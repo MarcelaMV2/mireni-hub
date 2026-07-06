@@ -1,0 +1,18 @@
+---
+// Encabezado de sección para la resolución. Uso en MDX:
+//   <Resolucion titulo="Análisis del problema"> ... </Resolucion>
+interface Props {
+  titulo: string;
+}
+const { titulo } = Astro.props;
+---
+
+<section class="mt-12">
+  <h2 class="flex items-center gap-3 font-heading uppercase text-2xl">
+    <span class="w-3 h-3 bg-brand shrink-0"></span>
+    {titulo}
+  </h2>
+  <div class="prosa mt-4 max-w-none">
+    <slot />
+  </div>
+</section>

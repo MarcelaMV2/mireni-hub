@@ -1,0 +1,102 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { Icon } from 'astro-icon/components';
+import Layout from '../../../../componentes/Layout.astro';
+import Breadcrumb from '../../../../componentes/Breadcrumb.astro';
+import EjercicioCard from '../../../../componentes/EjercicioCard.astro';
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection('materias');
+  const apartados = await getCollection('apartados');
+  return apartados.map((a) => {
+    const materia = materias.find((m) => m.id === a.data.materia.id)!;
+    return {
+      params: { materia: materia.id, apartado: a.id.split('/').pop()! },
+      props: { materia, apartado: a },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { materia, apartado } = Astro.props;
+
+const retos = (await getCollection('retos'))
+  .filter((r) => r.data.apartado.id === apartado.id)
+  .sort((a, b) => a.data.numero - b.data.numero);
+
+const gruposLabel: Record<'I' | 'II', string> = {
+  I: 'Grupo I · Módulo tipo función',
+  II: 'Grupo II · Módulo',
+};
+const grupos = (['I', 'II'] as const)
+  .map((g) => ({ g, items: retos.filter((r) => r.data.grupo === g) }))
+  .filter((x) => x.items.length > 0);
+
+const slugAp = apartado.id.split('/').pop()!;
+---
+
+<Layout titulo={`${apartado.data.titulo} · ${materia.data.sigla}`} marcaDerecha={apartado.data.titulo}>
+  <div class="max-w-[880px] mx-auto px-4 md:px-8">
+
+    <header class="flex flex-col gap-3 pt-8 pb-6 border-b-2 border-warning">
+      <Breadcrumb
+        items={[
+          { texto: 'Inicio', href: '/' },
+          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: apartado.data.titulo },
+        ]}
+      />
+
+      <div class="flex items-center gap-4">
+        <span class="grid place-items-center w-14 h-14 shrink-0 rounded-md border-2 border-warning text-warning">
+          <Icon name="tabler:sun" width={24} height={24} />
+        </span>
+        <h1 class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.9rem,6vw,3.2rem)]">
+          {apartado.data.titulo}
+        </h1>
+      </div>
+
+      <div class="flex gap-2 flex-wrap">
+        <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
+          {materia.data.sigla} · {materia.data.nombre}
+        </span>
+        <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
+          {retos.length} ejercicios
+        </span>
+        <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
+          Diagrama de flujo · Prueba de escritorio
+        </span>
+      </div>
+    </header>
+
+    {retos.length === 0 ? (
+      <p class="mt-8 text-secondary">
+        Todavía no hay ejercicios cargados en este apartado.
+      </p>
+    ) : (
+      grupos.map((bloque) => (
+        <section class="mt-10">
+          <p class="font-mono text-xs uppercase tracking-widest text-warning mb-4">
+            {gruposLabel[bloque.g]}
+          </p>
+
+          <div class="flex flex-col gap-4">
+            {bloque.items.map((r) => (
+              <EjercicioCard
+                numero={r.data.numero}
+                prefijo={`${bloque.g}.`}
+                titulo={r.data.titulo}
+                descripcion={r.data.descripcion}
+                etiqueta="Diagrama de flujo"
+                tags={['Diagrama de flujo', 'Prueba de escritorio']}
+                accion="Ver ejercicio"
+                href={`/${materia.id}/especiales/${slugAp}/${r.id.split('/').pop()}`}
+              />
+            ))}
+          </div>
+        </section>
+      ))
+    )}
+
+  </div>
+</Layout>

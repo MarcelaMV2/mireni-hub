@@ -1,0 +1,38 @@
+---
+titulo: "Clasificar repuesto por precio"
+descripcion: "Usar lógica condicional IF/ELSE dentro del procedimiento para etiquetar cada repuesto como económico, medio o caro según su precio."
+materia: "sis304"
+semana: 1
+numero: 3
+dificultad: "media"
+tiempo: "~15 min"
+tags: ["IF / ELSE", "CASE"]
+---
+
+import Enunciado from '../../../../componentes/mdx/Enunciado.astro';
+import Resolucion from '../../../../componentes/mdx/Resolucion.astro';
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+
+<Enunciado>
+Escribir `sp_clasificar_precio` que reciba un precio y devuelva una etiqueta:
+económico (< 50), medio (50–150) o caro (> 150).
+</Enunciado>
+
+<Resolucion titulo="Resolución">
+
+Usamos `IF … ELSEIF … ELSE` para asignar la etiqueta a una variable de salida:
+
+<Codigo archivo="sp_clasificar_precio.sql" lang="sql" codigo={`DELIMITER //
+CREATE PROCEDURE sp_clasificar_precio(IN p_precio DECIMAL(10,2), OUT p_etiqueta VARCHAR(20))
+BEGIN
+  IF p_precio < 50 THEN
+    SET p_etiqueta = 'economico';
+  ELSEIF p_precio <= 150 THEN
+    SET p_etiqueta = 'medio';
+  ELSE
+    SET p_etiqueta = 'caro';
+  END IF;
+END //
+DELIMITER ;`} />
+
+</Resolucion>

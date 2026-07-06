@@ -1,0 +1,24 @@
+---
+interface Props {
+  nivel: 'facil' | 'media' | 'dificil';
+}
+const { nivel } = Astro.props;
+const etiquetas = { facil: 'Fácil', media: 'Media', dificil: 'Difícil' };
+
+const estilos = {
+  facil: 'text-success border-success/40',
+  media: 'text-warning border-warning/40',
+  dificil: 'text-danger border-danger/40',
+};
+
+const puntos = {
+  facil: 'bg-success',
+  media: 'bg-warning',
+  dificil: 'bg-danger',
+};
+---
+
+<span class={`inline-flex items-center gap-2 font-mono text-[0.62rem] uppercase tracking-widest px-2 py-1 border rounded-sm ${estilos[nivel]}`}>
+  <span class={`w-1.5 h-1.5 rounded-full ${puntos[nivel]}`}></span>
+  {etiquetas[nivel]}
+</span>

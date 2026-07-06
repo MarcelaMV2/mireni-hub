@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 6,
+  "titulo": "Simplificar una fracción",
+  "descripcion": "Módulo que simplifica una fracción dados numerador y denominador.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para simplificar una fracción de la que se introduce el numerador y el denominador por separado."
+}

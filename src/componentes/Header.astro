@@ -1,0 +1,107 @@
+---
+import { nav } from "../config/sitio";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  marcaDerecha?: string;
+}
+const { marcaDerecha } = Astro.props;
+---
+
+<header
+  class="sticky top-0 z-10 border-b border-default bg-canvas/80 backdrop-blur-sm"
+>
+  <div
+    class="max-w-[1120px] mx-auto px-4 md:px-8 flex items-center justify-between h-14"
+  >
+    <!-- Lado izquierdo -->
+    <div class="flex items-center gap-3">
+      <!-- Menú móvil -->
+      <details id="mobile-menu" class="relative md:hidden">
+        <summary class="list-none cursor-pointer p-1">
+          <Icon name="tabler:menu-2" width={22} height={22} />
+        </summary>
+
+        <div
+          class="absolute left-0 top-full mt-2 w-56 rounded-md border border-default bg-canvas shadow-lg overflow-hidden"
+        >
+          {
+            nav.map((i) => (
+              <a
+                href={i.href}
+                class="block px-4 py-3 font-mono text-xs uppercase tracking-widest hover:bg-surface"
+              >
+                {i.texto}
+              </a>
+            ))
+          }
+        </div>
+      </details>
+
+      <!-- Logo solo en escritorio -->
+      <a
+        href="/"
+        class="hidden md:flex items-center gap-2 font-mono text-xs font-medium uppercase tracking-widest"
+      >
+        <span class="w-[7px] h-[7px] rounded-full bg-brand"></span>
+        Marcela · Auxiliatura
+      </a>
+    </div>
+
+    <!-- Navegación escritorio -->
+    <nav class="hidden md:flex items-center gap-6">
+      {
+        nav.map((i) => (
+          <a
+            href={i.href}
+            class="font-mono text-xs uppercase tracking-widest hover:text-primary"
+          >
+            {i.texto}
+          </a>
+        ))
+      }
+
+      {
+        marcaDerecha && (
+          <span class="font-mono text-xs uppercase tracking-widest border border-primary text-primary rounded-md px-2.5 py-1">
+            {marcaDerecha}
+          </span>
+        )
+      }
+    </nav>
+
+    <!-- Badge de la materia en móvil -->
+    {
+      marcaDerecha && (
+        <span class="md:hidden font-mono text-xs uppercase tracking-widest border border-primary text-primary rounded-md px-2.5 py-1">
+          {marcaDerecha}
+        </span>
+      )
+    }
+  </div>
+</header>
+<script>
+  const menu = document.querySelector("#mobile-menu");
+
+  if (menu instanceof HTMLDetailsElement) {
+    document.addEventListener("click", (event) => {
+      if (!(event.target instanceof Node)) return;
+
+      if (menu.open && !menu.contains(event.target)) {
+        menu.open = false;
+      }
+    });
+
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        menu.open = false;
+      });
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        menu.open = false;
+      }
+    });
+  }
+</script>

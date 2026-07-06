@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 4,
+  "titulo": "Ordenar cuatro números",
+  "descripcion": "Módulo que ordena cuatro números mediante intercambio de variables.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para ordenar cuatro números introducidos por teclado mediante el intercambio de valores de dos variables."
+}

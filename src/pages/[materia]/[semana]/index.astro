@@ -1,0 +1,80 @@
+---
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { Icon } from 'astro-icon/components';
+import Layout from '../../../componentes/Layout.astro';
+import Breadcrumb from '../../../componentes/Breadcrumb.astro';
+import EjercicioCard from '../../../componentes/EjercicioCard.astro';
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection('materias');
+  const semanas = await getCollection('semanas');
+
+  return semanas
+    .filter((s) => s.data.estado === 'disponible')
+    .map((s) => {
+      const materia = materias.find((m) => m.id === s.data.materia.id)!;
+      const slug = s.id.split('/').pop()!;
+      return {
+        params: { materia: materia.id, semana: slug },
+        props: { materia, semana: s },
+      };
+    });
+}) satisfies GetStaticPaths;
+
+const { materia, semana } = Astro.props;
+
+const ejercicios = (await getCollection('ejercicios'))
+  .filter((e) => e.data.materia.id === materia.id && e.data.semana === semana.data.numero)
+  .sort((a, b) => a.data.numero - b.data.numero);
+---
+
+<Layout
+  titulo={`Semana ${semana.data.numero} · ${materia.data.nombre}`}
+  marcaDerecha={`Semana ${semana.data.numero}`}
+>
+  <div class="max-w-[1120px] mx-auto px-4 md:px-8">
+
+    <div class="flex flex-col gap-4 pt-8 pb-6 border-b border-default">
+      <Breadcrumb
+        items={[
+          { texto: 'Inicio', href: '/' },
+          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: `Semana ${semana.data.numero}` },
+        ]}
+      />
+
+      <div class="flex items-center gap-4">
+        <span class="grid place-items-center w-[52px] h-[52px] border-2 border-primary shrink-0">
+          <Icon name="tabler:code" width={24} height={24} />
+        </span>
+        <h1 class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.8rem,6vw,3rem)]">
+          Semana {semana.data.numero} — {semana.data.titulo}
+        </h1>
+      </div>
+
+      <div class="flex gap-2 flex-wrap">
+        <span class="font-mono text-xs uppercase tracking-widest border border-primary px-2.5 py-1">
+          {materia.data.sigla} · {materia.data.nombre}
+        </span>
+        <span class="font-mono text-xs uppercase tracking-widest border border-default px-2.5 py-1 text-secondary">
+          {ejercicios.length} ejercicios
+        </span>
+      </div>
+    </div>
+
+    <section class="flex flex-col gap-4 py-6">
+      {ejercicios.map((e) => (
+        <EjercicioCard
+          numero={e.data.numero}
+          titulo={e.data.titulo}
+          descripcion={e.data.descripcion}
+          dificultad={e.data.dificultad}
+          tags={e.data.tags}
+          href={`/${materia.id}/${semana.id.split('/').pop()}/${e.id.split('/').pop()}`}
+        />
+      ))}
+    </section>
+
+  </div>
+</Layout>

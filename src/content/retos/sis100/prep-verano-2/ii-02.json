@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 2,
+  "titulo": "Suma de dígitos pares e impares",
+  "descripcion": "Módulo que suma por separado los dígitos pares e impares de un número.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para calcular la suma de los dígitos pares e impares de un número."
+}

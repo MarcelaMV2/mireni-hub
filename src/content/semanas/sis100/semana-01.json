@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 1,
+  "titulo": "Control de flujo",
+  "resumen": "Condicionales if/else y switch, operadores y primeros programas en C++.",
+  "estado": "bloqueada"
+}

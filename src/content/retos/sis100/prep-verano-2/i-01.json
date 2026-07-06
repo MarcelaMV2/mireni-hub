@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 1,
+  "titulo": "Mínimo Común Múltiplo (mcm)",
+  "descripcion": "Función que determina el mcm de dos números introducidos por teclado.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para determinar el Mínimo Común Múltiplo (mcm) de dos números introducidos por teclado."
+}

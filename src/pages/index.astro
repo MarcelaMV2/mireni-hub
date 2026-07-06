@@ -1,17 +1,52 @@
 ---
+import { getCollection } from "astro:content";
+import Layout from "../componentes/Layout.astro";
+import Perfil from "../componentes/Perfil.astro";
+import MateriaCard from "../componentes/MateriaCard.astro";
 
+const materias = (await getCollection("materias")).sort(
+  (a, b) => a.data.orden - b.data.orden,
+);
+const semanas = await getCollection("semanas");
+const ejercicios = await getCollection("ejercicios");
+
+function conteo(sigla: string) {
+  return {
+    semanas: semanas.filter((s) => s.data.materia.id === sigla).length,
+    ejercicios: ejercicios.filter((e) => e.data.materia.id === sigla).length,
+  };
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout
+  titulo="Marcela Miranda · Auxiliatura USFX"
+  descripcion="Ejercicios resueltos de las materias en las que soy auxiliar de docencia."
+  marcaDerecha="USFX · 2026"
+>
+  <div class="max-w-[1120px] mx-auto px-4 md:px-8">
+    <Perfil />
+    <section
+      id="materias"
+      class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 pb-8"
+    >
+      {
+        materias.map((m) => {
+          const c = conteo(m.id);
+          return (
+            <MateriaCard
+              sigla={m.data.sigla}
+              nombre={m.data.nombre}
+              descripcion={m.data.descripcion}
+              icono={m.data.icono}
+              acento={m.data.acento}
+              semanas={c.semanas}
+              ejercicios={c.ejercicios}
+              href={`/${m.id}`}
+              destacada={true}
+            />
+          );
+        })
+      }
+    </section>
+  </div>
+</Layout>

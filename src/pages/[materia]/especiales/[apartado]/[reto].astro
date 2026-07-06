@@ -1,0 +1,175 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import Layout from "../../../../componentes/Layout.astro";
+import Breadcrumb from "../../../../componentes/Breadcrumb.astro";
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection("materias");
+  const apartados = await getCollection("apartados");
+  const retos = await getCollection("retos");
+
+  return retos.map((r) => {
+    const materia = materias.find((m) => m.id === r.data.materia.id)!;
+    const apartado = apartados.find((a) => a.id === r.data.apartado.id)!;
+    const [, apSlug, retoSlug] = r.id.split("/");
+    return {
+      params: { materia: materia.id, apartado: apSlug, reto: retoSlug },
+      props: { materia, apartado, reto: r },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { materia, apartado, reto } = Astro.props;
+const apSlug = apartado.id.split("/").pop()!;
+const codigo = `${reto.data.grupo}.${String(reto.data.numero).padStart(2, "0")}`;
+---
+
+<Layout
+  titulo={`${reto.data.titulo} · ${materia.data.sigla}`}
+  descripcion={reto.data.descripcion}
+  marcaDerecha={codigo}
+>
+  <article class="max-w-[820px] mx-auto px-4 md:px-8">
+    <header class="flex flex-col gap-3 pt-8 pb-6 border-b-2 border-primary">
+      <Breadcrumb
+        items={[
+          { texto: "Inicio", href: "/" },
+          { texto: materia.data.nombre, href: `/${materia.id}` },
+          {
+            texto: apartado.data.titulo,
+            href: `/${materia.id}/especiales/${apSlug}`,
+          },
+          { texto: `Ejercicio ${codigo}` },
+        ]}
+      />
+      <div class="flex gap-2 flex-wrap">
+        <span
+          class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary"
+        >
+          Grupo {reto.data.grupo}
+        </span>
+        <span
+          class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary"
+        >
+          Ejercicio {codigo}
+        </span>
+      </div>
+      <h1
+        class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.9rem,6vw,3.2rem)]"
+      >
+        {reto.data.titulo}
+      </h1>
+    </header>
+
+    <section class="mt-8">
+      <div class="bg-surface border-l-4 border-brand rounded-r-md p-6">
+        <p
+          class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand mb-3"
+        >
+          <Icon name="tabler:clipboard-text" width={16} height={16} />
+          Enunciado
+        </p>
+        <p class="leading-relaxed">{reto.data.enunciado}</p>
+
+        {
+          reto.data.formula && (
+            <div class="mt-4 bg-white border border-default rounded-md px-5 py-4 font-mono text-lg text-center tracking-wide">
+              {reto.data.formula}
+            </div>
+          )
+        }
+
+        {
+          reto.data.ejemplo && (
+            <div class="mt-4 bg-white border border-default rounded-md px-5 py-4 font-mono text-base leading-relaxed whitespace-pre-line">
+              {reto.data.ejemplo}
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="flex items-center gap-3 font-heading uppercase text-2xl">
+        <span class="w-3 h-3 bg-brand shrink-0"></span>
+        Diagrama de flujo
+      </h2>
+      <div class="mt-4">
+        {
+          reto.data.diagrama ? (
+            <img
+              src={reto.data.diagrama}
+              alt={`Diagrama de flujo — ${reto.data.titulo}`}
+              class="w-full rounded-md border border-default"
+              loading="lazy"
+            />
+          ) : (
+            <div
+              class="grid place-items-center text-center min-h-[220px] rounded-md border border-dashed border-default text-secondary"
+              style="background: repeating-linear-gradient(45deg, var(--color-surface), var(--color-surface) 10px, #f0ece3 10px, #f0ece3 20px);"
+            >
+              <span class="font-mono text-xs uppercase tracking-widest">
+                Subir imagen del diagrama a /public/retos/
+              </span>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="mt-12">
+      <h2 class="flex items-center gap-3 font-heading uppercase text-2xl">
+        <span class="w-3 h-3 bg-brand shrink-0"></span>
+        Prueba de escritorio
+      </h2>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full text-[0.9rem] border-collapse">
+          <thead>
+            <tr>
+              {
+                ["Paso", "Variable", "Valor", "Condición", "Salida"].map(
+                  (h) => (
+                    <th class="text-left font-mono text-[0.66rem] tracking-widest uppercase text-brand p-3 border-b-2 border-default">
+                      {h}
+                    </th>
+                  ),
+                )
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              Array.from({ length: 3 }).map(() => (
+                <tr class="odd:bg-surface">
+                  {Array.from({ length: 5 }).map(() => (
+                    <td class="p-3 border-b border-default text-tertiary">—</td>
+                  ))}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+        <p
+          class="font-mono text-xs uppercase tracking-widest text-secondary mt-3"
+        >
+          Completar con el seguimiento de variables paso a paso.
+        </p>
+      </div>
+    </section>
+
+    <footer
+      class="flex justify-between gap-4 flex-wrap mt-12 pt-4 border-t border-default font-mono text-xs uppercase tracking-widest text-secondary"
+    >
+      <a
+        href={`/${materia.id}/especiales/${apSlug}`}
+        class="inline-flex items-center gap-2 hover:text-primary"
+      >
+        <Icon name="tabler:arrow-left" width={14} height={14} />
+        Volver a {apartado.data.titulo}
+      </a>
+      <span>{codigo} · {materia.data.sigla}</span>
+    </footer>
+  </article>
+</Layout>

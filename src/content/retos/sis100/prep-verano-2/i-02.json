@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 2,
+  "titulo": "Máximo Común Divisor (MCD)",
+  "descripcion": "Función que determina el MCD de dos números introducidos por teclado.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para determinar el Máximo Común Divisor (MCD) de dos números introducidos por teclado."
+}

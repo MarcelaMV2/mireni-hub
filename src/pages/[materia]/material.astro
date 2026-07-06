@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import Layout from "../../componentes/Layout.astro";
+import Breadcrumb from "../../componentes/Breadcrumb.astro";
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection("materias");
+  const material = await getCollection("material");
+
+  return material.map((m) => {
+    const materia = materias.find((mat) => mat.id === m.data.materia.id)!;
+    return {
+      params: { materia: materia.id },
+      props: { materia, material: m },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { materia, material } = Astro.props;
+---
+
+<Layout
+  titulo={`${material.data.titulo} · ${materia.data.sigla}`}
+  descripcion={material.data.descripcion}
+  marcaDerecha={materia.data.sigla}
+>
+  <article class="max-w-[820px] mx-auto px-4 md:px-8">
+    <header class="flex flex-col gap-3 pt-8 pb-6 border-b-2 border-primary">
+      <Breadcrumb
+        items={[
+          { texto: "Inicio", href: "/" },
+          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: material.data.titulo },
+        ]}
+      />
+
+      <div class="flex items-center gap-4">
+        <span
+          class="grid place-items-center w-14 h-14 border-2 border-primary rounded-md shrink-0"
+        >
+          <Icon name="tabler:photo" width={24} height={24} />
+        </span>
+        <h1
+          class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.9rem,6vw,3.2rem)]"
+        >
+          {material.data.titulo}
+        </h1>
+      </div>
+    </header>
+
+    <section class="mt-8">
+      <p class="text-secondary leading-relaxed mb-8">
+        {material.data.descripcion}
+      </p>
+
+      <div class="flex flex-col gap-10">
+        {
+          material.data.contenido.map((item) => (
+            <article class="border border-default rounded-lg overflow-hidden">
+              <img
+                src={item.imagen}
+                alt={item.titulo}
+                class="w-full"
+                loading="lazy"
+              />
+
+              <div class="p-5">
+                <h2 class="font-heading text-xl mb-2">{item.titulo}</h2>
+
+                <p class="text-secondary leading-relaxed">{item.descripcion}</p>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </article>
+</Layout>

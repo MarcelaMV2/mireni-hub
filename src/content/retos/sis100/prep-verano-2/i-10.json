@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 10,
+  "titulo": "Conversión de moneda",
+  "descripcion": "Función que convierte bolivianos a moneda extranjera según el tipo de cambio.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para convertir una cantidad de dinero introducida en bolivianos a su equivalente en moneda extranjera de acuerdo al tipo de cambio que se indica."
+}

@@ -1,0 +1,84 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { GetStaticPaths } from 'astro';
+import { Icon } from 'astro-icon/components';
+import Layout from '../../../componentes/Layout.astro';
+import Breadcrumb from '../../../componentes/Breadcrumb.astro';
+import BadgeDificultad from '../../../componentes/BadgeDificultad.astro';
+import '../../../estilos/contenido.css';
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection('materias');
+  const ejercicios = await getCollection('ejercicios');
+
+  return ejercicios.map((e) => {
+    const materia = materias.find((m) => m.id === e.data.materia.id)!;
+    const [, semanaSlug, ejSlug] = e.id.split('/');
+    return {
+      params: { materia: materia.id, semana: semanaSlug, ejercicio: ejSlug },
+      props: { materia, ejercicio: e },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { materia, ejercicio } = Astro.props;
+const { Content } = await render(ejercicio);
+const semanaSlug = ejercicio.id.split('/')[1];
+const numSemana = ejercicio.data.semana;
+---
+
+<Layout
+  titulo={`${ejercicio.data.titulo} · ${materia.data.sigla}`}
+  descripcion={ejercicio.data.descripcion}
+  marcaDerecha={`EJ ${String(ejercicio.data.numero).padStart(2, '0')}`}
+>
+  <article class="max-w-[820px] mx-auto px-4 md:px-8">
+
+    <header class="flex flex-col gap-3 pt-8 pb-6 border-b-2 border-primary">
+      <Breadcrumb
+        items={[
+          { texto: 'Inicio', href: '/' },
+          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: `Semana ${numSemana}`, href: `/${materia.id}/${semanaSlug}` },
+          { texto: `Ejercicio ${String(ejercicio.data.numero).padStart(2, '0')}` },
+        ]}
+      />
+
+      <div class="flex items-center gap-2 mt-2">
+        <BadgeDificultad nivel={ejercicio.data.dificultad} />
+        {ejercicio.data.tags[0] && (
+          <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
+            {ejercicio.data.tags[0]}
+          </span>
+        )}
+      </div>
+
+      <h1 class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.9rem,6vw,3.2rem)]">
+        {ejercicio.data.titulo}
+      </h1>
+
+      <div class="flex gap-4 flex-wrap">
+        {ejercicio.data.tiempo && (
+          <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-secondary">
+            <Icon name="tabler:clock" width={13} height={13} />
+            {ejercicio.data.tiempo}
+          </span>
+        )}
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-secondary">
+          <Icon name="tabler:database" width={13} height={13} />
+          {materia.data.sigla}
+        </span>
+      </div>
+    </header>
+
+    <div class="prosa py-6">
+      <Content />
+    </div>
+
+    <footer class="flex justify-between gap-4 flex-wrap pt-4 border-t border-default font-mono text-xs uppercase tracking-widest text-secondary">
+      <span>EJ {String(ejercicio.data.numero).padStart(2, '0')} · {ejercicio.data.titulo}</span>
+      <span>Semana {numSemana} · {materia.data.sigla}</span>
+    </footer>
+
+  </article>
+</Layout>

@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 6,
+  "titulo": "Vistas y desencadenadores",
+  "resumen": "CREATE VIEW, triggers BEFORE/AFTER y comprobaciones con CHECK.",
+  "estado": "bloqueada"
+}

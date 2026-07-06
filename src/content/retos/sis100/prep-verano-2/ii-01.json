@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 1,
+  "titulo": "Suma de n pares e impares",
+  "descripcion": "Módulo que suma por separado los primeros n números pares e impares.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para calcular la suma de los primeros n números pares e impares por separado."
+}

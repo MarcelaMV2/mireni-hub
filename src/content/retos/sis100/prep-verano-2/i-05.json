@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 5,
+  "titulo": "Mes en literal",
+  "descripcion": "Función que recibe el mes en numeral y devuelve el mes en literal.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función que, al enviarle el mes en numeral, devuelva el mes correspondiente en literal."
+}

@@ -1,0 +1,10 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 10,
+  "titulo": "Serie con factorial y potencia",
+  "descripcion": "Módulo que calcula la serie T con funciones de factorial y potencia (N términos).",
+  "enunciado": "Realizar un algoritmo que calcule la siguiente serie utilizando una función para el factorial y otra para la potencia. Encontrar T para N términos; X se introduce por teclado.",
+  "formula": "T = X¹/2! − X³/4! + X⁵/6! − ..."
+}

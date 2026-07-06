@@ -1,0 +1,99 @@
+---
+titulo: "Total de stock por categoría"
+descripcion: "Procedimiento que recorre las tablas ELECTRICO y MECANICO usando variables locales y calcula el total de stock disponible con un cursor simple."
+materia: "sis304"
+semana: 1
+numero: 2
+dificultad: "media"
+tiempo: "~20 min"
+tags: ["DECLARE", "CURSOR", "SUM"]
+---
+
+import Enunciado from '../../../../componentes/mdx/Enunciado.astro';
+import Resolucion from '../../../../componentes/mdx/Resolucion.astro';
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import Galeria from '../../../../componentes/mdx/Galeria.astro';
+
+<Enunciado>
+Escribir un procedimiento almacenado `sp_stock_categoria` que recorra los
+repuestos de la base `REPUESTOS` y calcule el **total de stock disponible**
+agrupado por categoría (eléctrico / mecánico).
+
+El procedimiento debe usar **variables locales** y un **cursor** para acumular
+el total, y mostrar el resultado ordenado de mayor a menor.
+</Enunciado>
+
+Este ejercicio combina tres conceptos vistos en clase: la declaración de
+variables locales con `DECLARE`, el recorrido de filas mediante un **cursor**,
+y la acumulación de un total dentro del bloque `BEGIN…END`. Lo resolvemos paso
+a paso.
+
+<Resolucion titulo="Análisis del problema">
+
+Antes de escribir SQL conviene identificar qué tablas y columnas necesitamos.
+La categoría vive en las tablas `ELECTRICO` y `MECANICO`, y el stock está en
+`REPUESTO`. Necesitamos entonces:
+
+- Recorrer cada repuesto y leer su **stock** y su **categoría**.
+- Mantener dos acumuladores, uno por cada categoría.
+- Devolver ambos totales ordenados de mayor a menor.
+
+</Resolucion>
+
+<Resolucion titulo="Estructura del cursor">
+
+El cursor nos permite iterar fila por fila. Declaramos primero las variables,
+luego el cursor y un *handler* para detectar el final de los datos:
+
+<Codigo archivo="sp_stock_categoria.sql" lang="sql" codigo={`DELIMITER //
+CREATE PROCEDURE sp_stock_categoria()
+BEGIN
+  DECLARE fin INT DEFAULT 0;
+  DECLARE v_stock INT;
+  DECLARE total_elec INT DEFAULT 0;
+  DECLARE cur CURSOR FOR
+    SELECT stock FROM REPUESTO;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fin = 1;
+END //
+DELIMITER ;`} />
+
+**Nota sobre el handler.** El `CONTINUE HANDLER FOR NOT FOUND` es lo que evita
+que el cursor genere un error al llegar al final: cuando ya no hay más filas,
+pone `fin = 1` y salimos del bucle.
+
+</Resolucion>
+
+<Resolucion titulo="Resultado esperado">
+
+Al ejecutar el procedimiento con `CALL sp_stock_categoria();` obtenemos una
+tabla como esta:
+
+| Categoría    | Repuestos | Stock total |
+| ------------ | --------- | ----------- |
+| Eléctrico    | 12        | 340         |
+| Mecánico     | 9         | 215         |
+| Sin categoría| 2         | 18          |
+
+La misma lógica aplica en **Programación Básica (SIS100)** cuando acumulamos
+con un bucle. Este es el equivalente en C++ para reforzar la idea:
+
+<Codigo archivo="acumulador.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    int stock[5] = {40, 30, 50, 20, 15};
+    int total = 0;
+    for (int i = 0; i < 5; i++) {
+        total += stock[i];   // acumulador
+    }
+    cout << "Stock total: " << total;
+    return 0;
+}`} />
+
+</Resolucion>
+
+<Galeria titulo="Capturas de la ejecución" imagenes={[
+  { pie: "Workbench — CREATE PROCEDURE ejecutado", ancho: 16, alto: 6 },
+  { pie: "Resultado — grilla CALL", ancho: 4, alto: 3 },
+  { pie: "Modelo — MER Repuestos", ancho: 4, alto: 3 },
+]} />

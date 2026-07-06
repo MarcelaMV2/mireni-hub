@@ -1,0 +1,41 @@
+---
+titulo: "Reporte de compras por proveedor"
+descripcion: "Procedimiento que cruza PROVEEDOR, COMPRA y ENTREGA con INNER JOIN para generar un reporte agregado del total comprado a cada proveedor."
+materia: "sis304"
+semana: 1
+numero: 4
+dificultad: "dificil"
+tiempo: "~30 min"
+tags: ["INNER JOIN", "GROUP BY", "HAVING"]
+---
+
+import Enunciado from '../../../../componentes/mdx/Enunciado.astro';
+import Resolucion from '../../../../componentes/mdx/Resolucion.astro';
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+
+<Enunciado>
+Generar `sp_reporte_compras` que devuelva, por proveedor, la cantidad de
+compras y el monto total, mostrando solo los que superan un umbral.
+</Enunciado>
+
+<Resolucion titulo="Resolución">
+
+Cruzamos las tres tablas con `INNER JOIN`, agrupamos por proveedor y filtramos
+el agregado con `HAVING`:
+
+<Codigo archivo="sp_reporte_compras.sql" lang="sql" codigo={`DELIMITER //
+CREATE PROCEDURE sp_reporte_compras(IN p_umbral DECIMAL(12,2))
+BEGIN
+  SELECT p.nombre,
+         COUNT(c.id)      AS compras,
+         SUM(e.subtotal)  AS total
+  FROM PROVEEDOR p
+  INNER JOIN COMPRA  c ON c.id_proveedor = p.id
+  INNER JOIN ENTREGA e ON e.id_compra    = c.id
+  GROUP BY p.id, p.nombre
+  HAVING total > p_umbral
+  ORDER BY total DESC;
+END //
+DELIMITER ;`} />
+
+</Resolucion>

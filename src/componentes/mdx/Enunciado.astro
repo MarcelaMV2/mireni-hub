@@ -1,0 +1,15 @@
+---
+// Caja destacada del enunciado. Uso en MDX:
+//   <Enunciado>...texto markdown...</Enunciado>
+import { Icon } from 'astro-icon/components';
+---
+
+<aside class="bg-surface border-l-4 border-brand rounded-r-md p-6 my-8">
+  <p class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-brand mb-3">
+    <Icon name="tabler:clipboard-text" width={16} height={16} />
+    Enunciado
+  </p>
+  <div class="[&>p+p]:mt-3 [&_code]:font-mono [&_code]:text-[0.85em] [&_code]:bg-white [&_code]:text-brand [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-sm">
+    <slot />
+  </div>
+</aside>

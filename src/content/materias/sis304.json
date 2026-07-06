@@ -1,0 +1,9 @@
+{
+  "sigla": "SIS304",
+  "nombre": "Base de Datos II",
+  "descripcion": "Procedimientos, parámetros, funciones, transacciones y triggers sobre MySQL.",
+  "icono": "db",
+  "acento": "#d9382c",
+  "orden": 1,
+  "meta": ["MySQL 8 · InnoDB", "Gestión II · 2026", "BD Repuestos"]
+}

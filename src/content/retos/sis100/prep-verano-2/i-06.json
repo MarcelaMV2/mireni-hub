@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 6,
+  "titulo": "Cantidad de dígitos pares",
+  "descripcion": "Función que cuenta los dígitos pares de un número.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para determinar la cantidad de dígitos pares en un número introducido por teclado."
+}

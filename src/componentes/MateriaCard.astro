@@ -1,0 +1,80 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  sigla: string;
+  nombre: string;
+  descripcion: string;
+  icono: "db" | "code";
+  acento?: string;
+  semanas: number;
+  ejercicios: number;
+  href: string;
+  destacada?: boolean;
+}
+
+const {
+  sigla,
+  nombre,
+  descripcion,
+  icono,
+  semanas,
+  ejercicios,
+  href,
+  destacada = true,
+} = Astro.props;
+
+const iconos = {
+  db: "tabler:database",
+  code: "tabler:code",
+};
+---
+
+<a
+  href={href}
+  class="group flex flex-col gap-3 bg-surface border border-primary p-6
+         transition-all duration-150
+         hover:-translate-x-1 hover:-translate-y-1
+         hover:shadow-[6px_6px_0_0_var(--color-primary)]"
+>
+  <div class="flex items-center justify-between">
+    <span class="grid place-items-center w-11 h-11 border border-default">
+      <Icon name={iconos[icono]} width={22} height={22} />
+    </span>
+
+    <span
+      class={`font-heading text-3xl ${destacada ? "text-brand" : "text-tertiary"}`}
+    >
+      {sigla}
+    </span>
+  </div>
+
+ <h2 class="font-heading text-2xl mt-1">{nombre}</h2>
+
+  <p class="text-sm text-secondary leading-relaxed">{descripcion}</p>
+
+  <div class="flex items-end justify-between pt-4 mt-4 border-t border-default">
+    <div class="flex gap-8">
+      <div class="flex flex-col">
+        <b class="text-lg font-semibold">{String(semanas).padStart(2, "0")}</b>
+        <small class="text-[10px] uppercase tracking-widest text-secondary"
+          >semanas</small
+        >
+      </div>
+      <div class="flex flex-col">
+        <b class="text-lg font-semibold"
+          >{String(ejercicios).padStart(2, "0")}</b
+        >
+        <small class="text-[10px] uppercase tracking-widest text-secondary"
+          >ejercicios</small
+        >
+      </div>
+    </div>
+
+    <span
+      class="text-secondary transition group-hover:translate-x-1 group-hover:-translate-y-1"
+    >
+      <Icon name="tabler:arrow-up-right" width={18} height={18} />
+    </span>
+  </div>
+</a>

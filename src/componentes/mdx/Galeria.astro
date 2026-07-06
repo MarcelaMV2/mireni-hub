@@ -1,0 +1,43 @@
+---
+// Galería de imágenes / capturas. Uso en MDX:
+//   <Galeria titulo="Capturas de la ejecución" imagenes={[
+//     { src: '/ejercicios/sis304-s01-e02-workbench.png', pie: 'CREATE PROCEDURE ejecutado' },
+//   ]} />
+interface Imagen {
+  src?: string;
+  pie: string;
+  ancho?: number;
+  alto?: number;
+}
+interface Props {
+  titulo?: string;
+  imagenes: Imagen[];
+}
+const { titulo, imagenes } = Astro.props;
+---
+
+<section class="mt-12">
+  {titulo && (
+    <h2 class="flex items-center gap-3 font-heading uppercase text-2xl mb-4">
+      <span class="w-3 h-3 bg-brand shrink-0"></span>
+      {titulo}
+    </h2>
+  )}
+  <div class="grid gap-4" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+    {imagenes.map((img) => (
+      <figure>
+        {img.src ? (
+          <img src={img.src} alt={img.pie} loading="lazy" class="rounded-md border border-default" />
+        ) : (
+          <div
+            class="grid place-items-center text-center p-4 rounded-md border border-default text-secondary"
+            style={`aspect-ratio:${(img.ancho ?? 4)}/${(img.alto ?? 3)}; background: repeating-linear-gradient(45deg, var(--color-surface), var(--color-surface) 10px, #f0ece3 10px, #f0ece3 20px);`}
+          >
+            <span class="font-mono text-xs uppercase tracking-widest">{img.pie}</span>
+          </div>
+        )}
+        <figcaption class="mt-2 font-mono text-xs uppercase tracking-widest text-secondary">{img.pie}</figcaption>
+      </figure>
+    ))}
+  </div>
+</section>

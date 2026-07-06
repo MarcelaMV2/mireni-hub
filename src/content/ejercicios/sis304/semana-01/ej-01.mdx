@@ -1,0 +1,36 @@
+---
+titulo: "Procedimiento para listar repuestos"
+descripcion: "Crear un procedimiento sin parámetros que devuelva todos los repuestos ordenados por nombre. Repaso de CREATE PROCEDURE y del bloque BEGIN…END."
+materia: "sis304"
+semana: 1
+numero: 1
+dificultad: "facil"
+tiempo: "~10 min"
+tags: ["CREATE PROCEDURE", "SELECT"]
+---
+
+import Enunciado from '../../../../componentes/mdx/Enunciado.astro';
+import Resolucion from '../../../../componentes/mdx/Resolucion.astro';
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+
+<Enunciado>
+Crear un procedimiento almacenado `sp_listar_repuestos` que devuelva todos los
+repuestos ordenados por nombre. Sin parámetros.
+</Enunciado>
+
+<Resolucion titulo="Resolución">
+
+El procedimiento envuelve un `SELECT` simple dentro de un bloque `BEGIN…END`:
+
+<Codigo archivo="sp_listar_repuestos.sql" lang="sql" codigo={`DELIMITER //
+CREATE PROCEDURE sp_listar_repuestos()
+BEGIN
+  SELECT id, nombre, stock
+  FROM REPUESTO
+  ORDER BY nombre ASC;
+END //
+DELIMITER ;`} />
+
+Se ejecuta con `CALL sp_listar_repuestos();`.
+
+</Resolucion>

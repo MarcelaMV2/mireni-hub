@@ -1,0 +1,64 @@
+---
+import { Code } from 'astro:components';
+
+// Bloque de código con título de archivo, botón copiar y resaltado (Shiki).
+// Uso en MDX:
+//   <Codigo archivo="sp_stock_categoria.sql" lang="sql" codigo={`CREATE PROCEDURE ...`} />
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  archivo: string;
+  lang: string;
+  codigo: string;
+}
+const { archivo, lang, codigo } = Astro.props;
+---
+
+<figure class="border border-default rounded-md overflow-hidden my-6 bg-white">
+  <figcaption class="flex items-center gap-3 px-3 py-2 border-b border-default bg-surface">
+    <span class="inline-flex gap-[5px]">
+      <i class="w-[9px] h-[9px] rounded-full bg-[#e05c4a]"></i>
+      <i class="w-[9px] h-[9px] rounded-full bg-[#e0b13a]"></i>
+      <i class="w-[9px] h-[9px] rounded-full bg-[#4aa96c]"></i>
+    </span>
+    <span class="flex-1 font-mono text-xs text-secondary">{archivo}</span>
+    <button
+      class="copiar inline-flex items-center gap-1.5 font-mono text-[0.66rem] uppercase tracking-widest text-secondary bg-transparent border border-default rounded-sm px-2 py-1.5 transition-all duration-150 hover:text-primary hover:border-primary"
+      data-codigo={codigo}
+      type="button"
+    >
+      <Icon name="tabler:copy" width={13} height={13} class="icono-copiar" />
+      <Icon name="tabler:check" width={13} height={13} class="icono-ok hidden" />
+      <span class="texto-btn">Copiar</span>
+    </button>
+  </figcaption>
+  <div class="[&_pre]:m-0 [&_pre]:p-4 [&_pre]:text-[0.82rem] [&_pre]:leading-[1.55] [&_pre]:overflow-x-auto [&_pre]:!bg-white">
+    <Code code={codigo} lang={lang as any} theme="github-light" />
+  </div>
+</figure>
+
+<script>
+  document.querySelectorAll('.copiar').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const codigo = btn.getAttribute('data-codigo') ?? '';
+      const iconoCopiar = btn.querySelector('.icono-copiar');
+      const iconoOk = btn.querySelector('.icono-ok');
+      const texto = btn.querySelector('.texto-btn');
+      try {
+        await navigator.clipboard.writeText(codigo);
+        iconoCopiar?.classList.add('hidden');
+        iconoOk?.classList.remove('hidden');
+        if (texto) texto.textContent = 'Copiado';
+        btn.classList.add('!text-success', '!border-success');
+        setTimeout(() => {
+          iconoCopiar?.classList.remove('hidden');
+          iconoOk?.classList.add('hidden');
+          if (texto) texto.textContent = 'Copiar';
+          btn.classList.remove('!text-success', '!border-success');
+        }, 1600);
+      } catch {
+        /* clipboard no disponible */
+      }
+    });
+  });
+</script>

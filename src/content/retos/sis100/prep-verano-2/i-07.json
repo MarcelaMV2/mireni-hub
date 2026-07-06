@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 7,
+  "titulo": "Suma de los dígitos",
+  "descripcion": "Función que calcula la suma de los dígitos de un número.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para calcular la suma de los dígitos de un número introducido por teclado."
+}

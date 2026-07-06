@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 7,
+  "titulo": "Ecuación de segundo grado",
+  "descripcion": "Módulo que resuelve una ecuación cuadrática.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para resolver una ecuación de segundo grado."
+}

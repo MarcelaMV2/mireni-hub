@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 5,
+  "titulo": "Transacciones",
+  "resumen": "TRANSACTION, COMMIT y ROLLBACK sobre operaciones múltiples.",
+  "estado": "bloqueada"
+}

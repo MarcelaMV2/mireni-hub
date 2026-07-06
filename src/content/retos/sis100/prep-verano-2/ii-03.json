@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 3,
+  "titulo": "Cociente y residuo (división entera)",
+  "descripcion": "Módulo que divide el mayor entre el menor y devuelve cociente y residuo.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para calcular el cociente y el residuo de la división entera de dos números introducidos por teclado, debiendo dividirse el mayor entre el menor."
+}

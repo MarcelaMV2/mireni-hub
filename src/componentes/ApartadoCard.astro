@@ -1,0 +1,38 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  tipo: 'parcial' | 'invierno';
+  titulo: string;
+  subtitulo: string;
+  href?: string;
+}
+const { tipo, titulo, subtitulo, href = '#' } = Astro.props;
+const icono = tipo === 'parcial' ? 'tabler:target-arrow' : tipo === 'invierno' ? 'tabler:snowflake' : 'tabler:sun';
+
+const estilos = {
+  parcial: 'border-brand bg-brand-subtle text-brand',
+  verano: 'border-warning bg-[#FDF3E3] text-warning',
+  invierno: 'border-success bg-[#E8F5EC] text-success', // o el color que prefieras
+};
+---
+
+<a
+  href={href}
+  class={`flex items-center gap-4 px-6 py-4 border-[1.5px] transition-transform duration-150 hover:-translate-y-0.5 ${estilos[tipo]}`}
+>
+  <span class="grid place-items-center w-10 h-10 border-[1.5px] border-current shrink-0">
+    <Icon name={icono} width={20} height={20} />
+  </span>
+
+  <div class="flex-1">
+    <h3 class="font-heading font-bold uppercase tracking-wide text-primary text-base">
+      {titulo}
+    </h3>
+    <p class="mt-0.5 font-mono text-xs uppercase tracking-widest">{subtitulo}</p>
+  </div>
+
+  <span>
+    <Icon name="tabler:arrow-up-right" width={16} height={16} />
+  </span>
+</a>

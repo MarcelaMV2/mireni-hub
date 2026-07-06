@@ -1,0 +1,9 @@
+{
+  "sigla": "SIS100",
+  "nombre": "Programación Básica",
+  "descripcion": "Fundamentos de C++: control de flujo, funciones, arreglos y punteros.",
+  "icono": "code",
+  "acento": "#2563eb",
+  "orden": 2,
+  "meta": ["C++ 17", "Gestión II · 2026"]
+}

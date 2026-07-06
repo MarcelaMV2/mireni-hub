@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 1,
+  "titulo": "Procedimientos almacenados",
+  "resumen": "CREATE PROCEDURE sin parámetros, variables locales y primeras consultas sobre REPUESTOS.",
+  "estado": "disponible"
+}

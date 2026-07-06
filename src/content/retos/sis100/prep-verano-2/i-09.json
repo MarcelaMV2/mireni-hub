@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 9,
+  "titulo": "Conversión de base decimal",
+  "descripcion": "Función que convierte un número decimal al sistema indicado.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para convertir un número del sistema decimal al sistema que se indique."
+}

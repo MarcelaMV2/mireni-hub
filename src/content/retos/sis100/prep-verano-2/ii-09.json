@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 9,
+  "titulo": "Formato de fecha en literal",
+  "descripcion": "Módulo que muestra una fecha 15/12/10 como 15 de diciembre de 2010.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para mostrar una fecha introducida en el formato 15/12/10 en el formato 15 de diciembre de 2010, donde el día, mes y año se introducen por separado."
+}

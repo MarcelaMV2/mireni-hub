@@ -1,0 +1,139 @@
+---
+import { getCollection } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import Layout from "../../componentes/Layout.astro";
+import Breadcrumb from "../../componentes/Breadcrumb.astro";
+import SemanaCard from "../../componentes/SemanaCard.astro";
+import ApartadoCard from "../../componentes/ApartadoCard.astro";
+
+export const getStaticPaths = (async () => {
+  const materias = await getCollection("materias");
+  return materias.map((m) => ({
+    params: { materia: m.id },
+    props: { materia: m },
+  }));
+}) satisfies GetStaticPaths;
+
+const { materia } = Astro.props;
+
+const semanas = (await getCollection("semanas"))
+  .filter((s) => s.data.materia.id === materia.id)
+  .sort((a, b) => a.data.numero - b.data.numero);
+
+const ejercicios = await getCollection("ejercicios");
+const apartados = (await getCollection("apartados"))
+  .filter((a) => a.data.materia.id === materia.id)
+  .sort((a, b) => a.data.orden - b.data.orden);
+
+const materialExtra = (await getCollection("material")).find(
+  (m) => m.data.materia.id === materia.id,
+);
+
+const iconos = {
+  db: "tabler:database",
+  code: "tabler:code",
+};
+
+function slugSemana(id: string) {
+  return id.split("/").pop()!;
+}
+function cantidad(numero: number) {
+  return ejercicios.filter(
+    (e) => e.data.materia.id === materia.id && e.data.semana === numero,
+  ).length;
+}
+---
+
+<Layout
+  titulo={`${materia.data.nombre} · ${materia.data.sigla}`}
+  marcaDerecha={materia.data.sigla}
+>
+  <div class="max-w-[1120px] mx-auto px-4 md:px-8">
+    <div class="flex flex-col gap-4 pt-8 pb-6">
+      <Breadcrumb
+        items={[{ texto: "Inicio", href: "/" }, { texto: materia.data.nombre }]}
+      />
+
+      <div class="flex items-center gap-4">
+        <span
+          class="grid place-items-center w-14 h-14 border-2 border-primary rounded-md shrink-0"
+        >
+          <Icon name={iconos[materia.data.icono]} width={26} height={26} />
+        </span>
+        <h1
+          class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(2rem,7vw,3.4rem)]"
+        >
+          {materia.data.nombre}
+        </h1>
+      </div>
+
+      <!-- <div class="flex gap-2 flex-wrap">
+        <span
+          class="font-mono text-xs uppercase tracking-widest border border-primary rounded-md px-2.5 py-1"
+        >
+          {materia.data.sigla}
+        </span>
+        {
+          materia.data.meta.map((m) => (
+            <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
+              {m}
+            </span>
+          ))
+        }
+      </div> -->
+
+      {
+        materialExtra && (
+          <a
+            href={`/${materia.id}/material`}
+            class="inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-widest border bg-primary text-canvas px-3 py-2 hover:bg-brand hover:text-canvas transition-colors duration-150"
+          >
+            <Icon name="tabler:photo" width={16} height={16} />
+            Material conseguido
+          </a>
+        )
+      }
+    </div>
+
+    <section class="mt-8 border-t-2 border-primary pt-4">
+      <p class="text-xs uppercase tracking-widest text-secondary mb-2">
+        Semanas
+      </p>
+      <div class="flex flex-col">
+        {
+          semanas.map((s) => (
+            <SemanaCard
+              numero={s.data.numero}
+              titulo={s.data.titulo}
+              resumen={s.data.resumen}
+              estado={s.data.estado}
+              cantidad={cantidad(s.data.numero)}
+              href={`/${materia.id}/${slugSemana(s.id)}`}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      apartados.length > 0 && (
+        <section class="mt-8 border-t-2 border-primary pt-4">
+          <p class="text-xs uppercase tracking-widest text-secondary mb-2">
+            Apartados especiales
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+            {apartados.map((a) => (
+              <ApartadoCard
+                tipo={a.data.tipo}
+                titulo={a.data.titulo}
+                subtitulo={a.data.subtitulo}
+                href={`/${materia.id}/especiales/${a.id.split("/").pop()}`}
+              />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </div>
+</Layout>

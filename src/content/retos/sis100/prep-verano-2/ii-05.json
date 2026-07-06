@@ -1,0 +1,10 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 5,
+  "titulo": "Figura triangular de n filas",
+  "descripcion": "Módulo que imprime un triángulo de asteriscos de n filas.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para imprimir la siguiente figura con n filas:",
+  "ejemplo": "*\n**\n***"
+}

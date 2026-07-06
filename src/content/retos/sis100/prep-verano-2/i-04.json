@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "I",
+  "numero": 4,
+  "titulo": "Signo de un número",
+  "descripcion": "Función que devuelve 1 si es positivo, -1 si es negativo y 0 si es cero.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo tipo función para determinar el signo de un número introducido por teclado y devuelva 1 si es positivo, -1 si es negativo y 0 si es cero."
+}

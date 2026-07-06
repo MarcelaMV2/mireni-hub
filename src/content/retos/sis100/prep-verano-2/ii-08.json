@@ -1,0 +1,9 @@
+{
+  "materia": "sis100",
+  "apartado": "sis100/prep-verano-2",
+  "grupo": "II",
+  "numero": 8,
+  "titulo": "Rectángulo: área, volumen y perímetro",
+  "descripcion": "Módulo que calcula área, volumen y perímetro de un rectángulo.",
+  "enunciado": "Realizar un algoritmo que utilice un módulo para calcular el área, volumen y perímetro de un rectángulo."
+}
