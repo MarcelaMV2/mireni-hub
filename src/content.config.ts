@@ -77,7 +77,7 @@ const retos = defineCollection({
     grupo: z.enum(["I", "II"]),
     numero: z.number(),
     enunciado: z.string(),
-    ejemplo: z.string(),
+    ejemplo: z.string().optional(),
     diagrama: z.string().optional(),
     formula: z.string().optional(),
   }),
