@@ -15,6 +15,11 @@
       "imagen": "/material/sis100/dk1.jpeg"
     },
     {
+      "titulo": "Ing. Angel Baspineiro",
+      "descripcion": "Creo que avanzaron solo en c++ hasta matrices.",
+      "imagen": "/material/sis100/ab1.jpeg"
+    },
+    {
       "titulo": "Ing. Coca",
       "descripcion": "Ustedes ya saben",
       "imagen": "/material/sis100/nc1.png"
@@ -26,27 +31,42 @@
     },
     {
       "titulo": "Ing. Remberto Gonzales",
-      "descripcion": "Avanzaron puro C++ hasta matrices, no tengo info de sus parciales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
+      "imagen": "/material/sis100/rg2.jpeg"
+    },
+    { 
+      "titulo": "Ing. Remberto Gonzales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
+      "imagen": "/material/sis100/rg3.jpeg"
+    },
+    {
+      "titulo": "Ing. Remberto Gonzales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
+      "imagen": "/material/sis100/rg4.jpeg"
+    },
+    {
+      "titulo": "Ing. Remberto Gonzales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
       "imagen": "/material/sis100/r1.jpeg"
     },
     {
        "titulo": "Ing. Remberto Gonzales",
-      "descripcion": "Avanzaron puro C++ hasta matrices, no tengo info de sus parciales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
       "imagen": "/material/sis100/r2.jpeg"
     },
     {
        "titulo": "Ing. Remberto Gonzales",
-      "descripcion": "Avanzaron puro C++ hasta matrices, no tengo info de sus parciales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
       "imagen": "/material/sis100/r3.jpeg"
     },
     {
        "titulo": "Ing. Remberto Gonzales",
-      "descripcion": "Avanzaron puro C++ hasta matrices, no tengo info de sus parciales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
       "imagen": "/material/sis100/r4.jpeg"
     },
     {
        "titulo": "Ing. Remberto Gonzales",
-      "descripcion": "Avanzaron puro C++ hasta matrices, no tengo info de sus parciales",
+      "descripcion": "Avanzaron puro C++ hasta matrices",
       "imagen": "/material/sis100/r5.jpeg"
     }
   ]
