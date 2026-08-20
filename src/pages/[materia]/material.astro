@@ -31,7 +31,7 @@ const { materia, material } = Astro.props;
       <Breadcrumb
         items={[
           { texto: "Inicio", href: "/" },
-          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: materia.data.sigla, href: `/${materia.id}` },
           { texto: material.data.titulo },
         ]}
       />

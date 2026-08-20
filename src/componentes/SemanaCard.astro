@@ -6,10 +6,9 @@ interface Props {
   titulo: string;
   resumen: string;
   estado: 'disponible' | 'bloqueada';
-  cantidad?: number;
   href?: string;
 }
-const { numero, titulo, resumen, estado, cantidad = 0, href } = Astro.props;
+const { numero, titulo, resumen, estado, href } = Astro.props;
 const bloqueada = estado === 'bloqueada';
 const nn = String(numero).padStart(2, '0');
 
@@ -28,19 +27,25 @@ const Tag = bloqueada ? 'div' : 'a';
   </span>
 
   <div class="flex flex-col gap-1">
-    <h3 class="font-semibold text-[1.02rem]">Semana {numero} — {titulo}</h3>
-    <p class="text-sm text-secondary">{resumen}</p>
+    {bloqueada ? (
+      <h3 class="font-semibold text-[1.02rem]">Semana {numero}</h3>
+    ) : (
+      <>
+        <h3 class="font-semibold text-[1.02rem]">Semana {numero} — {titulo}</h3>
+        <p class="text-sm text-secondary">{resumen}</p>
+      </>
+    )}
   </div>
 
   <div class="flex items-center justify-end">
     {bloqueada ? (
       <span class="inline-flex items-center gap-2 border border-dashed border-default rounded-md bg-surface px-2.5 py-1.5 font-mono text-xs uppercase tracking-widest text-secondary">
         <Icon name="tabler:lock" width={13} height={13} />
-        Coming soon
+        It's coming soon
       </span>
     ) : (
-      <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-secondary whitespace-nowrap">
-        {cantidad} ejercicios
+      <span class="inline-flex items-center gap-2 bg-primary text-canvas font-mono text-[0.66rem] uppercase tracking-widest px-3 py-2.5 whitespace-nowrap transition-colors duration-150 group-hover:bg-brand">
+        Ver semana
         <Icon name="tabler:arrow-up-right" width={14} height={14} />
       </span>
     )}

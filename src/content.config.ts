@@ -46,6 +46,21 @@ const ejercicios = defineCollection({
     dificultad: z.enum(["facil", "media", "dificil"]),
     tiempo: z.string().optional(),
     tags: z.array(z.string()).default([]),
+    publicado: z.boolean().default(true),
+  }),
+});
+
+// ─────────────────────────────────────────────────────────────
+// CLASES  ·  contenido que se muestra directamente en una semana
+// clases/{sigla}/semana-0X.mdx
+// Se usa cuando una clase no necesita una página separada por ejercicio.
+// ─────────────────────────────────────────────────────────────
+const clases = defineCollection({
+  loader: glob({ pattern: "**/*.mdx", base: "./src/content/clases" }),
+  schema: z.object({
+    materia: reference("materias"),
+    semana: z.number(),
+    cantidadEjercicios: z.number().default(0),
   }),
 });
 
@@ -107,6 +122,7 @@ export const collections = {
   materias,
   semanas,
   ejercicios,
+  clases,
   apartados,
   retos,
   material,

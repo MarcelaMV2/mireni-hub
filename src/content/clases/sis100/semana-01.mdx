@@ -1,0 +1,153 @@
+---
+materia: "sis100"
+semana: 1
+cantidadEjercicios: 3
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+import BloquesAlgoritmo from '../../../componentes/mdx/BloquesAlgoritmo.astro';
+import DiagramaFlujo from '../../../componentes/mdx/DiagramaFlujo.astro';
+
+<section class="mb-14">
+  <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand mb-2">
+      Guía rápida
+    </p>
+    <h2 class="!mt-0 !border-0 !p-0">Algoritmos secuenciales</h2>
+    <p class="mt-3 text-secondary">
+      Un algoritmo es una serie ordenada de pasos. En un algoritmo secuencial,
+      las instrucciones se ejecutan una después de otra.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Entrada</strong>
+      <p class="text-sm mt-2">Datos que ingresamos con <code>Leer</code>.</p>
+    </div>
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Proceso</strong>
+      <p class="text-sm mt-2">Operaciones y asignaciones que transforman los datos.</p>
+    </div>
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Salida</strong>
+      <p class="text-sm mt-2">Resultados que mostramos con <code>Escribir</code>.</p>
+    </div>
+  </div>
+
+  <p class="mt-4 text-sm text-secondary">
+    Todo programa en PSeInt comienza con <code>Algoritmo</code>, declara sus
+    variables con <code>Definir</code> y termina con <code>FinAlgoritmo</code>.
+  </p>
+</section>
+
+## Ejercicio 1 · Nombre y apellido
+
+<Enunciado>
+Ingresar el nombre y el apellido de una persona. Luego mostrar el mensaje:
+**"Hola soy nombre apellido"**.
+</Enunciado>
+
+<BloquesAlgoritmo
+  entrada="Nombre y apellido."
+  proceso="Guardar ambos datos como cadenas de caracteres."
+  salida="Un saludo con el nombre completo."
+/>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+  <Codigo
+    archivo="yo_soy.psc"
+    lang="text"
+    codigo={`Algoritmo yo_soy
+  Definir nombre, apellido Como Caracter
+
+  Escribir "Ingrese su nombre:"
+  Leer nombre
+
+  Escribir "Ingrese su apellido:"
+  Leer apellido
+
+  Escribir "Hola soy ", nombre, " ", apellido
+FinAlgoritmo`}
+  />
+  <DiagramaFlujo
+    src="/material/sis100/semana1/yo_soy.svg"
+    alt="Diagrama de flujo del algoritmo Yo soy"
+  />
+</div>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Doble y triple de un número
+
+<Enunciado>
+Ingresar un número y calcular su doble y su triple.
+</Enunciado>
+
+<BloquesAlgoritmo
+  entrada="Un número real."
+  proceso="Multiplicar el número por 2 y por 3."
+  salida="El doble y el triple del número."
+/>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+  <Codigo
+    archivo="doble_triple.psc"
+    lang="text"
+    codigo={`Algoritmo Doble_Triple
+  Definir n, doble, triple Como Real
+
+  Escribir "Ingrese un numero:"
+  Leer n
+
+  doble <- n * 2
+  triple <- n * 3
+
+  Escribir "El doble es: ", doble
+  Escribir "El triple es: ", triple
+FinAlgoritmo`}
+  />
+  <DiagramaFlujo
+    src="/material/sis100/semana1/Doble_Triple.svg"
+    alt="Diagrama de flujo para calcular el doble y triple de un número"
+  />
+</div>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 3 · Horas y minutos
+
+<Enunciado>
+Ingresar una cantidad de horas y minutos, y convertir todo a minutos.
+</Enunciado>
+
+<BloquesAlgoritmo
+  entrada="Una cantidad de horas y una cantidad de minutos."
+  proceso="Multiplicar las horas por 60 y sumar los minutos."
+  salida="La cantidad total de minutos."
+/>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
+  <Codigo
+    archivo="horas_a_minutos.psc"
+    lang="text"
+    codigo={`Algoritmo Horas_A_Minutos
+  Definir horas, minutos, total Como Entero
+
+  Escribir "Ingrese cantidad de horas:"
+  Leer horas
+
+  Escribir "Ingrese cantidad de minutos:"
+  Leer minutos
+
+  total <- (horas * 60) + minutos
+
+  Escribir "Total de minutos: ", total
+FinAlgoritmo`}
+  />
+  <DiagramaFlujo
+    src="/material/sis100/semana1/Horas_A_Minutos.svg"
+    alt="Diagrama de flujo para convertir horas y minutos a minutos totales"
+  />
+</div>

@@ -8,12 +8,19 @@ const materias = (await getCollection("materias")).sort(
   (a, b) => a.data.orden - b.data.orden,
 );
 const semanas = await getCollection("semanas");
-const ejercicios = await getCollection("ejercicios");
+const ejercicios = (await getCollection("ejercicios")).filter(
+  (e) => e.data.publicado,
+);
+const clases = await getCollection("clases");
 
 function conteo(sigla: string) {
   return {
     semanas: semanas.filter((s) => s.data.materia.id === sigla).length,
-    ejercicios: ejercicios.filter((e) => e.data.materia.id === sigla).length,
+    ejercicios:
+      ejercicios.filter((e) => e.data.materia.id === sigla).length +
+      clases
+        .filter((c) => c.data.materia.id === sigla)
+        .reduce((total, c) => total + c.data.cantidadEjercicios, 0),
   };
 }
 ---

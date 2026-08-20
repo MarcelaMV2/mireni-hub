@@ -1,0 +1,54 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+  modelo: string;
+  src?: string;
+  alt?: string;
+}
+
+const { modelo, src, alt = `Modelo de origen: ${modelo}` } = Astro.props;
+---
+
+<section class="mt-6 min-w-0">
+  <div class="flex items-center gap-2 font-heading uppercase text-xl mb-4 leading-tight">
+    <span class="w-3 h-3 bg-brand shrink-0"></span>
+    Modelo de origen · {modelo}
+  </div>
+  {src ? (
+    <figure class="grid place-items-center bg-white border border-default rounded-md p-3 h-auto lg:h-[280px] lg:overflow-hidden">
+      <img
+        src={src}
+        alt={alt}
+        class="modelo-imagen block object-contain"
+        style="max-width: 100%;"
+      />
+    </figure>
+  ) : (
+    <div class="grid place-items-center h-[280px] rounded-md border border-dashed border-default bg-surface p-6 text-center">
+      <div>
+        <Icon name="tabler:photo" width={34} height={34} class="mx-auto text-brand" />
+        <p class="font-semibold mt-3">Imagen original pendiente</p>
+        <p class="font-mono text-xs uppercase tracking-widest text-secondary mt-2">
+          Aquí aparecerá el {modelo}
+        </p>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+  .modelo-imagen {
+    width: 100%;
+    height: auto;
+  }
+
+  @media (min-width: 1024px) {
+    .modelo-imagen {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 254px;
+    }
+  }
+</style>

@@ -36,7 +36,7 @@ const codigo = `${reto.data.grupo}.${String(reto.data.numero).padStart(2, "0")}`
       <Breadcrumb
         items={[
           { texto: "Inicio", href: "/" },
-          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: materia.data.sigla, href: `/${materia.id}` },
           {
             texto: apartado.data.titulo,
             href: `/${materia.id}/especiales/${apSlug}`,

@@ -3,5 +3,5 @@
   "numero": 4,
   "titulo": "Funciones",
   "resumen": "CREATE FUNCTION con RETURNS, funciones escalares y su uso dentro de consultas.",
-  "estado": "disponible"
+  "estado": "bloqueada"
 }

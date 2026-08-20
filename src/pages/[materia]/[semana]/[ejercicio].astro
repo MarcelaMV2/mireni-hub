@@ -9,7 +9,9 @@ import '../../../estilos/contenido.css';
 
 export const getStaticPaths = (async () => {
   const materias = await getCollection('materias');
-  const ejercicios = await getCollection('ejercicios');
+  const ejercicios = (await getCollection('ejercicios')).filter(
+    (e) => e.data.publicado,
+  );
 
   return ejercicios.map((e) => {
     const materia = materias.find((m) => m.id === e.data.materia.id)!;
@@ -38,7 +40,7 @@ const numSemana = ejercicio.data.semana;
       <Breadcrumb
         items={[
           { texto: 'Inicio', href: '/' },
-          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: materia.data.sigla, href: `/${materia.id}` },
           { texto: `Semana ${numSemana}`, href: `/${materia.id}/${semanaSlug}` },
           { texto: `Ejercicio ${String(ejercicio.data.numero).padStart(2, '0')}` },
         ]}

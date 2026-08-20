@@ -1,10 +1,11 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
 import { Icon } from 'astro-icon/components';
 import Layout from '../../../componentes/Layout.astro';
 import Breadcrumb from '../../../componentes/Breadcrumb.astro';
 import EjercicioCard from '../../../componentes/EjercicioCard.astro';
+import '../../../estilos/contenido.css';
 
 export const getStaticPaths = (async () => {
   const materias = await getCollection('materias');
@@ -25,8 +26,19 @@ export const getStaticPaths = (async () => {
 const { materia, semana } = Astro.props;
 
 const ejercicios = (await getCollection('ejercicios'))
-  .filter((e) => e.data.materia.id === materia.id && e.data.semana === semana.data.numero)
+  .filter((e) =>
+    e.data.publicado &&
+    e.data.materia.id === materia.id &&
+    e.data.semana === semana.data.numero
+  )
   .sort((a, b) => a.data.numero - b.data.numero);
+
+const clase = (await getCollection('clases')).find(
+  (c) =>
+    c.data.materia.id === materia.id &&
+    c.data.semana === semana.data.numero
+);
+const ClaseContent = clase ? (await render(clase)).Content : null;
 ---
 
 <Layout
@@ -39,7 +51,7 @@ const ejercicios = (await getCollection('ejercicios'))
       <Breadcrumb
         items={[
           { texto: 'Inicio', href: '/' },
-          { texto: materia.data.nombre, href: `/${materia.id}` },
+          { texto: materia.data.sigla, href: `/${materia.id}` },
           { texto: `Semana ${semana.data.numero}` },
         ]}
       />
@@ -53,28 +65,26 @@ const ejercicios = (await getCollection('ejercicios'))
         </h1>
       </div>
 
-      <div class="flex gap-2 flex-wrap">
-        <span class="font-mono text-xs uppercase tracking-widest border border-primary px-2.5 py-1">
-          {materia.data.sigla} · {materia.data.nombre}
-        </span>
-        <span class="font-mono text-xs uppercase tracking-widest border border-default px-2.5 py-1 text-secondary">
-          {ejercicios.length} ejercicios
-        </span>
-      </div>
     </div>
 
-    <section class="flex flex-col gap-4 py-6">
-      {ejercicios.map((e) => (
-        <EjercicioCard
-          numero={e.data.numero}
-          titulo={e.data.titulo}
-          descripcion={e.data.descripcion}
-          dificultad={e.data.dificultad}
-          tags={e.data.tags}
-          href={`/${materia.id}/${semana.id.split('/').pop()}/${e.id.split('/').pop()}`}
-        />
-      ))}
-    </section>
+    {ClaseContent ? (
+      <article class="prosa max-w-none py-6">
+        <ClaseContent />
+      </article>
+    ) : (
+      <section class="flex flex-col gap-4 py-6">
+        {ejercicios.map((e) => (
+          <EjercicioCard
+            numero={e.data.numero}
+            titulo={e.data.titulo}
+            descripcion={e.data.descripcion}
+            dificultad={e.data.dificultad}
+            tags={e.data.tags}
+            href={`/${materia.id}/${semana.id.split('/').pop()}/${e.id.split('/').pop()}`}
+          />
+        ))}
+      </section>
+    )}
 
   </div>
 </Layout>

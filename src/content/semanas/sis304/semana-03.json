@@ -3,5 +3,5 @@
   "numero": 3,
   "titulo": "Parámetros de salida",
   "resumen": "Parámetros OUT para retornar valores calculados al exterior del procedimiento.",
-  "estado": "disponible"
+  "estado": "bloqueada"
 }

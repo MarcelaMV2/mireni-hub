@@ -1,0 +1,26 @@
+---
+interface Props {
+  entrada: string;
+  proceso: string;
+  salida: string;
+}
+
+const { entrada, proceso, salida } = Astro.props;
+const bloques = [
+  { numero: '01', nombre: 'Entrada', texto: entrada },
+  { numero: '02', nombre: 'Proceso', texto: proceso },
+  { numero: '03', nombre: 'Salida', texto: salida },
+];
+---
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-5">
+  {bloques.map((bloque) => (
+    <div class="border border-default bg-white p-4 min-w-0">
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-[0.65rem] text-brand">{bloque.numero}</span>
+        <strong class="font-mono text-xs uppercase tracking-widest">{bloque.nombre}</strong>
+      </div>
+      <p class="text-sm text-secondary mt-2 leading-relaxed">{bloque.texto}</p>
+    </div>
+  ))}
+</div>

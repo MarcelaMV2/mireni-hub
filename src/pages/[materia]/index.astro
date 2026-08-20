@@ -21,7 +21,6 @@ const semanas = (await getCollection("semanas"))
   .filter((s) => s.data.materia.id === materia.id)
   .sort((a, b) => a.data.numero - b.data.numero);
 
-const ejercicios = await getCollection("ejercicios");
 const apartados = (await getCollection("apartados"))
   .filter((a) => a.data.materia.id === materia.id)
   .sort((a, b) => a.data.orden - b.data.orden);
@@ -38,11 +37,6 @@ const iconos = {
 function slugSemana(id: string) {
   return id.split("/").pop()!;
 }
-function cantidad(numero: number) {
-  return ejercicios.filter(
-    (e) => e.data.materia.id === materia.id && e.data.semana === numero,
-  ).length;
-}
 ---
 
 <Layout
@@ -52,7 +46,7 @@ function cantidad(numero: number) {
   <div class="max-w-[1120px] mx-auto px-4 md:px-8">
     <div class="flex flex-col gap-4 pt-8 pb-6">
       <Breadcrumb
-        items={[{ texto: "Inicio", href: "/" }, { texto: materia.data.nombre }]}
+        items={[{ texto: "Inicio", href: "/" }, { texto: materia.data.sigla }]}
       />
 
       <div class="flex items-center gap-4">
@@ -108,7 +102,6 @@ function cantidad(numero: number) {
               titulo={s.data.titulo}
               resumen={s.data.resumen}
               estado={s.data.estado}
-              cantidad={cantidad(s.data.numero)}
               href={`/${materia.id}/${slugSemana(s.id)}`}
             />
           ))

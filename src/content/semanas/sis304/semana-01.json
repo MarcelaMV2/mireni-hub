@@ -1,7 +1,7 @@
 {
   "materia": "sis304",
   "numero": 1,
-  "titulo": "Procedimientos almacenados",
-  "resumen": "CREATE PROCEDURE sin parámetros, variables locales y primeras consultas sobre REPUESTOS.",
+  "titulo": "Transformación de modelos de datos",
+  "resumen": "Conversión entre el MER, el Modelo Objeto-Semántico y el Modelo Lógico Global de Datos.",
   "estado": "disponible"
 }
