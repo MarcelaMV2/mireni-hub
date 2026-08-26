@@ -1,7 +1,7 @@
 {
   "materia": "sis100",
   "numero": 2,
-  "titulo": "Bucles",
-  "resumen": "for, while y do-while; acumuladores y contadores.",
-  "estado": "bloqueada"
+  "titulo": "Estructuras selectivas",
+  "resumen": "Validación de datos y resolución de problemas con estructuras selectivas simples y dobles.",
+  "estado": "disponible"
 }

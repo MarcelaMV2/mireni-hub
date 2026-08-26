@@ -1,0 +1,88 @@
+---
+materia: "sis100"
+semana: 2
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+<section class="mb-14">
+  <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand mb-2">
+      Consigna de la semana
+    </p>
+    <h2 class="!mt-0 !border-0 !p-0">Estructuras selectivas</h2>
+    <p class="mt-3 text-secondary">
+      Para cada ejercicio, analice el problema, valide los datos de entrada y
+      plantee el algoritmo solicitado.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Parte A</strong>
+      <p class="text-sm mt-2">
+        Resolver utilizando estructuras selectivas simples.
+      </p>
+    </div>
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Parte B</strong>
+      <p class="text-sm mt-2">
+        Resolver el mismo ejercicio utilizando estructuras selectivas dobles.
+      </p>
+    </div>
+  </div>
+</section>
+
+## Ejercicio 1 · Análisis de tres números
+
+<Enunciado>
+Desarrolle un algoritmo que permita leer **tres números enteros positivos
+diferentes** ingresados por teclado. El algoritmo debe validar que los valores
+ingresados cumplan con las condiciones solicitadas.
+
+Una vez ingresados los datos, se debe determinar cuál es el **número mayor**,
+cuál es el **número menor** y cuál es el **número intermedio**.
+
+Finalmente, calcular y mostrar la diferencia existente entre el número mayor y
+el número menor.
+</Enunciado>
+
+### Mostrar
+
+- Número mayor.
+- Número intermedio.
+- Número menor.
+- Diferencia entre mayor y menor.
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Facturación con descuento
+
+<Enunciado>
+Desarrolle un algoritmo que permita calcular el monto final de una compra
+realizada en una tienda.
+
+El algoritmo debe leer el **precio unitario de un producto** y la **cantidad de
+unidades compradas**. Los datos ingresados deben ser validados, considerando que
+el precio y la cantidad deben tener valores positivos.
+
+El programa debe calcular el monto total de la compra. Si el monto supera un
+determinado valor establecido, se debe aplicar el descuento correspondiente;
+caso contrario, se aplicará otro porcentaje de descuento.
+
+Finalmente, mostrar los datos de la compra realizada.
+</Enunciado>
+
+### Mostrar
+
+- Precio unitario.
+- Cantidad comprada.
+- Monto total de la compra.
+- Descuento aplicado.
+- Monto final a pagar.
+
+<p class="mt-6 text-sm text-secondary">
+  Antes de desarrollar el algoritmo, establezca el límite de compra y los
+  porcentajes de descuento que utilizará en cada caso.
+</p>
