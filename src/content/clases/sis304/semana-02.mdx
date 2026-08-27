@@ -1,0 +1,158 @@
+---
+materia: "sis304"
+semana: 2
+cantidadEjercicios: 4
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+<section class="mb-14">
+  <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand mb-2">
+      Descripción de la actividad
+    </p>
+    <h2 class="!mt-0 !border-0 !p-0">Análisis y diseño del modelo de datos</h2>
+    <p class="mt-3 text-secondary">
+      Para cada ejercicio, realizar el análisis y diseño del modelo de datos,
+      identificando los elementos principales del problema y desarrollando los
+      siguientes puntos:
+    </p>
+  </div>
+
+  <ol class="mt-4 space-y-3">
+    <li>
+      <strong>Objetos:</strong> Identificar las entidades principales del sistema.
+    </li>
+    <li>
+      <strong>Atributos:</strong> Definir las características de cada objeto.
+    </li>
+    <li>
+      <strong>Relaciones binarias:</strong> Establecer las relaciones entre objetos
+      y sus cardinalidades.
+    </li>
+    <li>
+      <strong>Grafo de relaciones:</strong> Representar gráficamente la conexión
+      entre las entidades.
+    </li>
+    <li>
+      <strong>Modelo objeto semántico:</strong> Elaborar el modelo conceptual con
+      objetos, atributos y relaciones.
+    </li>
+    <li>
+      <strong>Modelo lógico global de datos:</strong> Transformar el modelo
+      conceptual en tablas con claves primarias y foráneas para su implementación
+      en una base de datos.
+    </li>
+  </ol>
+</section>
+
+## Ejercicio 1 · Impresión de editoras
+
+<Enunciado>
+Una empresa desea controlar la impresión de los diferentes libros realizada
+por las editoras, así como lo que se debe pagar a cada autor.
+
+De cada autor se conoce su código y nombre. A efectos de pago, los autores se
+pueden catalogar como nacionales o extranjeros. Para los autores nacionales se
+controlan su cédula de identidad (CI) y su dirección particular; para los
+extranjeros, el número de pasaporte y el lugar de origen.
+
+De cada editora se conoce su código, nombre, ciudad y número de cuenta bancaria.
+De cada libro se conoce su código y título. Un libro puede ser editado muchas
+veces. De cada edición de un libro se conoce el número de páginas, el idioma, el
+valor y la cantidad de ejemplares.
+
+La edición de un libro es realizada por una sola editora; sin embargo, una
+editora puede realizar muchas ediciones de diferentes libros.
+
+Un libro puede ser escrito por muchos autores y un autor puede escribir muchos
+libros. Se conoce el porcentaje que le corresponde a cada autor por la venta de
+los ejemplares correspondientes.
+</Enunciado>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Salas de un museo
+
+<Enunciado>
+En un museo existen varias salas de exposición que se identifican por un
+número. De cada sala se conoce su nombre, área en metros cuadrados y temática
+que expone.
+
+En cada sala existen muchas obras de arte y cada obra se expone en una sola
+sala. Cada obra se identifica por un código y tiene un nombre, tipo, material
+principal y un autor. Una obra puede estar prestada a otro museo; en ese caso,
+se conoce a qué museo se prestó, en qué fecha y el tipo de préstamo.
+
+Los autores se identifican por un código y de ellos se conoce el nombre, la
+fecha de nacimiento y la nacionalidad.
+
+Cada sala tiene varios guías asignados y cada guía trabaja en varias salas. Cada
+guía se identifica por su carnet de identidad y se conoce su nombre. Cada guía
+tiene asignado un turno de trabajo para cada sala en la que trabaja.
+
+Cada turno se identifica por un número y de él se conoce la hora de inicio y la
+hora de finalización.
+</Enunciado>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 3 · Funcionamiento de un hospital
+
+<Enunciado>
+Se desea tener un control informativo de los médicos de un hospital. De cada
+médico se conoce el número de su carnet de identidad (NCI), nombre, dirección,
+tipo de título que posee (básico o especialista), el código de la especialidad
+que cursa o cursó y el año en que se graduó como médico.
+
+Los médicos pueden ser especialistas, si terminaron de estudiar la
+especialidad, o residentes, si aún la estudian. De los especialistas se conoce
+el grado de especialidad alcanzado y el año en que la terminaron. De los
+residentes se conoce el año que cursan y la fecha en que comenzaron la
+especialidad. Los especialistas se diferencian de los residentes por el tipo de
+título.
+
+Los especialistas pueden estar graduados en varias especialidades. Un
+especialista supervisa a varios residentes y cada residente es supervisado por
+un solo especialista. De cada especialidad se controla su código y descripción.
+
+En el hospital existen varias salas que se identifican por su número y de las
+que se conoce la cantidad de camas. Cada médico está asignado a una sala y cada
+sala es atendida por varios médicos.
+
+También interesa controlar los pacientes ingresados en el hospital. De cada
+paciente se conoce el número de historia clínica (NHC), nombre y edad. Cuando un
+paciente ingresa, es ubicado en una sala y se registran su diagnóstico y la
+fecha de ingreso.
+</Enunciado>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 4 · Cursos de dibujo artístico
+
+<Enunciado>
+En un instituto se imparten cursos de dibujo artístico. Se necesita desarrollar
+un sistema de información para registrar a los estudiantes, las lecciones que
+han tomado y los instructores con quienes las realizaron. También se desea
+conocer los tipos de lecciones que ha enseñado cada instructor.
+
+Un estudiante puede tomar varias lecciones privadas, cada una impartida por un
+solo instructor; a su vez, un instructor puede impartir varias lecciones
+privadas. Por otra parte, los estudiantes pueden tomar lecciones en grupo y una
+lección puede ser tomada por varios estudiantes en una fecha determinada. Una
+lección en grupo es impartida por un solo instructor, quien puede impartir
+varias lecciones de este tipo.
+
+Los instructores deben asistir a las presentaciones que se realizan durante la
+semana y calificar a los estudiantes con un puntaje determinado, de acuerdo con
+su desempeño y tomando en cuenta la fecha de la presentación.
+
+De los estudiantes se almacenan los siguientes datos: CI, nombre, dirección,
+sexo, edad y teléfono. La lección privada se caracteriza por su tiempo u hora,
+fecha, código, costo por hora y costo total. Las lecciones en grupo se
+caracterizan por su tiempo de duración, nombre de la lección y costo total.
+
+De los instructores se registran: código, nombre, dirección, CI, teléfono,
+código postal y especialidad. Los cursos de dibujo artístico disponibles para
+presentación se caracterizan por su código, nombre y tipo.
+</Enunciado>

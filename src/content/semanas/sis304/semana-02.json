@@ -1,7 +1,7 @@
 {
   "materia": "sis304",
   "numero": 2,
-  "titulo": "Parámetros de entrada",
-  "resumen": "Parámetros IN para filtrar y parametrizar los procedimientos del curso.",
-  "estado": "bloqueada"
+  "titulo": "Análisis y diseño del modelo de datos",
+  "resumen": "Ejercicios para identificar entidades, atributos, relaciones, cardinalidades y restricciones.",
+  "estado": "disponible"
 }
