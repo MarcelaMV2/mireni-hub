@@ -5,6 +5,7 @@ cantidadEjercicios: 2
 ---
 
 import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import BloquesAlgoritmo from '../../../componentes/mdx/BloquesAlgoritmo.astro';
 
 <section class="mb-14">
   <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
@@ -37,23 +38,185 @@ import Enunciado from '../../../componentes/mdx/Enunciado.astro';
 ## Ejercicio 1 · Análisis de tres números
 
 <Enunciado>
-Desarrolle un algoritmo que permita leer **tres números enteros positivos
-diferentes** ingresados por teclado. El algoritmo debe validar que los valores
-ingresados cumplan con las condiciones solicitadas.
+Desarrolle un algoritmo que permita analizar tres números enteros positivos
+diferentes ingresados por teclado.
 
-Una vez ingresados los datos, se debe determinar cuál es el **número mayor**,
-cuál es el **número menor** y cuál es el **número intermedio**.
+Los valores ingresados deben ser validados, considerando que deben cumplir con
+las condiciones establecidas: ser positivos y no repetirse entre ellos.
+
+Una vez ingresados y validados los datos, el algoritmo debe determinar cuál de
+los valores corresponde al número mayor, cuál al número menor y cuál al número
+intermedio.
 
 Finalmente, calcular y mostrar la diferencia existente entre el número mayor y
 el número menor.
 </Enunciado>
 
-### Mostrar
+### Mostrar:
 
 - Número mayor.
 - Número intermedio.
 - Número menor.
 - Diferencia entre mayor y menor.
+
+El ejercicio debe ser resuelto mediante dos versiones del algoritmo:
+
+1. Una versión utilizando únicamente **estructuras selectivas simples**.
+2. Una versión utilizando **estructuras selectivas dobles**.
+
+### Análisis
+
+<BloquesAlgoritmo
+  entrada="Tres números enteros positivos y diferentes entre sí."
+  proceso="Validar los datos, comparar los tres valores para identificar su orden y restar el menor del mayor."
+  salida="Número mayor, número intermedio, número menor y diferencia entre el mayor y el menor."
+/>
+
+### Ejemplo de entrada y salida
+
+| Datos de entrada | Datos de salida |
+| --- | --- |
+| Primer número (`A`): `15` | Número mayor: `20` |
+| Segundo número (`B`): `8` | Número intermedio: `15` |
+| Tercer número (`C`): `20` | Número menor: `8` |
+|  | Diferencia entre mayor y menor: `12` |
+
+### Pasos para resolver el ejercicio
+
+1. Leer los tres números enteros.
+2. Validar que cada número sea mayor que cero.
+3. Validar que los tres números sean diferentes entre sí.
+4. Comparar los valores para determinar el mayor y el menor.
+5. Identificar como número intermedio el valor que no es ni el mayor ni el
+   menor.
+6. Calcular la diferencia mediante `mayor - menor`.
+7. Mostrar los cuatro resultados solicitados.
+
+### Resolución con selectivas simples
+
+La resolución se divide en diferentes etapas. Primero se validan los datos y
+después se analizan los números mediante comparaciones independientes.
+
+#### 1. Validación de los datos
+
+Primero se solicitan tres números enteros. Antes de realizar cualquier cálculo,
+se verifica que:
+
+- Los tres números sean positivos.
+- Los tres números sean diferentes.
+
+Esto evita trabajar con valores que no cumplen las condiciones del problema.
+
+#### 2. Determinación del número mayor
+
+Para encontrar el número mayor, se compara cada número con los otros dos:
+
+- Si **A es mayor que B y A es mayor que C**, entonces A es el mayor.
+- Si **B es mayor que A y B es mayor que C**, entonces B es el mayor.
+- Si **C es mayor que A y C es mayor que B**, entonces C es el mayor.
+
+Como los números son diferentes, solamente una de estas condiciones puede
+cumplirse.
+
+```text
+A = 15
+B = 8
+C = 20
+
+¿A > B y A > C?
+15 > 8 y 15 > 20 → Falso
+
+¿B > A y B > C?
+8 > 15 y 8 > 20 → Falso
+
+¿C > A y C > B?
+20 > 15 y 20 > 8 → Verdadero
+
+Mayor = C = 20
+```
+
+#### 3. Determinación del número menor
+
+Después se aplica la misma lógica, cambiando el sentido de las comparaciones:
+
+- Si **A es menor que B y A es menor que C**, entonces A es el menor.
+- Si **B es menor que A y B es menor que C**, entonces B es el menor.
+- Si **C es menor que A y C es menor que B**, entonces C es el menor.
+
+```text
+¿A < B y A < C?
+15 < 8 y 15 < 20 → Falso
+
+¿B < A y B < C?
+8 < 15 y 8 < 20 → Verdadero
+
+Menor = B = 8
+```
+
+#### 4. Determinación del número intermedio
+
+Una vez encontrados el mayor y el menor, se identifica el valor que se
+encuentra entre ambos:
+
+- Si A está entre B y C, entonces A es el intermedio.
+- Si B está entre A y C, entonces B es el intermedio.
+- Si C está entre A y B, entonces C es el intermedio.
+
+En el ejemplo, el mayor es `20`, el menor es `8` y el número restante es `15`.
+Por tanto:
+
+```text
+Intermedio = A = 15
+```
+
+#### 5. Cálculo de la diferencia
+
+Cuando ya se conocen el mayor y el menor, se realiza la resta:
+
+```text
+Diferencia = Mayor - Menor
+Diferencia = 20 - 8
+Diferencia = 12
+```
+
+#### 6. Presentación de los resultados
+
+Finalmente, el algoritmo muestra:
+
+```text
+Número mayor: 20
+Número intermedio: 15
+Número menor: 8
+Diferencia: 12
+```
+
+#### Resumen de la estrategia
+
+```text
+Leer tres números
+        ↓
+Validar que sean positivos y diferentes
+        ↓
+Buscar el mayor comparando los tres valores
+        ↓
+Buscar el menor comparando los tres valores
+        ↓
+Encontrar el número que queda entre ambos
+        ↓
+Calcular Mayor - Menor
+        ↓
+Mostrar resultados
+```
+
+La idea principal de esta versión es que **cada comparación es independiente**.
+Cada posibilidad se evalúa con una estructura `Si ... Entonces ... FinSi`, sin
+utilizar `SiNo` ni depender del resultado de otra comparación.
+
+### Versión con selectivas dobles
+
+Organizar las comparaciones mediante estructuras `Si ... Entonces ... SiNo`,
+asignando en cada rama los valores mayor, intermedio y menor. La validación
+también puede separar explícitamente el caso válido del caso inválido.
 
 <hr class="my-16 border-default" />
 
@@ -63,18 +226,21 @@ el número menor.
 Desarrolle un algoritmo que permita calcular el monto final de una compra
 realizada en una tienda.
 
-El algoritmo debe leer el **precio unitario de un producto** y la **cantidad de
-unidades compradas**. Los datos ingresados deben ser validados, considerando que
-el precio y la cantidad deben tener valores positivos.
+El algoritmo debe calcular el valor total de una compra considerando el precio
+unitario de un producto y la cantidad de unidades adquiridas. Los valores
+utilizados para realizar los cálculos deben ser validados, considerando que el
+precio y la cantidad deben tener valores positivos.
 
-El programa debe calcular el monto total de la compra. Si el monto supera un
-determinado valor establecido, se debe aplicar el descuento correspondiente;
-caso contrario, se aplicará otro porcentaje de descuento.
+Antes de desarrollar el algoritmo, establezca un monto límite de compra y un
+porcentaje de descuento que será aplicado. Si el monto total de la compra supera
+el límite establecido, se deberá aplicar el descuento correspondiente; caso
+contrario, la compra mantendrá su valor sin descuento.
 
-Finalmente, mostrar los datos de la compra realizada.
+El programa debe calcular el monto total de la compra, determinar si corresponde
+aplicar el descuento y obtener el monto final que deberá pagar el cliente.
+
+Finalmente, mostrar la información relacionada con la compra realizada:
 </Enunciado>
-
-### Mostrar
 
 - Precio unitario.
 - Cantidad comprada.
@@ -82,7 +248,7 @@ Finalmente, mostrar los datos de la compra realizada.
 - Descuento aplicado.
 - Monto final a pagar.
 
-<p class="mt-6 text-sm text-secondary">
-  Antes de desarrollar el algoritmo, establezca el límite de compra y los
-  porcentajes de descuento que utilizará en cada caso.
-</p>
+El ejercicio debe ser resuelto mediante dos versiones del algoritmo:
+
+1. Una versión utilizando únicamente **estructuras selectivas simples**.
+2. Una versión utilizando **estructuras selectivas dobles**.
