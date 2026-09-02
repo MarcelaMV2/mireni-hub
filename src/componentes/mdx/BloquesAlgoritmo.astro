@@ -1,8 +1,8 @@
 ---
 interface Props {
-  entrada: string;
-  proceso: string;
-  salida: string;
+  entrada: string | string[];
+  proceso: string | string[];
+  salida: string | string[];
 }
 
 const { entrada, proceso, salida } = Astro.props;
@@ -20,7 +20,15 @@ const bloques = [
         <span class="font-mono text-[0.65rem] text-brand">{bloque.numero}</span>
         <strong class="font-mono text-xs uppercase tracking-widest">{bloque.nombre}</strong>
       </div>
-      <p class="text-sm text-secondary mt-2 leading-relaxed">{bloque.texto}</p>
+      {Array.isArray(bloque.texto) ? (
+        <ul class="mt-2 space-y-1.5 text-sm text-secondary leading-relaxed">
+          {bloque.texto.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
+      ) : (
+        <p class="text-sm text-secondary mt-2 leading-relaxed">{bloque.texto}</p>
+      )}
     </div>
   ))}
 </div>

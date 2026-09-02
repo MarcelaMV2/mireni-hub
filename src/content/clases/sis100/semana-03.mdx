@@ -1,0 +1,223 @@
+---
+materia: "sis100"
+semana: 3
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+<section class="mb-14">
+  <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand mb-2">
+      Guía rápida
+    </p>
+    <h2 class="!mt-0 !border-0 !p-0">Estructuras selectivas múltiples</h2>
+    <p class="mt-3 text-secondary">
+      Una estructura selectiva múltiple permite escoger una acción entre varias
+      alternativas a partir del valor de una sola variable. Es especialmente
+      útil para construir menús de opciones.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Expresión</strong>
+      <p class="text-sm mt-2">
+        Se evalúa una sola vez, por ejemplo <code>opcion</code>.
+      </p>
+    </div>
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Casos</strong>
+      <p class="text-sm mt-2">
+        Cada valor ejecuta únicamente el bloque que le corresponde.
+      </p>
+    </div>
+    <div class="border border-default bg-white p-4">
+      <strong class="font-mono text-sm text-brand">Caso alternativo</strong>
+      <p class="text-sm mt-2">
+        <code>De Otro Modo</code> atiende cualquier valor no contemplado.
+      </p>
+    </div>
+  </div>
+
+  <p class="mt-4 text-sm text-secondary">
+    En otros lenguajes esta estructura suele llamarse <code>switch</code>. En
+    PSeInt se escribe <code>Segun ... Hacer</code> y termina con
+    <code>FinSegun</code>.
+  </p>
+
+  <Codigo
+    archivo="estructura_segun.psc"
+    lang="text"
+    codigo={`Segun opcion Hacer
+  1:
+    Escribir "Selecciono la primera opcion"
+  2:
+    Escribir "Selecciono la segunda opcion"
+  De Otro Modo:
+    Escribir "La opcion no existe"
+FinSegun`}
+  />
+</section>
+
+## Ejercicio 1 · Sistema bancario de cuenta de ahorro
+
+<Enunciado>
+Una cooperativa financiera requiere desarrollar un sistema que permita
+gestionar las operaciones básicas realizadas sobre una cuenta de ahorro.
+
+Al iniciar el sistema, el cliente debe registrar el saldo actual disponible en
+su cuenta. Posteriormente podrá seleccionar una operación:
+
+1. **Consultar saldo disponible:** mostrar el monto actual de la cuenta.
+2. **Realizar un depósito:** ingresar un monto y añadirlo al saldo disponible.
+3. **Realizar un retiro:** solicitar un monto y verificar que exista saldo
+   suficiente antes de descontarlo. Si el saldo es insuficiente, informar que
+   la operación no puede realizarse.
+4. **Calcular beneficio generado:** calcular el rendimiento obtenido durante
+   una cantidad de meses, considerando una tasa anual del 5 %.
+
+Si el usuario ingresa una opción diferente, se debe indicar que la operación no
+existe.
+</Enunciado>
+
+### Fórmula del beneficio
+
+El beneficio se calcula mediante la expresión:
+
+<div class="my-5 border border-default bg-surface p-5 text-center font-mono text-sm sm:text-base">
+  Beneficio = Saldo actual × 0.05 × (Meses / 12)
+</div>
+
+- **Saldo actual:** dinero disponible al momento del cálculo.
+- **0.05:** tasa de rendimiento anual del 5 %.
+- **Meses:** periodo durante el cual se desea calcular el beneficio.
+
+### Consideraciones antes de programar
+
+- El saldo inicial no puede ser negativo.
+- Los montos de depósito y retiro deben ser mayores que cero.
+- Un retiro solo puede realizarse si el monto solicitado no supera el saldo.
+- La cantidad de meses debe ser mayor que cero.
+- Cada alternativa del menú se resuelve en un caso de la estructura `Segun`.
+
+### Ejemplos de funcionamiento
+
+| Operación | Datos | Resultado |
+| --- | --- | --- |
+| Consultar | Saldo: `1500`, opción: `1` | Saldo disponible: `Bs 1500` |
+| Depositar | Saldo: `1500`, opción: `2`, monto: `300` | Nuevo saldo: `Bs 1800` |
+| Retirar | Saldo: `1500`, opción: `3`, monto: `400` | Nuevo saldo: `Bs 1100` |
+| Beneficio | Saldo: `1500`, opción: `4`, meses: `6` | Beneficio: `Bs 37.50` |
+
+### ¿Cómo trabaja la estructura `Segun` en este ejercicio?
+
+La variable `opcion` se evalúa una sola vez. Si contiene `1`, se consulta el
+saldo; si contiene `2`, se ejecuta el depósito; con `3`, se procesa el retiro;
+y con `4`, se calcula el beneficio. Cualquier otro valor llega a
+`De Otro Modo`, evitando encadenar numerosos bloques `Si ... SiNo` para decidir
+qué operación realizar.
+
+### Solución en PSeInt
+
+<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">
+    Tu turno
+  </p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">
+    La solución la estás construyendo tú
+  </p>
+  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">
+    Cada caso que analizas y cada decisión que escribes te acerca al algoritmo
+    completo. Confía en tu razonamiento y construye tu propia versión con
+    <code>Segun ... Hacer</code>. ¡Tú puedes!
+  </p>
+</div>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Sistema de cálculo de figuras geométricas
+
+<Enunciado>
+Una empresa dedicada al diseño arquitectónico requiere un programa que permita
+calcular medidas geométricas básicas utilizadas en sus proyectos.
+
+El usuario podrá seleccionar el tipo de figura que desea analizar. Según la
+figura seleccionada, el sistema deberá solicitar la información necesaria y
+mostrar los resultados correspondientes.
+
+Las figuras disponibles son:
+
+1. **Cuadrado**
+2. **Rectángulo**
+3. **Triángulo**
+4. **Círculo**
+
+El programa debe permitir seleccionar una figura y realizar los cálculos
+correspondientes. Si la opción ingresada no pertenece a las figuras disponibles,
+deberá mostrar un mensaje indicando que la selección no es válida.
+</Enunciado>
+
+### Fórmulas
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-5">
+  <div class="border border-default bg-surface p-4">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand">Opción 1</p>
+    <h4 class="!mt-1 !mb-3">Cuadrado</h4>
+    <div class="space-y-1 font-mono text-sm">
+      <p>Área = lado²</p>
+      <p>Perímetro = lado × 4</p>
+    </div>
+  </div>
+
+  <div class="border border-default bg-surface p-4">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand">Opción 2</p>
+    <h4 class="!mt-1 !mb-3">Rectángulo</h4>
+    <div class="space-y-1 font-mono text-sm">
+      <p>Área = base × altura</p>
+      <p>Perímetro = 2 × (base + altura)</p>
+    </div>
+  </div>
+
+  <div class="border border-default bg-surface p-4">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand">Opción 3</p>
+    <h4 class="!mt-1 !mb-3">Triángulo</h4>
+    <div class="space-y-1 font-mono text-sm">
+      <p>Área = (base × altura) / 2</p>
+      <p>Perímetro = lado 1 + lado 2 + lado 3</p>
+    </div>
+  </div>
+
+  <div class="border border-default bg-surface p-4">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand">Opción 4</p>
+    <h4 class="!mt-1 !mb-3">Círculo</h4>
+    <div class="space-y-1 font-mono text-sm">
+      <p>Área = π × radio²</p>
+      <p>Circunferencia = 2 × π × radio</p>
+    </div>
+  </div>
+</div>
+
+### ¿Cómo trabaja la estructura `Segun` en este ejercicio?
+
+La opción elegida determina qué medidas debe solicitar el programa y qué
+fórmulas debe aplicar. El caso `1` calcula el cuadrado; el `2`, el rectángulo;
+el `3`, el triángulo; y el `4`, el círculo. Cualquier otro valor se controla con
+`De Otro Modo` para informar que la selección no es válida.
+
+### Solución en PSeInt
+
+<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">
+    Tu turno
+  </p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">
+    La solución la estás construyendo tú
+  </p>
+  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">
+    Ya tienes las figuras y sus fórmulas. Ahora transforma cada opción en un
+    caso de <code>Segun ... Hacer</code>, prueba tus resultados y mejora tu
+    algoritmo paso a paso. ¡Confía en lo que estás construyendo!
+  </p>
+</div>
