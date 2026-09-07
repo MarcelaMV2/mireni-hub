@@ -1,7 +1,7 @@
 {
   "materia": "sis304",
   "numero": 4,
-  "titulo": "Funciones",
-  "resumen": "CREATE FUNCTION con RETURNS, funciones escalares y su uso dentro de consultas.",
-  "estado": "bloqueada"
+  "titulo": "Creación de bases de datos y tablas en MySQL Workbench",
+  "resumen": "Creación de bases de datos, tablas, relaciones y restricciones.",
+  "estado": "disponible"
 }

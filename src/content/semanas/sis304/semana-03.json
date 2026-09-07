@@ -1,7 +1,7 @@
 {
   "materia": "sis304",
   "numero": 3,
-  "titulo": "Parámetros de salida",
-  "resumen": "Parámetros OUT para retornar valores calculados al exterior del procedimiento.",
-  "estado": "bloqueada"
+  "titulo": "Modelo orientado a objetos",
+  "resumen": "Práctica de construcción del Modelo Orientado a Objetos (MOO).",
+  "estado": "disponible"
 }
