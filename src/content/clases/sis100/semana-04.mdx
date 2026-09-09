@@ -1,0 +1,155 @@
+---
+materia: "sis100"
+semana: 4
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+<section class="mb-14">
+  <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
+    <p class="font-mono text-xs uppercase tracking-widest text-brand mb-2">Guía rápida</p>
+    <h2 class="!mt-0 !border-0 !p-0">¿Cómo funciona una estructura repetitiva?</h2>
+    <p class="mt-3 text-secondary">
+      Una estructura repetitiva repite las mismas instrucciones mientras se cumpla una condición.
+      Imaginemos que queremos mostrar los primeros <strong>5 números impares</strong>:
+      <code>1, 3, 5, 7, 9</code>.
+    </p>
+  </div>
+
+  <div class="mt-5 border border-default bg-surface p-5">
+    <h3 class="!mt-0">Parte 1 · ¿Dónde comienza el contador?</h3>
+    <p class="mt-2 text-sm">Si el contador representa posiciones, muchas veces comienza en <code>0</code>. Si representa el número de la primera repetición, puede comenzar en <code>1</code>. Ambas formas son correctas: lo importante es ajustar la fórmula y la condición.</p>
+  </div>
+
+  <div class="mt-5 border border-default bg-surface p-5">
+    <h3 class="!mt-0">Las piezas del ciclo</h3>
+    <div class="mt-4 space-y-4">
+      <div><strong class="text-brand">Contador</strong> <code>i</code><p class="text-sm mt-1">Indica en qué repetición estamos. Puede comenzar en <code>0</code> o en <code>1</code>, según el problema. En esta serie usaremos <code>impar = 1</code>, porque el primer número impar es 1.</p></div>
+      <div><strong class="text-brand">Incremento</strong> <code>i &lt;- i + 1</code><p class="text-sm mt-1">Hace avanzar la serie de dos en dos: <code>impar &lt;- impar + 2</code>. Por eso aparecen 1, 3, 5, 7 y 9.</p></div>
+      <div><strong class="text-brand">Cuerpo</strong><p class="text-sm mt-1">Son las instrucciones que se repiten. Aquí mostramos el valor de <code>impar</code> y luego lo incrementamos en 2.</p></div>
+      <div><strong class="text-brand">Condición</strong> <code>i &lt;= 5</code><p class="text-sm mt-1">Se revisa antes de cada vuelta. Si <code>contador &lt;= 5</code> es verdadera, el ciclo continúa; cuando es falsa, termina.</p></div>
+      <div><strong class="text-brand">Acumulador</strong> <code>suma &lt;- suma + par</code><p class="text-sm mt-1">Guarda un total que cambia en cada vuelta: 1, 4, 9, 16, 25.</p></div>
+      <div><strong class="text-brand">Salida</strong><p class="text-sm mt-1">Es lo que observa la persona: los números impares y, al final, la suma total.</p></div>
+    </div>
+  </div>
+
+  <p class="mt-5 text-sm text-secondary">
+    Observa el orden: <strong>verificar condición → ejecutar cuerpo → incrementar contador → volver a verificar</strong>.
+    Si olvidamos el incremento, el contador nunca cambia y el ciclo no termina.
+  </p>
+
+  <Codigo archivo="pares_mientras.psc" lang="text" codigo={`contador <- 1
+impar <- 1
+suma <- 0
+Mientras contador <= 5 Hacer
+  Escribir impar
+  suma <- suma + impar
+  impar <- impar + 2
+  contador <- contador + 1
+FinMientras
+Escribir "Suma total: ", suma`} />
+</section>
+
+## Ejercicio 1 · Análisis de los dígitos de un número
+
+<Enunciado>
+Desarrolle un algoritmo que permita leer un número entero positivo por teclado y determinar la cantidad de dígitos que posee, la suma de todos sus dígitos, la suma de los dígitos pares y la suma de los dígitos impares.
+
+El número debe tener entre **5 y 10 dígitos**, inclusive. Si el valor ingresado no cumple este rango, se debe informar que es inválido y solicitarlo nuevamente (o finalizar indicando el error).
+
+No se deben utilizar cadenas de caracteres. La extracción y el procesamiento de los dígitos deben realizarse únicamente con división entera y residuo.
+</Enunciado>
+
+### Ejemplo
+
+Para el número `5827391640`, el algoritmo deberá mostrar:
+
+```text
+Cantidad de dígitos: 10
+Suma total de dígitos: 45
+Suma de dígitos pares: 20
+Suma de dígitos impares: 25
+```
+
+### Orientaciones
+
+- Valida que el número sea positivo y esté entre `10000` y `9999999999`.
+- En cada repetición, obtiene el último dígito con `MOD 10`.
+- Acumula la suma total y, según el residuo del dígito al dividir entre 2, acumula la suma par o impar.
+- Elimina el último dígito mediante división entera entre 10.
+- Incrementa la cantidad de dígitos en cada iteración.
+
+### Cómo extraer los dígitos
+
+Tomemos el número sencillo `5827`. El residuo al dividir entre 10 siempre nos entrega el último dígito:
+
+| Operación | Qué hacemos | Resultado |
+| --- | --- | --- |
+| `5827 MOD 10` | Obtenemos el último dígito. | `7` (primer dígito procesado) |
+| `5827 / 10` | Eliminamos el `7`, porque ya lo obtuvimos. Usamos división entera. | `582` (resto del número) |
+| `582 MOD 10` | Obtenemos el último dígito del número restante. | `2` |
+| `582 / 10` | Eliminamos el `2`, porque ya fue procesado. | `58` |
+| `58 MOD 10` | Obtenemos el siguiente dígito. | `8` |
+| `58 / 10` | Eliminamos el `8`, porque ya fue procesado. | `5` |
+| `5 MOD 10` | Obtenemos el último dígito que queda. | `5` |
+| `5 / 10` | Eliminamos el `5`; ya no quedan dígitos. | `0` (termina el ciclo) |
+
+En la primera vuelta obtenemos el `7` con `MOD 10`. Como ese dígito ya fue leído y guardado, lo quitamos con la división entera: `5827 / 10 = 582`. Así nos queda solamente el resto del número, que debemos seguir separando. Luego repetimos exactamente lo mismo: obtenemos el `2`, lo quitamos y queda `58`; después obtenemos el `8`, lo quitamos y queda `5`, hasta que ya no queden dígitos.
+
+En cada vuelta contamos el dígito y actualizamos las sumas. Para saber si es par o impar usamos `MOD 2`: `7 MOD 2 = 1`, por eso 7 es impar; `8 MOD 2 = 0`, por eso 8 es par. El ciclo termina cuando la división entera deja `numero` en cero.
+
+### Esquema del ciclo en PSeInt
+
+<Codigo archivo="analisis_digitos.psc" lang="text" codigo={`Mientras numero > 0 Hacer
+  digito <- numero MOD 10
+  numero <- trunc(numero / 10)
+FinMientras`} />
+
+<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">Tu turno</p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Construye el algoritmo</p>
+  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">Completa la validación y los acumuladores, prueba con distintos números y verifica cada resultado.</p>
+</div>
+
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Serie numérica con estructura `Mientras`
+
+<Enunciado>
+Diseñe un algoritmo que genere y muestre una serie numérica en una cantidad de **N términos**, de acuerdo con la siguiente secuencia:
+
+```text
+2, 5, 10, 17, 26, 37, 50, 65, ...
+```
+
+Además, el algoritmo debe calcular y mostrar la suma total de los términos generados, la cantidad de números pares y la cantidad de números impares.
+
+Para `N = 8`, la serie generada es `2 5 10 17 26 37 50 65`, con una suma total de `212`, `4` números pares y `4` números impares.
+
+En la resolución se debe utilizar únicamente la estructura repetitiva **MIENTRAS**. No se deben utilizar vectores ni arreglos.
+</Enunciado>
+
+### Orientaciones
+
+- Solicita una cantidad `N` positiva de términos.
+- Observa que el término en la posición `i` puede obtenerse como `i² + 1`, comenzando con `i = 1`.
+- En cada repetición muestra el término, lo acumula en la suma y actualiza el contador de pares o impares.
+- Incrementa `i` hasta generar exactamente `N` términos.
+
+### Resultado esperado para `N = 8`
+
+```text
+Serie: 2 5 10 17 26 37 50 65
+Suma total = 212
+Cantidad de pares = 4
+Cantidad de impares = 4
+```
+
+<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">Tu turno</p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Resuelve con `Mientras`</p>
+  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">Construye el algoritmo sin almacenar la serie: procesa cada término, actualiza los acumuladores y comprueba los resultados.</p>
+</div>

@@ -14,7 +14,7 @@ interface Props {
 const { archivo, lang, codigo } = Astro.props;
 ---
 
-<figure class="border border-default rounded-md overflow-hidden my-6 bg-white">
+<figure class="border border-default rounded-md overflow-hidden my-6 bg-surface">
   <figcaption class="flex items-center gap-3 px-3 py-2 border-b border-default bg-surface">
     <span class="inline-flex gap-[5px]">
       <i class="w-[9px] h-[9px] rounded-full bg-[#e05c4a]"></i>
@@ -32,7 +32,7 @@ const { archivo, lang, codigo } = Astro.props;
       <span class="texto-btn">Copiar</span>
     </button>
   </figcaption>
-  <div class="[&_pre]:m-0 [&_pre]:p-4 [&_pre]:text-[0.82rem] [&_pre]:leading-[1.55] [&_pre]:overflow-x-auto [&_pre]:!bg-white">
+  <div class="[&_pre]:m-0 [&_pre]:p-4 [&_pre]:text-[0.82rem] [&_pre]:leading-[1.55] [&_pre]:overflow-x-auto [&_pre]:!bg-surface">
     <Code code={codigo} lang={lang as any} theme="github-light" />
   </div>
 </figure>
