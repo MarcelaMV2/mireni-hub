@@ -33,6 +33,7 @@ const grupos = (['I', 'II'] as const)
   .filter((x) => x.items.length > 0);
 
 const slugAp = apartado.id.split('/').pop()!;
+const esPrimerParcial = slugAp === 'prep-primer-parcial';
 ---
 
 <Layout titulo={`${apartado.data.titulo} · ${materia.data.sigla}`} marcaDerecha={apartado.data.titulo}>
@@ -68,6 +69,38 @@ const slugAp = apartado.id.split('/').pop()!;
         </span>
       </div>
     </header>
+
+    {esPrimerParcial && (
+      <section class="mt-8 border-t-2 border-primary pt-4">
+        <p class="text-xs uppercase tracking-widest text-secondary mb-3">
+          Prepárate para el reto
+        </p>
+
+        <div class="flex flex-col gap-2">
+          {[1, 2, 3].map((numero) => (
+            <details class="group border border-default rounded-md overflow-hidden">
+              <summary class="flex items-center justify-between gap-4 cursor-pointer list-none px-4 py-3 font-mono text-sm uppercase tracking-widest hover:bg-surface-muted transition-colors">
+                <span>Registro {String(numero).padStart(2, '0')}</span>
+                <Icon
+                  name="tabler:plus"
+                  width={20}
+                  height={20}
+                  class="shrink-0 transition-transform duration-150 group-open:rotate-45"
+                />
+              </summary>
+              <div class="border-t border-default bg-surface-muted p-3 md:p-5">
+                <img
+                  src={`/material/sis304/parcial1/pp${numero}.jpeg`}
+                  alt={`Pregunta ${numero} del primer parcial de SIS304`}
+                  loading="lazy"
+                  class="mx-auto block max-h-[70vh] w-full object-contain"
+                />
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
 
     {retos.length === 0 ? (
       <p class="mt-8 text-secondary">
