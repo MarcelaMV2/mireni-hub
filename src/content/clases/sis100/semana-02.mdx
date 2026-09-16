@@ -5,7 +5,6 @@ cantidadEjercicios: 2
 ---
 
 import Enunciado from '../../../componentes/mdx/Enunciado.astro';
-import BloquesAlgoritmo from '../../../componentes/mdx/BloquesAlgoritmo.astro';
 
 <section class="mb-14">
   <div class="border-l-4 border-brand bg-surface px-5 py-5 sm:px-6">
@@ -64,159 +63,21 @@ El ejercicio debe ser resuelto mediante dos versiones del algoritmo:
 1. Una versión utilizando únicamente **estructuras selectivas simples**.
 2. Una versión utilizando **estructuras selectivas dobles**.
 
-### Análisis
+### Ejemplos de funcionamiento
 
-<BloquesAlgoritmo
-  entrada="Tres números enteros positivos y diferentes entre sí."
-  proceso="Validar los datos, comparar los tres valores para identificar su orden y restar el menor del mayor."
-  salida="Número mayor, número intermedio, número menor y diferencia entre el mayor y el menor."
-/>
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Valores desordenados | `a = 15`, `b = 8`, `c = 20` | Mayor: `20`. Intermedio: `15`. Menor: `8`. Diferencia: `12`. |
+| Orden ascendente | `a = 3`, `b = 7`, `c = 12` | Mayor: `12`. Intermedio: `7`. Menor: `3`. Diferencia: `9`. |
+| Orden descendente | `a = 30`, `b = 20`, `c = 10` | Mayor: `30`. Intermedio: `20`. Menor: `10`. Diferencia: `20`. |
+| Cero | `a = 0`, `b = 8`, `c = 20` | Se rechaza el proceso: los números deben ser positivos. |
+| Negativo | `a = 15`, `b = -8`, `c = 20` | Se rechaza el proceso: los números deben ser positivos. |
+| Dos iguales | `a = 15`, `b = 8`, `c = 15` | Se rechaza el proceso: los números deben ser diferentes. |
+| Tres iguales | `a = 5`, `b = 5`, `c = 5` | Se rechaza el proceso: los números deben ser diferentes. |
 
-### Ejemplo de entrada y salida
-
-| Datos de entrada | Datos de salida |
-| --- | --- |
-| Primer número (`A`): `15` | Número mayor: `20` |
-| Segundo número (`B`): `8` | Número intermedio: `15` |
-| Tercer número (`C`): `20` | Número menor: `8` |
-|  | Diferencia entre mayor y menor: `12` |
-
-### Pasos para resolver el ejercicio
-
-1. Leer los tres números enteros.
-2. Validar que cada número sea mayor que cero.
-3. Validar que los tres números sean diferentes entre sí.
-4. Comparar los valores para determinar el mayor y el menor.
-5. Identificar como número intermedio el valor que no es ni el mayor ni el
-   menor.
-6. Calcular la diferencia mediante `mayor - menor`.
-7. Mostrar los cuatro resultados solicitados.
-
-### Resolución con selectivas simples
-
-La resolución se divide en diferentes etapas. Primero se validan los datos y
-después se analizan los números mediante comparaciones independientes.
-
-#### 1. Validación de los datos
-
-Primero se solicitan tres números enteros. Antes de realizar cualquier cálculo,
-se verifica que:
-
-- Los tres números sean positivos.
-- Los tres números sean diferentes.
-
-Esto evita trabajar con valores que no cumplen las condiciones del problema.
-
-#### 2. Determinación del número mayor
-
-Para encontrar el número mayor, se compara cada número con los otros dos:
-
-- Si **A es mayor que B y A es mayor que C**, entonces A es el mayor.
-- Si **B es mayor que A y B es mayor que C**, entonces B es el mayor.
-- Si **C es mayor que A y C es mayor que B**, entonces C es el mayor.
-
-Como los números son diferentes, solamente una de estas condiciones puede
-cumplirse.
-
-```text
-A = 15
-B = 8
-C = 20
-
-¿A > B y A > C?
-15 > 8 y 15 > 20 → Falso
-
-¿B > A y B > C?
-8 > 15 y 8 > 20 → Falso
-
-¿C > A y C > B?
-20 > 15 y 20 > 8 → Verdadero
-
-Mayor = C = 20
-```
-
-#### 3. Determinación del número menor
-
-Después se aplica la misma lógica, cambiando el sentido de las comparaciones:
-
-- Si **A es menor que B y A es menor que C**, entonces A es el menor.
-- Si **B es menor que A y B es menor que C**, entonces B es el menor.
-- Si **C es menor que A y C es menor que B**, entonces C es el menor.
-
-```text
-¿A < B y A < C?
-15 < 8 y 15 < 20 → Falso
-
-¿B < A y B < C?
-8 < 15 y 8 < 20 → Verdadero
-
-Menor = B = 8
-```
-
-#### 4. Determinación del número intermedio
-
-Una vez encontrados el mayor y el menor, se identifica el valor que se
-encuentra entre ambos:
-
-- Si A está entre B y C, entonces A es el intermedio.
-- Si B está entre A y C, entonces B es el intermedio.
-- Si C está entre A y B, entonces C es el intermedio.
-
-En el ejemplo, el mayor es `20`, el menor es `8` y el número restante es `15`.
-Por tanto:
-
-```text
-Intermedio = A = 15
-```
-
-#### 5. Cálculo de la diferencia
-
-Cuando ya se conocen el mayor y el menor, se realiza la resta:
-
-```text
-Diferencia = Mayor - Menor
-Diferencia = 20 - 8
-Diferencia = 12
-```
-
-#### 6. Presentación de los resultados
-
-Finalmente, el algoritmo muestra:
-
-```text
-Número mayor: 20
-Número intermedio: 15
-Número menor: 8
-Diferencia: 12
-```
-
-#### Resumen de la estrategia
-
-```text
-Leer tres números
-        ↓
-Validar que sean positivos y diferentes
-        ↓
-Buscar el mayor comparando los tres valores
-        ↓
-Buscar el menor comparando los tres valores
-        ↓
-Encontrar el número que queda entre ambos
-        ↓
-Calcular Mayor - Menor
-        ↓
-Mostrar resultados
-```
-
-La idea principal de esta versión es que **cada comparación es independiente**.
-Cada posibilidad se evalúa con una estructura `Si ... Entonces ... FinSi`, sin
-utilizar `SiNo` ni depender del resultado de otra comparación.
-
-### Versión con selectivas dobles
-
-Organizar las comparaciones mediante estructuras `Si ... Entonces ... SiNo`,
-asignando en cada rama los valores mayor, intermedio y menor. La validación
-también puede separar explícitamente el caso válido del caso inválido.
+<a href="/sis100/semana-02/analisis-tres-numeros/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>
 
 <hr class="my-16 border-default" />
 
@@ -252,3 +113,21 @@ El ejercicio debe ser resuelto mediante dos versiones del algoritmo:
 
 1. Una versión utilizando únicamente **estructuras selectivas simples**.
 2. Una versión utilizando **estructuras selectivas dobles**.
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Con descuento | `precio = 50`, `cantidad = 4`, `limite = 150`, `porcentaje = 10` | Precio: `50`. Cantidad: `4`. Total: `200`. Descuento: `20`. Final: `180`. |
+| Total igual al límite | `precio = 50`, `cantidad = 3`, `limite = 150`, `porcentaje = 10` | Precio: `50`. Cantidad: `3`. Total: `150`. Descuento: `0`. Final: `150`. |
+| Total menor al límite | `precio = 50`, `cantidad = 2`, `limite = 150`, `porcentaje = 10` | Precio: `50`. Cantidad: `2`. Total: `100`. Descuento: `0`. Final: `100`. |
+| Precio inválido | `precio = 0`, `cantidad = 4`, `limite = 150`, `porcentaje = 10` | Se rechaza el proceso: el precio debe ser positivo. |
+| Cantidad inválida | `precio = 50`, `cantidad = -2`, `limite = 150`, `porcentaje = 10` | Se rechaza el proceso: la cantidad debe ser positiva. |
+| Límite inválido | `precio = 50`, `cantidad = 4`, `limite = 0`, `porcentaje = 10` | Se rechaza el proceso: el límite debe ser positivo. |
+| Porcentaje inválido | `precio = 50`, `cantidad = 4`, `limite = 150`, `porcentaje = 0` | Se rechaza el proceso: el porcentaje debe ser positivo. |
+
+Los motivos de rechazo se muestran por separado en la versión simple; la doble muestra el mensaje general «Los datos deben ser positivos».
+
+<a href="/sis100/semana-02/facturacion-descuento/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>

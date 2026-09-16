@@ -1,0 +1,307 @@
+---
+titulo: "Resolución · Facturación con descuento"
+descripcion: "Variables, validación de datos positivos y aplicación de descuentos mediante selectivas simples y dobles."
+materia: "sis100"
+semana: 2
+numero: 2
+dificultad: "facil"
+tags: ["Selectivas simples y dobles"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+Ambas variantes calculan el total de una compra y aplican un descuento **solo cuando el total supera el límite**. Primero se validan las entradas y después se calculan los importes.
+
+## Datos de entrada
+
+| Variable | Tipo en PSeInt | Significado | Validación |
+| --- | --- | --- | --- |
+| `precio` | Real | Precio de una unidad del producto. | Debe ser mayor que cero. |
+| `cantidad` | Entero | Número de unidades compradas. | Debe ser un entero mayor que cero. |
+| `limite` | Real | Monto que debe superarse para aplicar el descuento. | Debe ser mayor que cero. |
+| `porcentaje` | Real | Porcentaje de descuento, por ejemplo `10` para el 10 %. | En tu algoritmo se exige que sea mayor que cero. |
+
+Se leen los cuatro valores antes de validar. Los importes y el porcentaje admiten decimales; la cantidad representa unidades enteras. El porcentaje se ingresa como `10`, no como `0.10`, porque la fórmula ya divide entre `100`.
+
+## Datos de salida
+
+| Variable | ¿Qué se muestra? | ¿Cómo se obtiene? |
+| --- | --- | --- |
+| `precio` | Precio unitario. | Se muestra el dato ingresado. |
+| `cantidad` | Cantidad comprada. | Se muestra el dato ingresado. |
+| `total` | Importe antes del descuento. | `precio * cantidad`. |
+| `descuento` | Dinero que se resta a la compra, no el porcentaje. | `total * porcentaje / 100` si corresponde; `0` si no corresponde. |
+| `final` | Importe que debe pagarse. | `total - descuento`. |
+
+`total`, `descuento` y `final` son reales calculados; no se solicitan por teclado. `limite` y `porcentaje` controlan la regla de descuento, pero no aparecen en las salidas de esta resolución.
+
+## Análisis de resolución
+
+### 1. Validar los datos positivos
+
+Un precio, una cantidad, un límite o un porcentaje igual a cero o negativo no cumple las condiciones de tu algoritmo. Por ejemplo, `precio = -50` se rechaza para evitar calcular una compra negativa.
+
+En la versión simple hay cuatro `Si` independientes: cada uno informa qué dato está mal. Si fallan varios, pueden aparecer varios mensajes. En la doble se usa `precio <= 0 O cantidad <= 0 O limite <= 0 O porcentaje <= 0`: basta **una** condición verdadera para mostrar el mensaje general de error.
+
+Ninguna versión vuelve a pedir los datos, porque no utiliza ciclos. Las estructuras selectivas deciden si se ejecuta el proceso o se rechaza.
+
+### 2. Proteger los cálculos en la versión simple
+
+En la versión simple recibida, los mensajes de error no impedían continuar con la multiplicación y las salidas. Se agregó un bloque `Si precio > 0 Y cantidad > 0 Y limite > 0 Y porcentaje > 0 Entonces` que contiene todo el cálculo.
+
+Se utiliza **Y** porque las cuatro reglas deben cumplirse al mismo tiempo. Así se conserva una solución con selectivas simples, sin `SiNo`, y no se muestran importes calculados cuando los datos son inválidos. En la versión doble, el `SiNo` de la validación ya protege ese proceso.
+
+### 3. Calcular el total de la compra
+
+`total <- precio * cantidad` multiplica el precio de una unidad por el número de unidades. Por ejemplo, `precio = 50` y `cantidad = 4` dan `total = 200`.
+
+No se suma el límite ni se resta todavía el porcentaje. Primero necesitamos el total para decidir si cumple la condición del descuento.
+
+### 4. ¿Por qué `descuento` comienza en cero en la versión simple?
+
+`descuento <- 0` significa que, inicialmente, no se aplica ninguna rebaja. Si luego `total > limite` resulta verdadero, se reemplaza ese cero por el descuento calculado.
+
+Si la condición es falsa, el `Si` simple no ejecuta su cuerpo y el descuento conserva el valor `0`. Sin esa asignación previa, `final <- total - descuento` podría utilizar una variable sin valor definido.
+
+En la versión doble no hace falta asignar antes: una rama calcula el descuento y la otra lo fija en cero. **Ambos caminos dejan `descuento` definido** antes de calcular el importe final.
+
+### 5. Comparar el total con el límite
+
+La condición es `total > limite`, no `total >= limite`. Por eso, si el total es exactamente igual al límite, **no se aplica descuento**.
+
+| Total | Límite | ¿`total > limite`? | Decisión |
+| --- | --- | --- | --- |
+| `200` | `150` | Verdadero | Aplicar descuento. |
+| `150` | `150` | Falso | Descuento igual a cero. |
+| `100` | `150` | Falso | Descuento igual a cero. |
+
+### 6. Convertir el porcentaje en dinero
+
+`descuento <- total * porcentaje / 100` calcula qué parte del total se descontará. Con `total = 200` y `porcentaje = 10`, se obtiene `200 * 10 / 100 = 20`.
+
+El `10` es el porcentaje; el `20` es el monto descontado. Dividir entre `100` convierte el porcentaje en una proporción del total. El descuento se calcula sobre **toda la compra**, no únicamente sobre la parte que supera el límite.
+
+### 7. Obtener el importe final
+
+`final <- total - descuento` resta la rebaja al importe original. En el ejemplo, `200 - 20 = 180`. Si no hay descuento, `200 - 0 = 200`: se paga el total completo.
+
+### 8. Prueba de escritorio de ambas versiones
+
+Para `precio = 50`, `cantidad = 4`, `limite = 150` y `porcentaje = 10`:
+
+| Paso | Selectivas simples | Selectivas dobles |
+| --- | --- | --- |
+| Validar | No se muestran errores y se entra al bloque de datos válidos. | La condición de error es falsa; se entra al `SiNo`. |
+| Calcular total | `total = 50 * 4 = 200`. | `total = 50 * 4 = 200`. |
+| Preparar descuento | Se asigna `descuento = 0`. | Se espera la decisión de la condición. |
+| Comparar | `200 > 150`: verdadero. | `200 > 150`: verdadero. |
+| Aplicar porcentaje | Se reemplaza el cero por `200 * 10 / 100 = 20`. | La rama verdadera asigna `descuento = 20`. |
+| Calcular final | `final = 200 - 20 = 180`. | `final = 200 - 20 = 180`. |
+
+### 9. Alcance de la validación del porcentaje
+
+Se conserva la regla de tu resolución: **el porcentaje solo se valida como positivo**. Esto rechaza `0`, incluso si el total no supera el límite. También permite porcentajes mayores que `100`; si se aplica uno, el importe final puede resultar negativo. Por ejemplo, con total `200` y porcentaje `120`, el descuento sería `240` y el final `-40`.
+
+Si se quisiera impedir ese resultado, habría que agregar explícitamente la condición `porcentaje <= 100` a ambas variantes. Esa restricción adicional no forma parte del algoritmo proporcionado.
+
+## Opción A · Estructuras selectivas simples
+
+Se mantiene la lógica original con el bloque adicional de datos válidos explicado en el análisis.
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="pseint-simples">
+<h3 id="pseint-simples" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="facturacion_descuento_simples.psc" lang="text" codigo={`Algoritmo facturacion_descuento_simples
+    Definir precio, total, descuento, final Como Real
+    Definir limite, porcentaje Como Real
+    Definir cantidad Como Entero
+    Escribir "ingrese precio unitario:"
+    Leer precio
+    Escribir "ingrese cantidad de unidades:"
+    Leer cantidad
+    Escribir "ingrese monto limite de compra:"
+    Leer limite
+    Escribir "ingrese porcentaje de descuento:"
+    Leer porcentaje
+    Si precio <= 0 Entonces
+        Escribir "no se puede realizar el proceso. el precio debe ser positivo."
+    FinSi
+    Si cantidad <= 0 Entonces
+        Escribir "no se puede realizar el proceso. la cantidad debe ser positiva."
+    FinSi
+    Si limite <= 0 Entonces
+        Escribir "no se puede realizar el proceso. el limite debe ser positivo."
+    FinSi
+    Si porcentaje <= 0 Entonces
+        Escribir "no se puede realizar el proceso. el porcentaje debe ser positivo."
+    FinSi
+    Si precio > 0 Y cantidad > 0 Y limite > 0 Y porcentaje > 0 Entonces
+        total <- precio * cantidad
+        descuento <- 0
+        Si total > limite Entonces
+            descuento <- total * porcentaje / 100
+        FinSi
+        final <- total - descuento
+        Escribir "precio unitario: ", precio
+        Escribir "cantidad comprada: ", cantidad
+        Escribir "monto total de la compra: ", total
+        Escribir "descuento aplicado: ", descuento
+        Escribir "monto final a pagar: ", final
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="cpp-simples">
+<h3 id="cpp-simples" class="!mt-0">C++</h3>
+
+<Codigo archivo="facturacion_descuento_simples.cpp" lang="cpp" codigo={`#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    cout << fixed << setprecision(2);
+    double precio, total, descuento, final;
+    double limite, porcentaje;
+    long long cantidad;
+    cout << "ingrese precio unitario:" << endl;
+    cin >> precio;
+    cout << "ingrese cantidad de unidades:" << endl;
+    cin >> cantidad;
+    cout << "ingrese monto limite de compra:" << endl;
+    cin >> limite;
+    cout << "ingrese porcentaje de descuento:" << endl;
+    cin >> porcentaje;
+    if (precio <= 0) {
+        cout << "no se puede realizar el proceso. el precio debe ser positivo." << endl;
+    }
+    if (cantidad <= 0) {
+        cout << "no se puede realizar el proceso. la cantidad debe ser positiva." << endl;
+    }
+    if (limite <= 0) {
+        cout << "no se puede realizar el proceso. el limite debe ser positivo." << endl;
+    }
+    if (porcentaje <= 0) {
+        cout << "no se puede realizar el proceso. el porcentaje debe ser positivo." << endl;
+    }
+    if (precio > 0 && cantidad > 0 && limite > 0 && porcentaje > 0) {
+        total = precio * cantidad;
+        descuento = 0;
+        if (total > limite) {
+            descuento = total * porcentaje / 100;
+        }
+        final = total - descuento;
+        cout << "precio unitario: " << precio << endl;
+        cout << "cantidad comprada: " << cantidad << endl;
+        cout << "monto total de la compra: " << total << endl;
+        cout << "descuento aplicado: " << descuento << endl;
+        cout << "monto final a pagar: " << final << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+## Opción B · Estructuras selectivas dobles
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="pseint-dobles">
+<h3 id="pseint-dobles" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="facturacion_descuento_dobles.psc" lang="text" codigo={`Algoritmo facturacion_descuento_dobles
+    Definir precio, total, descuento, final Como Real
+    Definir limite, porcentaje Como Real
+    Definir cantidad Como Entero
+    Escribir "ingrese precio unitario:"
+    Leer precio
+    Escribir "ingrese cantidad de unidades:"
+    Leer cantidad
+    Escribir "ingrese monto limite de compra:"
+    Leer limite
+    Escribir "ingrese porcentaje de descuento:"
+    Leer porcentaje
+    Si precio <= 0 O cantidad <= 0 O limite <= 0 O porcentaje <= 0 Entonces
+        Escribir "no se puede realizar el proceso. los datos deben ser positivos."
+    SiNo
+        total <- precio * cantidad
+        Si total > limite Entonces
+            descuento <- total * porcentaje / 100
+        SiNo
+            descuento <- 0
+        FinSi
+        final <- total - descuento
+        Escribir "precio unitario: ", precio
+        Escribir "cantidad comprada: ", cantidad
+        Escribir "monto total de la compra: ", total
+        Escribir "descuento aplicado: ", descuento
+        Escribir "monto final a pagar: ", final
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="cpp-dobles">
+<h3 id="cpp-dobles" class="!mt-0">C++</h3>
+
+<Codigo archivo="facturacion_descuento_dobles.cpp" lang="cpp" codigo={`#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    cout << fixed << setprecision(2);
+    double precio, total, descuento, final;
+    double limite, porcentaje;
+    long long cantidad;
+    cout << "ingrese precio unitario:" << endl;
+    cin >> precio;
+    cout << "ingrese cantidad de unidades:" << endl;
+    cin >> cantidad;
+    cout << "ingrese monto limite de compra:" << endl;
+    cin >> limite;
+    cout << "ingrese porcentaje de descuento:" << endl;
+    cin >> porcentaje;
+    if (precio <= 0 || cantidad <= 0 || limite <= 0 || porcentaje <= 0) {
+        cout << "no se puede realizar el proceso. los datos deben ser positivos." << endl;
+    } else {
+        total = precio * cantidad;
+        if (total > limite) {
+            descuento = total * porcentaje / 100;
+        } else {
+            descuento = 0;
+        }
+        final = total - descuento;
+        cout << "precio unitario: " << precio << endl;
+        cout << "cantidad comprada: " << cantidad << endl;
+        cout << "monto total de la compra: " << total << endl;
+        cout << "descuento aplicado: " << descuento << endl;
+        cout << "monto final a pagar: " << final << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+## Equivalencias en C++
+
+`Real` se representa con `double`; para `cantidad` se usa `long long`. `Si` se escribe `if`, `SiNo` se escribe `else`, `Y` se escribe `&&` y `O` se escribe `||`. La asignación `<-` se convierte en `=`.
+
+Como `total` y `porcentaje` son reales, la división entre `100` conserva los decimales. `fixed` y `setprecision(2)` muestran los importes con dos decimales. Se presupone una cantidad entera e importes dentro de la capacidad numérica de los tipos utilizados.
+
+## Diagramas de flujo
+
+### Selectivas simples
+
+El diagrama corresponde a la versión original: los mensajes de error no detienen el cálculo. El bloque adicional de datos válidos que protege el código de esta página todavía no aparece en la imagen.
+
+<DiagramaFlujo src="/material/sis100/semana2/facturacion_descuento_simples.svg" alt="Diagrama original de facturación con selectivas simples, validaciones independientes y descuento condicionado al total mayor que el límite." />
+
+### Selectivas dobles
+
+<DiagramaFlujo src="/material/sis100/semana2/facturacion_descuento_dobles.svg" alt="Diagrama de facturación con selectivas dobles: rechazo de datos inválidos y ramas para aplicar descuento o asignar cero." />
+
+<a href="/sis100/semana-02/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

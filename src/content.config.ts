@@ -71,7 +71,7 @@ const apartados = defineCollection({
   loader: glob({ pattern: "**/*.json", base: "./src/content/apartados" }),
   schema: z.object({
     materia: reference("materias"),
-    tipo: z.enum(["parcial", "invierno"]),
+    tipo: z.enum(["parcial", "invierno", "practica"]),
     titulo: z.string(),
     subtitulo: z.string(),
     orden: z.number().default(0),

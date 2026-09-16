@@ -1,0 +1,184 @@
+---
+titulo: "Resolución · Serie numérica con Mientras"
+descripcion: "Generación de la serie i² + 1: validación, contador desde 1, suma y conteo de pares e impares en PSeInt y C++."
+materia: "sis100"
+semana: 4
+numero: 2
+dificultad: "facil"
+tags: ["Mientras"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+Generamos cada término a partir de su posición, lo mostramos y actualizamos los acumuladores. No necesitamos guardar la serie en un vector o arreglo.
+
+## Datos de entrada
+
+- **`n` ← Cantidad de términos:** un entero positivo, mayor que cero.
+
+## Datos de salida
+
+- **Serie:** los primeros `n` valores de `se = i² + 1`.
+- **`suma` ← Suma total** de los términos generados.
+- **`cp` ← Cantidad de términos pares.**
+- **`ci` ← Cantidad de términos impares.**
+
+`i` indica la posición del término y `se` guarda el valor de ese término. `cp` y `ci` cuentan números; no suman sus valores.
+
+## Análisis de resolución
+
+### 1. Validar una cantidad positiva
+
+Primero se lee `n`. Mientras `n <= 0`, se muestra el error y se vuelve a leer. Por ejemplo, `n = -3` y `n = 0` se rechazan; `n = 8` permite continuar y generar ocho términos.
+
+La primera lectura ocurre antes del ciclo porque `Mientras` evalúa su condición antes de ejecutar el cuerpo. La nueva lectura dentro del ciclo permite corregir el dato y evita repetir indefinidamente el mismo valor inválido.
+
+### 2. ¿Por qué `i` comienza en 1?
+
+**`i` representa la posición del término, no su valor.** Queremos empezar por la primera posición y obtener `se = 1² + 1 = 2`, el primer número de la serie solicitada. En la segunda posición obtenemos `2² + 1 = 5`; en la tercera, `3² + 1 = 10`.
+
+Si empezáramos con `i = 0`, la misma fórmula produciría `0² + 1 = 1`, que no es el primer término pedido. Además, con la condición `i <= n` recorreríamos desde `0` hasta `n`: serían `n + 1` vueltas. Por eso, en este algoritmo, **la fórmula, el inicio en 1 y la condición se eligen juntos**.
+
+### 3. ¿Por qué los demás valores comienzan en 0?
+
+`suma`, `cp` y `ci` empiezan en `0` porque todavía no generamos ningún término. El contador de posición `i` empieza en `1`, pero los contadores de resultados empiezan en cero: aún no encontramos números pares ni impares.
+
+### 4. Generar exactamente `n` términos
+
+`Mientras i <= n` recorre las posiciones `1, 2, 3, …, n`, incluyendo la última. Para `n = 8`, procesa `i = 8`; después del incremento, `i = 9` hace falsa la condición y el ciclo termina. Si usáramos `i < n`, faltaría el último término.
+
+En cada vuelta se calcula `se <- i^2+1`. Se usa la posición actual para obtener un nuevo valor; la serie no aumenta siempre en la misma cantidad.
+
+### 5. Mostrar, sumar y clasificar
+
+`Escribir se, ' + ' Sin Saltar` muestra el término y un separador sin cambiar de línea. `suma <- suma+se` incorpora ese valor al total.
+
+Si `se MOD 2 = 0`, el término es par y se ejecuta `cp <- cp+1`. En caso contrario, se ejecuta `ci <- ci+1`. **Se evalúa `se`, no `i`**: en la posición `i = 1`, el término es `2`, que es par.
+
+El pseudocódigo de clase deja un signo `+` después del último término. Es un separador de presentación y no agrega ningún valor a `suma`. La versión C++ conserva ese mismo formato.
+
+### 6. Incrementar la posición
+
+`i <- i+1` permite pasar a la siguiente posición. Sin este incremento, `i` seguiría en `1`, se generaría `2` una y otra vez y la condición nunca dejaría de cumplirse. El incremento va después de procesar el término actual para no saltarnos el primero.
+
+### 7. Prueba de escritorio para `n = 8`
+
+Los acumuladores de esta tabla muestran el estado después de procesar cada término.
+
+| Posición `i` | Término `se = i² + 1` | Clasificación | `suma` | `cp` | `ci` |
+| --- | --- | --- | --- | --- | --- |
+| `1` | `2` | Par | `2` | `1` | `0` |
+| `2` | `5` | Impar | `7` | `1` | `1` |
+| `3` | `10` | Par | `17` | `2` | `1` |
+| `4` | `17` | Impar | `34` | `2` | `2` |
+| `5` | `26` | Par | `60` | `3` | `2` |
+| `6` | `37` | Impar | `97` | `3` | `3` |
+| `7` | `50` | Par | `147` | `4` | `3` |
+| `8` | `65` | Impar | `212` | `4` | `4` |
+
+Finalmente se muestran **suma total 212**, **4 pares** y **4 impares**. La comprobación `cp + ci = n` da `4 + 4 = 8`: todos los términos quedaron clasificados.
+
+## Pseudocódigo y programa en C++
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Serie_Numerica_Mientras.psc" lang="text" codigo={`Algoritmo Serie_Numerica_Mientras
+    Definir n, i, se, cp, ci, suma Como Entero
+    Escribir 'Ingrese la cantidad de terminos:'
+    Leer n
+    Mientras n<=0 Hacer
+        Escribir 'Error. La cantidad debe ser positiva:'
+        Leer n
+    FinMientras
+    i <- 1
+    suma <- 0
+    cp <- 0
+    ci <- 0
+    Escribir 'Serie:'
+    Mientras i<=n Hacer
+        se <- i^2+1
+        Escribir se, ' + 'Sin Saltar
+        suma <- suma+se
+        Si se MOD 2=0 Entonces
+            cp <- cp+1
+        SiNo
+            ci <- ci+1
+        FinSi
+        i <- i+1
+    FinMientras
+    Escribir ''
+    Escribir 'Suma total = ', suma
+    Escribir 'Cantidad de pares = ', cp
+    Escribir 'Cantidad de impares = ', ci
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="serie_numerica_mientras.cpp" lang="cpp" codigo={`#include <iostream>
+#include <limits>
+using namespace std;
+
+int main() {
+    long long n, i, se, cp, ci, suma;
+    cout << "Ingrese la cantidad de terminos:" << endl;
+    cin >> n;
+    while (n <= 0) {
+        cout << "Error. La cantidad debe ser positiva:" << endl;
+        cin >> n;
+    }
+    i = 1;
+    suma = 0;
+    cp = 0;
+    ci = 0;
+    cout << "Serie:" << endl;
+    while (i <= n) {
+        // Evitar desbordamiento al calcular el termino.
+        if (i > (numeric_limits<long long>::max() - 1) / i) {
+            cout << "La serie supera la capacidad numerica." << endl;
+            return 1;
+        }
+        se = i * i + 1;
+        if (suma > numeric_limits<long long>::max() - se) {
+            cout << "La suma supera la capacidad numerica." << endl;
+            return 1;
+        }
+        cout << se << " + ";
+        suma = suma + se;
+        if (se % 2 == 0) {
+            cp = cp + 1;
+        } else {
+            ci = ci + 1;
+        }
+        i = i + 1;
+    }
+    cout << endl;
+    cout << "Suma total = " << suma << endl;
+    cout << "Cantidad de pares = " << cp << endl;
+    cout << "Cantidad de impares = " << ci << endl;
+    return 0;
+}`} />
+
+</section>
+</div>
+
+### Equivalencias en C++
+
+En PSeInt, `i^2` eleva al cuadrado. En C++ se escribe **`i * i`**: el operador `^` tiene otro significado y no calcula potencias. `MOD` se convierte en `%`, `Mientras` en `while` y `Sin Saltar` equivale a mostrar con `cout` sin agregar un salto de línea.
+
+Se utiliza `long long` para disponer de mayor capacidad que un entero de 32 bits. Como el enunciado no fija un máximo para `n`, se comprueba que el término y la suma puedan representarse antes de calcularlos; si exceden la capacidad, se informa y se termina. Estas comprobaciones evitan desbordamientos y no cambian la fórmula de la serie.
+
+Se lee el número con `cin >> n` y se valida la condición del ejercicio con `while`.
+
+## Diagrama de flujo
+
+<DiagramaFlujo src="/material/sis100/semana4/Serie_Numerica_Mientras.svg" alt="Diagrama de la serie numérica con Mientras: validación de n positivo, posición i desde 1, generación de i² + 1, suma y conteo de términos pares e impares." />
+
+<a href="/sis100/semana-04/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

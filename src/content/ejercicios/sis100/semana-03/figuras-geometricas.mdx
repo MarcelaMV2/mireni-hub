@@ -1,0 +1,280 @@
+---
+titulo: "Resolución · Figuras geométricas"
+descripcion: "Variables, fórmulas y validación de medidas positivas con Si, Y y Segun en PSeInt y C++."
+materia: "sis100"
+semana: 3
+numero: 2
+dificultad: "facil"
+tags: ["Segun"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+El programa selecciona **una figura**, solicita sus medidas y calcula el área y el perímetro si los datos son positivos. Cada figura tiene su propio caso y sus propias validaciones.
+
+## Datos de entrada
+
+| Variable | Tipo en PSeInt | Significado | Validación y uso |
+| --- | --- | --- | --- |
+| `opcion` | Entero | Figura elegida: `1` cuadrado, `2` rectángulo, `3` triángulo, `4` círculo. | `Segun` selecciona el caso. Otros valores llegan a `De Otro Modo`. |
+| `lado` | Real | Longitud de un lado del cuadrado. | `lado > 0`, solo en el caso `1`. |
+| `base` | Real | Base del rectángulo o del triángulo. | `base > 0`, en los casos `2` y `3`. |
+| `altura` | Real | Altura del rectángulo o altura perpendicular a la base del triángulo. | `altura > 0`, en los casos `2` y `3`. |
+| `lado1`, `lado2`, `lado3` | Real | Longitudes de los tres lados del triángulo. | Cada lado debe ser mayor que cero, en el caso `3`. |
+| `radio` | Real | Distancia del centro del círculo a su borde. | `radio > 0`, solo en el caso `4`. |
+
+Las medidas son reales porque admiten decimales, como `2.5`. Deben expresarse en la misma unidad. Solo se leen las variables de la figura seleccionada: para un círculo no se piden base, altura ni lados.
+
+## Datos de salida y constante
+
+| Nombre | Tipo | ¿Qué representa? |
+| --- | --- | --- |
+| `area` | Real | Superficie de la figura. Se calcula y se muestra si las medidas son válidas. |
+| `perimetro` | Real | Longitud del contorno. En el círculo se muestra con el nombre «Circunferencia». |
+| Mensaje de rechazo | Texto | Indica que las medidas no son positivas o que la opción no existe. |
+| `PI` | Constante | Valor aproximado de π, `3.141592653589793`, usado en las fórmulas del círculo. No es un dato de entrada ni una salida. |
+
+`area` y `perimetro` **no se leen por teclado**. Cada caso les asigna sus resultados antes de mostrarlos. No son acumuladores y no necesitan inicializarse en cero. Si las longitudes están en centímetros, el perímetro queda en centímetros y el área en centímetros cuadrados.
+
+## Análisis de resolución
+
+### 1. Seleccionar la figura con `Segun`
+
+Se muestra el menú y se lee `opcion`. `Segun opcion Hacer` ejecuta el caso que coincide con ese valor. Por ejemplo, `opcion = 2` solicita únicamente las medidas del rectángulo. Con `opcion = 9`, se ejecuta `De Otro Modo` y se informa que la opción no existe.
+
+Esta estructura elige una alternativa; no repite el menú. Al terminar el caso seleccionado, finaliza el programa.
+
+### 2. Validar con `Si / SiNo`
+
+En cada caso se leen las medidas y después se evalúa una condición. Si es verdadera, se calculan y muestran los resultados. Si es falsa, el `SiNo` muestra un mensaje y no realiza el cálculo.
+
+**Validar con `Si` no significa volver a pedir:** esta resolución rechaza el dato y termina. No contiene ciclos. Cero también se rechaza, porque se exige un valor estrictamente mayor que cero.
+
+### 3. Cuadrado: una medida positiva
+
+`Si lado > 0` comprueba la única medida necesaria. Con `lado = 4`, el área es `4² = 16` y el perímetro es `4*4 = 16`. Elevar al cuadrado multiplica el lado por sí mismo para obtener la superficie; multiplicar por cuatro suma los cuatro lados iguales del contorno.
+
+Con `lado = 0` o `lado = -4`, se ejecuta el rechazo y no se asignan resultados.
+
+### 4. Rectángulo: ¿por qué se utiliza `Y`?
+
+`Si base > 0 Y altura > 0` exige que **ambas medidas sean positivas al mismo tiempo**. Basta que una falle para rechazar el cálculo. No sirve `O`, porque aceptaría, por ejemplo, una base positiva junto con una altura negativa.
+
+| Base | Altura | `base > 0` | `altura > 0` | Resultado de `Y` |
+| --- | --- | --- | --- | --- |
+| `5` | `3` | Verdadero | Verdadero | Verdadero: se calcula. |
+| `5` | `0` | Verdadero | Falso | Falso: se rechaza. |
+| `-5` | `3` | Falso | Verdadero | Falso: se rechaza. |
+| `-5` | `-3` | Falso | Falso | Falso: se rechaza. |
+
+Con `base = 5` y `altura = 3`, `area = 5*3 = 15` y `perimetro = 2*(5+3) = 16`. Los paréntesis hacen que primero se sumen la base y la altura; luego se multiplica por dos porque hay dos lados de cada medida.
+
+### 5. Triángulo: validar las cinco medidas
+
+La condición une con `Y` las comprobaciones de `base`, `altura`, `lado1`, `lado2` y `lado3`. Todas deben ser mayores que cero. Por ejemplo, aunque base y altura sean válidas, `lado2 = 0` hace falsa toda la condición.
+
+Se usan `base` y `altura` para `area <- (base*altura)/2`; se usan los tres lados para `perimetro <- lado1+lado2+lado3`. La altura es perpendicular a la base y no tiene por qué ser uno de los lados del triángulo.
+
+Un ejemplo coherente es un triángulo rectángulo con `base = 3`, `altura = 4` y lados `3`, `4`, `5`: el área es `6` y el perímetro es `12`.
+
+**Alcance de esta validación:** el algoritmo proporcionado comprueba positividad, pero no verifica que los lados formen un triángulo ni que base y altura correspondan a esos lados. Por ejemplo, los lados `1`, `2`, `10` son positivos pero no forman un triángulo. Se conserva tu resolución y se presupone que las medidas positivas describen la misma figura; una validación geométrica completa requeriría comprobaciones adicionales.
+
+### 6. Círculo: validar el radio
+
+`Si radio > 0` permite calcular `area <- PI*radio^2` y `perimetro <- 2*PI*radio`. Con `radio = 2`, el área es `4π` y la circunferencia también es `4π`, aproximadamente `12.57` cada una. Aunque coincida el número, representan superficie y longitud, respectivamente.
+
+Con un radio cero o negativo se muestra el mensaje de rechazo. `PI` es constante: no cambia entre cálculos y no se solicita al usuario.
+
+### 7. Resumen de las decisiones
+
+| Caso | Condición para calcular | Resultado si no se cumple |
+| --- | --- | --- |
+| Cuadrado | `lado > 0` | Se rechaza el lado. |
+| Rectángulo | Base y altura positivas. | Se rechazan las medidas. |
+| Triángulo | Base, altura y tres lados positivos. | Se rechazan las medidas. |
+| Círculo | `radio > 0` | Se rechaza el radio. |
+| Opción fuera de `1` a `4` | No coincide con ningún caso. | `De Otro Modo` informa que no existe. |
+
+## Pseudocódigo y programa en C++
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Figuras_Geometricas.psc" lang="text" codigo={`Algoritmo Figuras_Geometricas
+    Definir opcion Como Entero
+    Definir lado, base, altura, lado1, lado2, lado3, radio Como Real
+    Definir area, perimetro Como Real
+    Escribir '===== FIGURAS GEOMETRICAS ====='
+    Escribir '1. Cuadrado'
+    Escribir '2. Rectangulo'
+    Escribir '3. Triangulo'
+    Escribir '4. Circulo'
+    Escribir 'Seleccione una opcion:'
+    Leer opcion
+    Segun opcion Hacer
+        1:
+            Escribir 'Ingrese lado:'
+            Leer lado
+            Si lado>0 Entonces
+                area <- lado^2
+                perimetro <- lado*4
+                Escribir 'Area: ', area
+                Escribir 'Perimetro: ', perimetro
+            SiNo
+                Escribir 'No se puede calcular. El lado debe ser positivo.'
+            FinSi
+        2:
+            Escribir 'Ingrese base:'
+            Leer base
+            Escribir 'Ingrese altura:'
+            Leer altura
+            Si base>0 Y altura>0 Entonces
+                area <- base*altura
+                perimetro <- 2*(base+altura)
+                Escribir 'Area: ', area
+                Escribir 'Perimetro: ', perimetro
+            SiNo
+                Escribir 'No se puede calcular. Los valores deben ser positivos.'
+            FinSi
+        3:
+            Escribir 'Ingrese base:'
+            Leer base
+            Escribir 'Ingrese altura:'
+            Leer altura
+            Escribir 'Ingrese lado 1:'
+            Leer lado1
+            Escribir 'Ingrese lado 2:'
+            Leer lado2
+            Escribir 'Ingrese lado 3:'
+            Leer lado3
+            Si base>0 Y altura>0 Y lado1>0 Y lado2>0 Y lado3>0 Entonces
+                area <- (base*altura)/2
+                perimetro <- lado1+lado2+lado3
+                Escribir 'Area: ', area
+                Escribir 'Perimetro: ', perimetro
+            SiNo
+                Escribir 'No se puede calcular. Todos los valores deben ser positivos.'
+            FinSi
+        4:
+            Escribir 'Ingrese radio:'
+            Leer radio
+            Si radio>0 Entonces
+                area <- PI*radio^2
+                perimetro <- 2*PI*radio
+                Escribir 'Area: ', area
+                Escribir 'Circunferencia: ', perimetro
+            SiNo
+                Escribir 'No se puede calcular. El radio debe ser positivo.'
+            FinSi
+        De Otro Modo:
+            Escribir 'La opcion seleccionada no existe.'
+    FinSegun
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="figuras_geometricas.cpp" lang="cpp" codigo={`#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    int opcion;
+    double lado, base, altura, lado1, lado2, lado3, radio;
+    double area, perimetro;
+    const double PI = 3.141592653589793;
+    cout << fixed << setprecision(2);
+    cout << "===== FIGURAS GEOMETRICAS =====" << endl;
+    cout << "1. Cuadrado" << endl;
+    cout << "2. Rectangulo" << endl;
+    cout << "3. Triangulo" << endl;
+    cout << "4. Circulo" << endl;
+    cout << "Seleccione una opcion:" << endl;
+    cin >> opcion;
+    switch (opcion) {
+        case 1:
+            cout << "Ingrese lado:" << endl;
+            cin >> lado;
+            if (lado>0) {
+                area = lado * lado;
+                perimetro = lado*4;
+                cout << "Area: " << area << endl;
+                cout << "Perimetro: " << perimetro << endl;
+            } else {
+                cout << "No se puede calcular. El lado debe ser positivo." << endl;
+            }
+            break;
+        case 2:
+            cout << "Ingrese base:" << endl;
+            cin >> base;
+            cout << "Ingrese altura:" << endl;
+            cin >> altura;
+            if (base>0 && altura>0) {
+                area = base*altura;
+                perimetro = 2*(base+altura);
+                cout << "Area: " << area << endl;
+                cout << "Perimetro: " << perimetro << endl;
+            } else {
+                cout << "No se puede calcular. Los valores deben ser positivos." << endl;
+            }
+            break;
+        case 3:
+            cout << "Ingrese base:" << endl;
+            cin >> base;
+            cout << "Ingrese altura:" << endl;
+            cin >> altura;
+            cout << "Ingrese lado 1:" << endl;
+            cin >> lado1;
+            cout << "Ingrese lado 2:" << endl;
+            cin >> lado2;
+            cout << "Ingrese lado 3:" << endl;
+            cin >> lado3;
+            if (base>0 && altura>0 && lado1>0 && lado2>0 && lado3>0) {
+                area = (base*altura)/2;
+                perimetro = lado1+lado2+lado3;
+                cout << "Area: " << area << endl;
+                cout << "Perimetro: " << perimetro << endl;
+            } else {
+                cout << "No se puede calcular. Todos los valores deben ser positivos." << endl;
+            }
+            break;
+        case 4:
+            cout << "Ingrese radio:" << endl;
+            cin >> radio;
+            if (radio>0) {
+                area = PI*radio * radio;
+                perimetro = 2*PI*radio;
+                cout << "Area: " << area << endl;
+                cout << "Circunferencia: " << perimetro << endl;
+            } else {
+                cout << "No se puede calcular. El radio debe ser positivo." << endl;
+            }
+            break;
+        default:
+            cout << "La opcion seleccionada no existe." << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+### Equivalencias en C++
+
+`Entero` se traduce como `int` y `Real` como `double`. `Si / SiNo` se expresa con `if / else`, `Y` con `&&`, y `Segun` con `switch`. Cada `case` termina con `break` para no continuar ejecutando los casos siguientes. `default` equivale a `De Otro Modo`.
+
+En PSeInt, `lado^2` y `radio^2` elevan al cuadrado. En C++ se escriben `lado * lado` y `radio * radio`: `^` no es un operador de potencia. Se declara explícitamente `PI` con `const double`.
+
+La versión C++ muestra dos decimales con `fixed` y `setprecision(2)`. Las validaciones de positividad conservan la lógica del pseudocódigo.
+
+## Diagrama de flujo
+
+<DiagramaFlujo src="/material/sis100/semana3/Figuras_Geometricas.svg" alt="Diagrama de Figuras_Geometricas: menú con cuatro casos, validación de medidas positivas y cálculo del área y perímetro de cada figura." />
+
+<a href="/sis100/semana-03/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

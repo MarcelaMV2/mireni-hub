@@ -2,18 +2,19 @@
 import { Icon } from 'astro-icon/components';
 
 interface Props {
-  tipo: 'parcial' | 'invierno';
+  tipo: 'parcial' | 'invierno' | 'practica';
   titulo: string;
   subtitulo: string;
   href?: string;
 }
 const { tipo, titulo, subtitulo, href = '#' } = Astro.props;
-const icono = tipo === 'parcial' ? 'tabler:target-arrow' : tipo === 'invierno' ? 'tabler:snowflake' : 'tabler:sun';
+const icono = tipo === 'parcial' ? 'tabler:target-arrow' : tipo === 'invierno' ? 'tabler:snowflake' : 'tabler:pencil';
 
 const estilos = {
   parcial: 'border-brand bg-brand-subtle text-brand',
   verano: 'border-warning bg-[#FDF3E3] text-warning',
   invierno: 'border-success bg-[#E8F5EC] text-success', // o el color que prefieras
+  practica: 'border-success bg-[#E8F5EC] text-success',
 };
 ---
 

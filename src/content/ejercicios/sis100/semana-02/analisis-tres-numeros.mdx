@@ -1,0 +1,376 @@
+---
+titulo: "Resolución · Análisis de tres números"
+descripcion: "Comparación de selectivas simples y dobles para validar y ordenar tres números positivos diferentes."
+materia: "sis100"
+semana: 2
+numero: 1
+dificultad: "facil"
+tags: ["Selectivas simples y dobles"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+Las dos versiones buscan el mayor, el menor y el intermedio de tres enteros positivos diferentes, y calculan la diferencia entre los extremos. Cambia la forma de organizar las decisiones, pero los resultados válidos deben coincidir.
+
+## Datos de entrada
+
+| Variable | Tipo | Significado y validación |
+| --- | --- | --- |
+| `a` | Entero | Primer número: debe ser mayor que cero y distinto de `b` y `c`. |
+| `b` | Entero | Segundo número: debe ser mayor que cero y distinto de `a` y `c`. |
+| `c` | Entero | Tercer número: debe ser mayor que cero y distinto de `a` y `b`. |
+
+## Datos de salida
+
+| Variable | Tipo | ¿Qué guarda? |
+| --- | --- | --- |
+| `mayor` | Entero | El valor más grande de los tres. |
+| `menor` | Entero | El valor más pequeño de los tres. |
+| `intermedio` | Entero | El valor que queda entre el menor y el mayor. |
+| `diferencia` | Entero | El resultado de `mayor - menor`. |
+
+Las salidas se calculan; no se piden por teclado. Solo se muestran cuando los tres datos son válidos. Al ser diferentes, hay un único mayor, un único menor y un único intermedio.
+
+## Análisis de resolución
+
+### 1. Validar que todos sean positivos
+
+`a <= 0 O b <= 0 O c <= 0` detecta si **al menos uno** es inválido. Por ejemplo, con `a = 15`, `b = 0`, `c = 20`, la segunda comparación es verdadera y se rechazan los datos.
+
+Se utiliza `O` porque basta un número inválido para rechazar el conjunto. Con `Y` solo se detectaría el caso en que los tres fueran inválidos a la vez.
+
+### 2. Validar que sean diferentes
+
+`a = b O a = c O b = c` compara las tres parejas posibles. Con `a = 15`, `b = 8`, `c = 15`, se cumple `a = c`, así que hay repetición. Comprobar únicamente `a = b` no sería suficiente.
+
+Estas estructuras son selectivas: muestran el rechazo pero no solicitan nuevos números. Ninguna de las versiones utiliza ciclos.
+
+### 3. Qué cambia entre simples y dobles
+
+| Selectivas simples | Selectivas dobles |
+| --- | --- |
+| `Si … Entonces … FinSi`: ejecuta un bloque solo si la condición es verdadera. | `Si … Entonces … SiNo … FinSi`: elige uno de dos caminos. |
+| Las comprobaciones de error son independientes; pueden mostrarse ambos mensajes si fallan ambas reglas. | Primero se valida positividad; solo si pasa se revisan las repeticiones. Se muestra el primer rechazo encontrado. |
+| Una condición adicional de datos válidos protege todo el cálculo. | Las ramas `SiNo` dejan el cálculo únicamente en el camino válido. |
+
+### 4. Ajuste necesario en la versión simple
+
+En el pseudocódigo recibido, los dos primeros `Si` muestran mensajes, pero **escribir un error no detiene el algoritmo**. Con números repetidos, algunas variables podrían quedar sin asignar y aun así se intentaría calcular la diferencia o mostrar resultados.
+
+Por eso se agregó un `Si` que contiene las comparaciones, la resta y las salidas, con la condición `a > 0 Y b > 0 Y c > 0 Y a <> b Y a <> c Y b <> c`. Todas las reglas deben cumplirse para entrar. Se mantienen las selectivas simples: **no se añade ningún `SiNo`** a esta versión.
+
+### 5. Encontrar mayor y menor con simples
+
+Para que `a` sea el mayor debe superar a los otros dos: `a > b Y a > c`. Se comprueba lo mismo para `b` y `c`. Como los números son diferentes, exactamente una de las tres condiciones asigna `mayor`.
+
+Para el menor se invierten las comparaciones: `a < b Y a < c`, y de la misma forma para los otros valores. Se utiliza `Y` porque ser mayor o menor que un solo número no basta para ser el extremo del conjunto.
+
+### 6. Encontrar el intermedio con simples
+
+Una vez conocidos los extremos, un valor es intermedio si es **mayor que `menor` y menor que `mayor`**. Por ejemplo, con `menor = 8` y `mayor = 20`, el número `15` cumple ambas condiciones.
+
+### 7. Recorrer los caminos de la versión doble
+
+Para encontrar el mayor, primero se compara `a > b`. Si es verdadero, `b` ya no puede ser el mayor y se compara `a` con `c`. Si es falso, se compara `b` con `c`. Cada camino asigna un valor a `mayor`.
+
+Para el menor se sigue el mismo razonamiento con `<`. Para el intermedio, se pregunta si `a` es distinto de ambos extremos; si no lo es, se prueba `b`; si tampoco lo es, el intermedio debe ser `c`. Esta última deducción funciona porque ya se comprobó que los tres son diferentes.
+
+En la rama de datos repetidos de tu versión doble se conservan `a <- 0`, `b <- 0` y `c <- 0`. **No son necesarias para impedir el cálculo:** lo que lo impide es estar en una rama diferente del `SiNo` que contiene el proceso. Esas asignaciones solo reemplazan los datos y luego termina el algoritmo.
+
+### 8. Prueba de escritorio con `a = 15`, `b = 8`, `c = 20`
+
+| Etapa | Versión simple | Versión doble | Resultado |
+| --- | --- | --- | --- |
+| Validar | No hay ceros, negativos ni parejas iguales; se entra al bloque válido. | Se recorren las dos ramas `SiNo` de validación. | Datos aceptados. |
+| Mayor | Solo `c > a Y c > b` es verdadero. | `a > b` es verdadero; `a > c` es falso: se elige `c`. | `mayor = 20`. |
+| Menor | Solo `b < a Y b < c` es verdadero. | `a < b` es falso; `b < c` es verdadero: se elige `b`. | `menor = 8`. |
+| Intermedio | `15 > 8 Y 15 < 20` es verdadero. | `a <> mayor Y a <> menor` es verdadero. | `intermedio = 15`. |
+| Diferencia | Se restan los extremos. | Se restan los extremos. | `20 - 8 = 12`. |
+
+`diferencia` se calcula después de encontrar los extremos. No es una suma acumulada: se asigna una sola vez y es positiva porque el mayor y el menor son diferentes.
+
+## Opción A · Estructuras selectivas simples
+
+El bloque de datos válidos es el ajuste explicado arriba; el resto conserva las comparaciones de tu resolución.
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="pseint-simples">
+<h3 id="pseint-simples" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="analisis_tres_numeros_simples.psc" lang="text" codigo={`Algoritmo analisis_tres_numeros_simples
+    Definir a, b, c Como Entero
+    Definir mayor, menor, intermedio, diferencia Como Entero
+    Escribir "ingrese el primer numero:"
+    Leer a
+    Escribir "ingrese el segundo numero:"
+    Leer b
+    Escribir "ingrese el tercer numero:"
+    Leer c
+    Si a <= 0 O b <= 0 O c <= 0 Entonces
+        Escribir "no se puede realizar el proceso. los numeros deben ser positivos."
+    FinSi
+    Si a = b O a = c O b = c Entonces
+        Escribir "no se puede realizar el proceso. los numeros deben ser diferentes."
+    FinSi
+    Si a > 0 Y b > 0 Y c > 0 Y a <> b Y a <> c Y b <> c Entonces
+        Si a > b Y a > c Entonces
+            mayor <- a
+        FinSi
+        Si b > a Y b > c Entonces
+            mayor <- b
+        FinSi
+        Si c > a Y c > b Entonces
+            mayor <- c
+        FinSi
+        Si a < b Y a < c Entonces
+            menor <- a
+        FinSi
+        Si b < a Y b < c Entonces
+            menor <- b
+        FinSi
+        Si c < a Y c < b Entonces
+            menor <- c
+        FinSi
+        Si a > menor Y a < mayor Entonces
+            intermedio <- a
+        FinSi
+        Si b > menor Y b < mayor Entonces
+            intermedio <- b
+        FinSi
+        Si c > menor Y c < mayor Entonces
+            intermedio <- c
+        FinSi
+        diferencia <- mayor - menor
+        Escribir "numero mayor: ", mayor
+        Escribir "numero intermedio: ", intermedio
+        Escribir "numero menor: ", menor
+        Escribir "diferencia: ", diferencia
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="cpp-simples">
+<h3 id="cpp-simples" class="!mt-0">C++</h3>
+
+<Codigo archivo="analisis_tres_numeros_simples.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    long long a, b, c;
+    long long mayor, menor, intermedio, diferencia;
+    cout << "ingrese el primer numero:" << endl;
+    cin >> a;
+    cout << "ingrese el segundo numero:" << endl;
+    cin >> b;
+    cout << "ingrese el tercer numero:" << endl;
+    cin >> c;
+    if (a <= 0 || b <= 0 || c <= 0) {
+        cout << "no se puede realizar el proceso. los numeros deben ser positivos." << endl;
+    }
+    if (a == b || a == c || b == c) {
+        cout << "no se puede realizar el proceso. los numeros deben ser diferentes." << endl;
+    }
+    if (a > 0 && b > 0 && c > 0 && a != b && a != c && b != c) {
+        if (a > b && a > c) {
+            mayor = a;
+        }
+        if (b > a && b > c) {
+            mayor = b;
+        }
+        if (c > a && c > b) {
+            mayor = c;
+        }
+        if (a < b && a < c) {
+            menor = a;
+        }
+        if (b < a && b < c) {
+            menor = b;
+        }
+        if (c < a && c < b) {
+            menor = c;
+        }
+        if (a > menor && a < mayor) {
+            intermedio = a;
+        }
+        if (b > menor && b < mayor) {
+            intermedio = b;
+        }
+        if (c > menor && c < mayor) {
+            intermedio = c;
+        }
+        diferencia = mayor - menor;
+        cout << "numero mayor: " << mayor << endl;
+        cout << "numero intermedio: " << intermedio << endl;
+        cout << "numero menor: " << menor << endl;
+        cout << "diferencia: " << diferencia << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+## Opción B · Estructuras selectivas dobles
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="pseint-dobles">
+<h3 id="pseint-dobles" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="analisis_tres_numeros_dobles.psc" lang="text" codigo={`Algoritmo analisis_tres_numeros_dobles
+    Definir a, b, c Como Entero
+    Definir mayor, menor, intermedio, diferencia Como Entero
+    Escribir "ingrese el primer numero:"
+    Leer a
+    Escribir "ingrese el segundo numero:"
+    Leer b
+    Escribir "ingrese el tercer numero:"
+    Leer c
+    Si a <= 0 O b <= 0 O c <= 0 Entonces
+        Escribir "no se puede realizar el proceso. los numeros deben ser positivos."
+    SiNo
+        Si a = b O a = c O b = c Entonces
+            Escribir "no se puede realizar el proceso. los numeros deben ser diferentes."
+            a <- 0
+            b <- 0
+            c <- 0
+        SiNo
+            Si a > b Entonces
+                Si a > c Entonces
+                    mayor <- a
+                SiNo
+                    mayor <- c
+                FinSi
+            SiNo
+                Si b > c Entonces
+                    mayor <- b
+                SiNo
+                    mayor <- c
+                FinSi
+            FinSi
+            Si a < b Entonces
+                Si a < c Entonces
+                    menor <- a
+                SiNo
+                    menor <- c
+                FinSi
+            SiNo
+                Si b < c Entonces
+                    menor <- b
+                SiNo
+                    menor <- c
+                FinSi
+            FinSi
+            Si a <> mayor Y a <> menor Entonces
+                intermedio <- a
+            SiNo
+                Si b <> mayor Y b <> menor Entonces
+                    intermedio <- b
+                SiNo
+                    intermedio <- c
+                FinSi
+            FinSi
+            diferencia <- mayor - menor
+            Escribir "numero mayor: ", mayor
+            Escribir "numero intermedio: ", intermedio
+            Escribir "numero menor: ", menor
+            Escribir "diferencia: ", diferencia
+        FinSi
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="cpp-dobles">
+<h3 id="cpp-dobles" class="!mt-0">C++</h3>
+
+<Codigo archivo="analisis_tres_numeros_dobles.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    long long a, b, c;
+    long long mayor, menor, intermedio, diferencia;
+    cout << "ingrese el primer numero:" << endl;
+    cin >> a;
+    cout << "ingrese el segundo numero:" << endl;
+    cin >> b;
+    cout << "ingrese el tercer numero:" << endl;
+    cin >> c;
+    if (a <= 0 || b <= 0 || c <= 0) {
+        cout << "no se puede realizar el proceso. los numeros deben ser positivos." << endl;
+    } else {
+        if (a == b || a == c || b == c) {
+            cout << "no se puede realizar el proceso. los numeros deben ser diferentes." << endl;
+            a = 0;
+            b = 0;
+            c = 0;
+        } else {
+            if (a > b) {
+                if (a > c) {
+                    mayor = a;
+                } else {
+                    mayor = c;
+                }
+            } else {
+                if (b > c) {
+                    mayor = b;
+                } else {
+                    mayor = c;
+                }
+            }
+            if (a < b) {
+                if (a < c) {
+                    menor = a;
+                } else {
+                    menor = c;
+                }
+            } else {
+                if (b < c) {
+                    menor = b;
+                } else {
+                    menor = c;
+                }
+            }
+            if (a != mayor && a != menor) {
+                intermedio = a;
+            } else {
+                if (b != mayor && b != menor) {
+                    intermedio = b;
+                } else {
+                    intermedio = c;
+                }
+            }
+            diferencia = mayor - menor;
+            cout << "numero mayor: " << mayor << endl;
+            cout << "numero intermedio: " << intermedio << endl;
+            cout << "numero menor: " << menor << endl;
+            cout << "diferencia: " << diferencia << endl;
+        }
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+## Equivalencias en C++
+
+`Si` se expresa con `if`; `SiNo`, con `else`. `Y` se escribe `&&`, `O` se escribe `||`, la igualdad se compara con `==` y la desigualdad con `!=`. La asignación `<-` se convierte en `=`.
+
+Se usa `long long` para los enteros. Como los datos válidos son positivos, restar el menor al mayor se mantiene dentro del rango del tipo.
+
+## Diagramas de flujo
+
+### Selectivas simples
+
+Este diagrama corresponde al algoritmo original compartido: muestra los errores y después continúa con las comparaciones. El código de esta página añade el bloque de datos válidos explicado en el análisis; ese bloque todavía no está representado en la imagen.
+
+<DiagramaFlujo src="/material/sis100/semana2/analisis_tres_numeros_simples.svg" alt="Diagrama original de análisis de tres números con selectivas simples y comparaciones independientes, sin el bloque adicional que impide calcular con datos inválidos." />
+
+### Selectivas dobles
+
+<DiagramaFlujo src="/material/sis100/semana2/analisis_tres_numeros_dobles.svg" alt="Diagrama de análisis de tres números con selectivas dobles: validaciones anidadas y selección del mayor, menor e intermedio." />
+
+<a href="/sis100/semana-02/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

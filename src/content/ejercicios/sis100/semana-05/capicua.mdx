@@ -1,0 +1,169 @@
+---
+titulo: "Resolución · Número capicúa"
+descripcion: "Pseudocódigo en PSeInt, programa en C++ y explicación paso a paso de la validación e inversión de un número de 3 a 6 dígitos."
+materia: "sis100"
+semana: 5
+numero: 1
+dificultad: "facil"
+tags: ["do while"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+Un número es **capicúa** cuando es igual al leerlo de izquierda a derecha y de derecha a izquierda. La estrategia consiste en validar la entrada, guardar el número original, invertir sus dígitos y comparar ambos valores.
+
+## Datos de entrada
+
+- **`n` ← Número a invertir:** un entero positivo de **3 a 6 dígitos**, validado entre `100` y `999999`, inclusive.
+
+## Datos de salida
+
+- **`original` ← Número ingresado:** copia de `n` antes de modificarlo.
+- **`inv` ← Número invertido de `n`:** se obtiene separando sus dígitos y colocándolos en orden inverso.
+- **Mensaje de resultado:** indica si el número es capicúa al comparar `original` con `inv`.
+
+## Análisis de resolución
+
+### 1. Validar el dato ingresado
+
+El número debe tener entre **3 y 6 dígitos**. Por ejemplo, si `n = 45`, tiene solo dos dígitos y es menor que `100`; por eso se vuelve a pedir. Si `n = 1000000`, tiene siete dígitos y supera `999999`, así que también se rechaza. Los negativos y el cero quedan rechazados por ser menores que `100`.
+
+La lectura se realiza con `Repetir Mientras (do while)`: primero se pide el dato y luego se evalúa `n < 100 o n > 999999`. Mientras alguna de esas condiciones sea verdadera, se solicita otro número. Solo se continúa cuando el valor está dentro del rango permitido. Se utiliza **O** porque basta con incumplir uno de los límites para rechazar el dato; con **Y** se exigiría que fuera menor que `100` y mayor que `999999` a la vez, lo cual es imposible.
+
+### 2. Guardar el número original
+
+Se asigna `original <- n` antes de dividir. Esto conserva el dato de entrada, porque durante el proceso `n` irá perdiendo dígitos hasta quedar en cero. Al final, necesitamos esa copia para compararla con el número invertido.
+
+### 3. Contar los dígitos y recuperar el número
+
+En la resolución de clase, `ctd` comienza en `0`. Se divide `n` entre `10` con `Trunc(n/10)` y se incrementa `ctd` en cada vuelta. Por ejemplo, `45872 → 4587 → 458 → 45 → 4 → 0`: se eliminaron cinco dígitos, por lo que `ctd = 5`.
+
+Este conteo utiliza `Mientras` y es auxiliar: el rango ya fue validado y `ctd` no interviene en la comparación final. Como al terminar `n` vale `0`, se recupera con `n <- original` para comenzar la inversión.
+
+### 4. Separar los dígitos y construir el invertido
+
+Tomemos `n = 45872`, un número **no capicúa**, para observar cómo cambia el orden de sus dígitos. Se conserva `original = 45872` y se inicializa `inv <- 0`. En cada vuelta de `Repetir Mientras` se realizan tres operaciones, en este orden:
+
+| Operación | ¿Qué se hace? | Ejemplo en la primera vuelta con `n = 45872` |
+| --- | --- | --- |
+| `dig <- n MOD 10` | Se obtiene el último dígito mediante el residuo de dividir entre `10`. | `45872 MOD 10 = 2` |
+| `inv <- inv*10+dig` | Se desplazan los dígitos acumulados una posición y se agrega el dígito obtenido. | `0*10+2 = 2` |
+| `n <- Trunc(n/10)` | Se elimina el último dígito mediante división entera. | `Trunc(45872/10) = 4587` |
+
+En la segunda vuelta, se obtiene `dig = 7`, el invertido pasa a ser `2*10+7 = 27` y queda `n = 458`. El proceso continúa hasta que `n = 0`, cuando ya no hay dígitos por separar.
+
+| Vuelta | `n` antes de dividir | Dígito extraído | `inv` acumulado | `n` restante |
+| --- | --- | --- | --- | --- |
+| 1 | `45872` | `2` | `2` | `4587` |
+| 2 | `4587` | `7` | `27` | `458` |
+| 3 | `458` | `8` | `278` | `45` |
+| 4 | `45` | `5` | `2785` | `4` |
+| 5 | `4` | `4` | `27854` | `0` |
+
+### 5. Comparar y mostrar los datos de salida
+
+Se muestran `original` e `inv`. En este ejemplo, `original = 45872` e `inv = 27854`. Como `45872` es diferente de `27854`, la comparación es falsa y se muestra **«El numero NO es CAPICUA»**. Si ambos valores fueran iguales, se indicaría que el número sí es capicúa.
+
+Los ceros a la izquierda no se conservan en un entero: al invertir `100`, el resultado es `1`. Como ambos valores son diferentes, no es capicúa.
+
+## Pseudocódigo y programa en C++
+
+Ambas versiones siguen el mismo orden: validar, guardar el original, contar los dígitos, recuperar el número, invertir y comparar.
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Numero_Capicua.psc" lang="text" codigo={`Algoritmo Numero_Capicua
+    Definir n, original, inv, dig, ctd Como Entero
+    Repetir
+        Escribir 'Ingrese un numero entero positivo entre 3 y 6 digitos:'
+        Leer n
+    Mientras Que n<100 o n>999999
+    ctd <- 0
+    original <- n
+    Mientras n>0 Hacer
+        n <- Trunc(n/10)
+        ctd <- ctd+1
+    FinMientras
+    inv <- 0
+    n <- original
+    Repetir
+        dig <- n MOD 10
+        inv <- inv*10+dig
+        n <- Trunc(n/10)
+    Mientras Que n<>0
+    Escribir 'Numero original: ', original
+    Escribir 'Numero invertido: ', inv
+    Si original=inv Entonces
+        Escribir 'El numero es CAPICUA'
+    SiNo
+        Escribir 'El numero NO es CAPICUA'
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="numero_capicua.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    long long n, original, inv, dig;
+    int ctd;
+
+    do {
+        cout << "Ingrese un numero entero positivo entre 3 y 6 digitos: " << endl;
+        cin >> n;
+    } while (n < 100 || n > 999999);
+
+    ctd = 0;
+    original = n;
+    while (n > 0) {
+        n = n / 10;
+        ctd = ctd + 1;
+    }
+
+    inv = 0;
+    n = original;
+    do {
+        dig = n % 10;
+        inv = inv * 10 + dig;
+        n = n / 10;
+    } while (n != 0);
+
+    cout << "Numero original: " << original << endl;
+    cout << "Numero invertido: " << inv << endl;
+    if (original == inv) {
+        cout << "El numero es CAPICUA" << endl;
+    } else {
+        cout << "El numero NO es CAPICUA" << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+### Sobre la sintaxis de PSeInt
+
+En PSeInt, utiliza un perfil que admita `Mientras Que`: esta variante **repite mientras la condición sea verdadera**, igual que `do while` en C++. Si tu perfil utiliza `Hasta Que`, debes invertir las condiciones: `Hasta Que n>=100 Y n<=999999` para validar y `Hasta Que n=0` para terminar la inversión.
+
+### Equivalencias y lectura en C++
+
+Se conservan las variables y el orden del pseudocódigo. Se lee el número con `cin >> n` y se valida el rango con `do while`.
+
+En C++, `MOD` se escribe `%`, `o` se escribe `||` y la comparación de igualdad se escribe `==`. La división entre dos enteros descarta la parte decimal, por eso `n / 10` cumple aquí el papel de `Trunc(n/10)`. Se usa `long long` para almacenar holgadamente los números del ejercicio y sus inversiones.
+
+## Diagrama de flujo
+
+El diagrama muestra la validación, el conteo auxiliar, la inversión y la comparación final del pseudocódigo.
+
+<DiagramaFlujo src="/material/sis100/semana5/capicua.jpeg" alt="Diagrama del algoritmo Numero_Capicua: validación de 100 a 999999, conteo de dígitos, inversión con Repetir Mientras y comparación del original con el invertido." />
+
+<a href="/sis100/semana-05/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

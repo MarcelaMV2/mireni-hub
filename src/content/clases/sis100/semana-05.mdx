@@ -1,0 +1,184 @@
+---
+materia: "sis100"
+semana: 5
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+<aside class="my-6 border-l-4 border-brand bg-surface px-5 py-5 sm:px-6" aria-label="Comunicado de la clase">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">Comunicado · 16 de septiembre</p>
+  <p>¡Hola, amig@s! Hoy me reemplazará el auxiliar <strong>Freddy Valencia</strong>. Mantendremos la misma metodología: él explicará el <strong>ejercicio 1</strong> y ustedes resolverán el <strong>ejercicio 2</strong>.</p>
+  <p>Para ganar puntos, presenten los ejercicios funcionando y, en una hojita, los <strong>datos de entrada, salida y el análisis</strong>.</p>
+  <p><strong>¡Mucho éxito en su parcial de mañana!</strong></p>
+</aside>
+
+## Ejercicio 1 · Determinar si un número es capicúa
+
+<Enunciado>
+Desarrolle un algoritmo y codifique su programa en **C++** para leer un número entero positivo entre **3 y 6 dígitos**. El programa deberá invertir el número ingresado utilizando la separación de sus dígitos y comparar el número original con el número invertido para determinar si es un número capicúa.
+
+Para el desarrollo del algoritmo deberá utilizar la estructura repetitiva **Repetir Mientras (`do while`)** para separar los dígitos del número, generar el número invertido y también deberá utilizar esta estructura para validar que el número ingresado cumpla con la cantidad de dígitos solicitada.
+</Enunciado>
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Número capicúa | Número: `12321` | Número invertido: `12321`. El número ingresado es capicúa. |
+| Número no capicúa | Número: `45872` | Número invertido: `27854`. El número ingresado no es capicúa. |
+| Límite de 3 dígitos | Número: `100` | Número invertido: `1`. El número ingresado no es capicúa. |
+| Límite de 6 dígitos | Número: `999999` | Número invertido: `999999`. El número ingresado es capicúa. |
+| Número negativo | Número: `-121` | Dato inválido. Debe ser positivo y tener entre 3 y 6 dígitos. Solicitar nuevamente. |
+| Cero | Número: `0` | Dato inválido. Debe ser positivo y tener entre 3 y 6 dígitos. Solicitar nuevamente. |
+| Menos de 3 dígitos | Número: `45` | Dato inválido. Debe tener entre 3 y 6 dígitos. Solicitar nuevamente. |
+| Más de 6 dígitos | Número: `1000000` | Dato inválido. Debe tener entre 3 y 6 dígitos. Solicitar nuevamente. |
+
+<a href="/sis100/semana-05/capicua/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Serie de múltiplos elevados al cubo con bandera
+
+<Enunciado>
+Desarrolle un algoritmo y codifique su programa en **C++** para leer dos números enteros positivos **`N`** y **`P`**. El programa deberá generar, mostrar y calcular una operación alternada de **suma y resta** de los cubos de los primeros **`N`** números enteros positivos que sean múltiplos de **`P`**.
+
+La operación deberá iniciar con la suma utilizando una **bandera de control con los valores `"+"` y `"-"`**. Después de procesar cada término, la bandera deberá cambiar de signo.
+
+Para el desarrollo del algoritmo deberá utilizar la estructura repetitiva **Repetir Mientras (`do while`)** para la generación de los múltiplos y también deberá utilizar esta estructura para validar que los datos ingresados sean valores positivos.
+</Enunciado>
+
+### Orientaciones
+
+- Valida con `do while` que tanto `N` como `P` sean enteros **mayores que cero**.
+- Si cualquiera de los datos es cero o negativo, muestra un mensaje de error y vuelve a solicitar ese dato hasta que sea válido. Genera la serie solo cuando ambos sean válidos.
+- Genera los primeros `N` múltiplos positivos de `P`: `P`, `2 × P`, `3 × P`, hasta `N × P`.
+- Inicializa el resultado en `0` y la bandera en `"+"` para comenzar sumando.
+- Utiliza `do while` para mostrar cada múltiplo y sumar o restar su cubo según el valor de la bandera.
+- Después de procesar cada término, cambia la bandera: de `"+"` a `"-"` o de `"-"` a `"+"`.
+- Los datos de entrada deben ser positivos; el resultado final sí puede ser negativo.
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos | Resultado |
+| --- | --- | --- |
+| Seis múltiplos de 5 | `N = 6`, `P = 5` | Múltiplos: `5, 10, 15, 20, 25, 30`. Operación: `+5³ - 10³ + 15³ - 20³ + 25³ - 30³`. Resultado final: `-16875`. |
+| Tres múltiplos de 2 | `N = 3`, `P = 2` | Múltiplos: `2, 4, 6`. Operación: `+2³ - 4³ + 6³`. Resultado final: `160`. |
+| Un solo múltiplo | `N = 1`, `P = 4` | Múltiplo: `4`. Operación: `+4³`. Resultado final: `64`. |
+| Cantidad igual a cero | `N = 0`, `P = 3` | `N` debe ser mayor que cero. Solicitar `N` nuevamente. |
+| Cantidad negativa | `N = -5`, `P = 3` | `N` debe ser mayor que cero. Solicitar `N` nuevamente. |
+| Base igual a cero | `N = 5`, `P = 0` | `P` debe ser mayor que cero. Solicitar `P` nuevamente. |
+| Base negativa | `N = 5`, `P = -3` | `P` debe ser mayor que cero. Solicitar `P` nuevamente. |
+
+### Aplicación de la bandera para `N = 6` y `P = 5`
+
+| Término | Múltiplo | Cubo | Bandera | Resultado acumulado |
+| --- | --- | --- | --- | --- |
+| `1` | `5` | `5³ = 125` | `+` | `0 + 125 = 125` |
+| `2` | `10` | `10³ = 1000` | `-` | `125 - 1000 = -875` |
+| `3` | `15` | `15³ = 3375` | `+` | `-875 + 3375 = 2500` |
+| `4` | `20` | `20³ = 8000` | `-` | `2500 - 8000 = -5500` |
+| `5` | `25` | `25³ = 15625` | `+` | `-5500 + 15625 = 10125` |
+| `6` | `30` | `30³ = 27000` | `-` | `10125 - 27000 = -16875` |
+
+La operación completa es `125 - 1000 + 3375 - 8000 + 15625 - 27000`.
+
+**Resultado final: `-16875`.**
+
+<details class="my-6 border border-default rounded-md overflow-hidden">
+<summary class="cursor-pointer bg-primary text-canvas px-5 py-3 font-mono text-sm uppercase tracking-widest focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver ejemplo de bandera
+</summary>
+<div class="p-5 sm:p-6">
+
+### ¿Qué es una bandera?
+
+Una **bandera** es una variable que guarda un estado, como un interruptor: **`0` significa apagado y `1` significa encendido**. Su valor permite decidir qué acción realizar. No cuenta términos ni acumula resultados.
+
+En este ejemplo llamaremos `band` a la bandera y elegiremos esta regla: **si `band = 0`, sumamos; si `band = 1`, restamos**. Esa relación la definimos nosotros: el cero y el uno no suman ni restan por sí solos.
+
+### Ejemplo sencillo: sumar y restar del 1 al 4
+
+Queremos calcular `+1 - 2 + 3 - 4`. Comenzamos con `resultado = 0` y `band = 0`. En cada vuelta usamos el estado actual y **después lo cambiamos** para preparar la siguiente operación.
+
+| Término | `band` al comenzar | Operación | Resultado acumulado | `band` para la siguiente vuelta |
+| --- | --- | --- | --- | --- |
+| `1` | `0` (apagado) | `0 + 1` | `1` | `1` (encendido) |
+| `2` | `1` (encendido) | `1 - 2` | `-1` | `0` (apagado) |
+| `3` | `0` (apagado) | `-1 + 3` | `2` | `1` (encendido) |
+| `4` | `1` (encendido) | `2 - 4` | `-2` | `0` (apagado) |
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="bandera-pseint">
+<h3 id="bandera-pseint">PSeInt</h3>
+
+<Codigo archivo="ejemplo_bandera.psc" lang="text" codigo={`Algoritmo Ejemplo_Bandera
+    Definir i, resultado, band Como Entero
+    i <- 1
+    resultado <- 0
+    band <- 0
+    Repetir
+        Si band = 0 Entonces
+            resultado <- resultado + i
+            band <- 1
+        SiNo
+            resultado <- resultado - i
+            band <- 0
+        FinSi
+        i <- i + 1
+    Mientras Que i <= 4
+    Escribir "Resultado final: ", resultado
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="bandera-cpp">
+<h3 id="bandera-cpp">C++</h3>
+
+<Codigo archivo="ejemplo_bandera.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    int i = 1;
+    int resultado = 0;
+    int band = 0;
+
+    do {
+        if (band == 0) {
+            resultado = resultado + i;
+            band = 1;
+        } else {
+            resultado = resultado - i;
+            band = 0;
+        }
+        i = i + 1;
+    } while (i <= 4);
+
+    cout << "Resultado final: " << resultado << endl;
+    return 0;
+}`} />
+
+</section>
+</div>
+
+El resultado es **`-2`**. La bandera sigue la secuencia **`0 → 1 → 0 → 1 → 0`**: se enciende y se apaga después de cada operación. En C++, `int band = 0` crea la bandera apagada; `band == 0` compara su estado y `band = 1` cambia su valor.
+
+El `do while` controla cuántas veces repetimos. El `if / else` elige entre sumar y restar según la bandera. Se usa una sola decisión con dos ramas: así, cambiar el estado dentro de una rama no ejecuta también la otra en la misma vuelta.
+
+Si no cambias la bandera, siempre harás la misma operación. Si la cambias antes de usarla, comenzarás restando aunque la hayas inicializado en `0`.
+
+### Aplícalo al ejercicio 2
+
+En el ejemplo sumamos o restamos `i`. En tu ejercicio, debes sumar o restar **el cubo del múltiplo generado**. La lógica es la misma: en este ejemplo `0` cumple el papel del signo `"+"` del enunciado, y `1` el del signo `"-"`. Realiza `N` vueltas, después de validar que `N` y `P` sean positivos.
+
+</div>
+</details>
+
+<div class="mt-6 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">¡Tu turno!</p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">La resolución la construyes tú</p>
+  <p class="mx-auto mt-3 max-w-[60ch] text-sm text-secondary">Ya tienes el ejemplo de la bandera. Ahora diseña tu algoritmo, valida los datos y alterna la suma y la resta de los cubos. ¡Ponlo a prueba!</p>
+  <p class="mx-auto mt-3 max-w-[60ch] text-sm text-secondary">Para ganar puntos, presenta los ejercicios funcionando y, en una hojita, los datos de entrada, salida y tu análisis.</p>
+</div>

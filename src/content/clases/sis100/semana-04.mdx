@@ -57,62 +57,27 @@ Escribir "Suma total: ", suma`} />
 <Enunciado>
 Desarrolle un algoritmo que permita leer un número entero positivo por teclado y determinar la cantidad de dígitos que posee, la suma de todos sus dígitos, la suma de los dígitos pares y la suma de los dígitos impares.
 
-El número debe tener entre **5 y 10 dígitos**, inclusive. Si el valor ingresado no cumple este rango, se debe informar que es inválido y solicitarlo nuevamente (o finalizar indicando el error).
+El número debe tener entre **5 y 10 dígitos**, inclusive. Si el valor ingresado no cumple este rango, se debe informar que es inválido y solicitarlo nuevamente hasta que cumpla el rango solicitado.
 
 No se deben utilizar cadenas de caracteres. La extracción y el procesamiento de los dígitos deben realizarse únicamente con división entera y residuo.
 </Enunciado>
 
-### Ejemplo
+### Ejemplos de funcionamiento
 
-Para el número `5827391640`, el algoritmo deberá mostrar:
-
-```text
-Cantidad de dígitos: 10
-Suma total de dígitos: 45
-Suma de dígitos pares: 20
-Suma de dígitos impares: 25
-```
-
-### Orientaciones
-
-- Valida que el número sea positivo y esté entre `10000` y `9999999999`.
-- En cada repetición, obtiene el último dígito con `MOD 10`.
-- Acumula la suma total y, según el residuo del dígito al dividir entre 2, acumula la suma par o impar.
-- Elimina el último dígito mediante división entera entre 10.
-- Incrementa la cantidad de dígitos en cada iteración.
-
-### Cómo extraer los dígitos
-
-Tomemos el número sencillo `5827`. El residuo al dividir entre 10 siempre nos entrega el último dígito:
-
-| Operación | Qué hacemos | Resultado |
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
 | --- | --- | --- |
-| `5827 MOD 10` | Obtenemos el último dígito. | `7` (primer dígito procesado) |
-| `5827 / 10` | Eliminamos el `7`, porque ya lo obtuvimos. Usamos división entera. | `582` (resto del número) |
-| `582 MOD 10` | Obtenemos el último dígito del número restante. | `2` |
-| `582 / 10` | Eliminamos el `2`, porque ya fue procesado. | `58` |
-| `58 MOD 10` | Obtenemos el siguiente dígito. | `8` |
-| `58 / 10` | Eliminamos el `8`, porque ya fue procesado. | `5` |
-| `5 MOD 10` | Obtenemos el último dígito que queda. | `5` |
-| `5 / 10` | Eliminamos el `5`; ya no quedan dígitos. | `0` (termina el ciclo) |
+| Dígitos pares e impares | Número: `5827391640` | Cantidad: `10`. Suma total: `45`. Suma de pares: `20`. Suma de impares: `25`. |
+| Número de 5 dígitos | Número: `58273` | Cantidad: `5`. Suma total: `25`. Suma de pares: `10`. Suma de impares: `15`. |
+| Límite de 5 dígitos | Número: `10000` | Cantidad: `5`. Suma total: `1`. Suma de pares: `0`. Suma de impares: `1`. |
+| Límite de 10 dígitos | Número: `9999999999` | Cantidad: `10`. Suma total: `90`. Suma de pares: `0`. Suma de impares: `90`. |
+| Número negativo | Número: `-58273` | Dato inválido. Debe ser positivo y tener entre 5 y 10 dígitos. Solicitar nuevamente. |
+| Cero | Número: `0` | Dato inválido. Debe ser positivo y tener entre 5 y 10 dígitos. Solicitar nuevamente. |
+| Menos de 5 dígitos | Número: `45` | Dato inválido. Debe tener entre 5 y 10 dígitos. Solicitar nuevamente. |
+| Más de 10 dígitos | Número: `10000000000` | Dato inválido. Debe tener entre 5 y 10 dígitos. Solicitar nuevamente. |
 
-En la primera vuelta obtenemos el `7` con `MOD 10`. Como ese dígito ya fue leído y guardado, lo quitamos con la división entera: `5827 / 10 = 582`. Así nos queda solamente el resto del número, que debemos seguir separando. Luego repetimos exactamente lo mismo: obtenemos el `2`, lo quitamos y queda `58`; después obtenemos el `8`, lo quitamos y queda `5`, hasta que ya no queden dígitos.
-
-En cada vuelta contamos el dígito y actualizamos las sumas. Para saber si es par o impar usamos `MOD 2`: `7 MOD 2 = 1`, por eso 7 es impar; `8 MOD 2 = 0`, por eso 8 es par. El ciclo termina cuando la división entera deja `numero` en cero.
-
-### Esquema del ciclo en PSeInt
-
-<Codigo archivo="analisis_digitos.psc" lang="text" codigo={`Mientras numero > 0 Hacer
-  digito <- numero MOD 10
-  numero <- trunc(numero / 10)
-FinMientras`} />
-
-<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
-  <p class="font-mono text-xs uppercase tracking-widest text-brand">Tu turno</p>
-  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Construye el algoritmo</p>
-  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">Completa la validación y los acumuladores, prueba con distintos números y verifica cada resultado.</p>
-</div>
-
+<a href="/sis100/semana-04/analisis-digitos/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>
 
 <hr class="my-16 border-default" />
 
@@ -132,24 +97,16 @@ Para `N = 8`, la serie generada es `2 5 10 17 26 37 50 65`, con una suma total d
 En la resolución se debe utilizar únicamente la estructura repetitiva **MIENTRAS**. No se deben utilizar vectores ni arreglos.
 </Enunciado>
 
-### Orientaciones
+### Ejemplos de funcionamiento
 
-- Solicita una cantidad `N` positiva de términos.
-- Observa que el término en la posición `i` puede obtenerse como `i² + 1`, comenzando con `i = 1`.
-- En cada repetición muestra el término, lo acumula en la suma y actualiza el contador de pares o impares.
-- Incrementa `i` hasta generar exactamente `N` términos.
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Ocho términos | `n = 8` | Serie: `2, 5, 10, 17, 26, 37, 50, 65`. Suma total: `212`. Pares: `4`. Impares: `4`. |
+| Tres términos | `n = 3` | Serie: `2, 5, 10`. Suma total: `17`. Pares: `2`. Impares: `1`. |
+| Un término | `n = 1` | Serie: `2`. Suma total: `2`. Pares: `1`. Impares: `0`. |
+| Cero | `n = 0` | Dato inválido. La cantidad debe ser positiva. Solicitar nuevamente. |
+| Cantidad negativa | `n = -3` | Dato inválido. La cantidad debe ser positiva. Solicitar nuevamente. |
 
-### Resultado esperado para `N = 8`
-
-```text
-Serie: 2 5 10 17 26 37 50 65
-Suma total = 212
-Cantidad de pares = 4
-Cantidad de impares = 4
-```
-
-<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
-  <p class="font-mono text-xs uppercase tracking-widest text-brand">Tu turno</p>
-  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Resuelve con `Mientras`</p>
-  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">Construye el algoritmo sin almacenar la serie: procesa cada término, actualiza los acumuladores y comprueba los resultados.</p>
-</div>
+<a href="/sis100/semana-04/serie-numerica/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>

@@ -96,7 +96,7 @@ El beneficio se calcula mediante la expresión:
 
 ### Consideraciones antes de programar
 
-- El saldo inicial no puede ser negativo.
+- El saldo inicial debe ser mayor que cero.
 - Los montos de depósito y retiro deben ser mayores que cero.
 - Un retiro solo puede realizarse si el monto solicitado no supera el saldo.
 - La cantidad de meses debe ser mayor que cero.
@@ -104,36 +104,23 @@ El beneficio se calcula mediante la expresión:
 
 ### Ejemplos de funcionamiento
 
-| Operación | Datos | Resultado |
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
 | --- | --- | --- |
-| Consultar | Saldo: `1500`, opción: `1` | Saldo disponible: `Bs 1500` |
-| Depositar | Saldo: `1500`, opción: `2`, monto: `300` | Nuevo saldo: `Bs 1800` |
-| Retirar | Saldo: `1500`, opción: `3`, monto: `400` | Nuevo saldo: `Bs 1100` |
-| Beneficio | Saldo: `1500`, opción: `4`, meses: `6` | Beneficio: `Bs 37.50` |
+| Consultar | `saldo = 1500`, `opc = 1` | Saldo disponible: `Bs 1500`. |
+| Depositar | `saldo = 1500`, `opc = 2`, `monto = 300` | Nuevo saldo: `Bs 1800`. |
+| Retirar | `saldo = 1500`, `opc = 3`, `monto = 400` | Nuevo saldo: `Bs 1100`. |
+| Retirar todo | `saldo = 1500`, `opc = 3`, `monto = 1500` | Nuevo saldo: `Bs 0`. |
+| Saldo insuficiente | `saldo = 1500`, `opc = 3`, `monto = 1800` | Retiro rechazado. Se conserva el saldo: `Bs 1500`. |
+| Beneficio | `saldo = 1500`, `opc = 4`, `meses = 6` | Beneficio generado: `Bs 37.50`. |
+| Saldo inicial inválido | `saldo = 0` o `saldo = -50` | Se rechaza el inicio y no se muestra el menú. |
+| Depósito inválido | `saldo = 1500`, `opc = 2`, `monto = 0` o negativo | No se puede realizar el depósito. |
+| Retiro inválido | `saldo = 1500`, `opc = 3`, `monto = 0` o negativo | No se puede realizar el retiro. |
+| Meses inválidos | `saldo = 1500`, `opc = 4`, `meses = 0` o negativo | No se puede calcular el beneficio. |
+| Opción inexistente | `saldo = 1500`, `opc = 9` | La opción no existe. |
 
-### ¿Cómo trabaja la estructura `Segun` en este ejercicio?
-
-La variable `opcion` se evalúa una sola vez. Si contiene `1`, se consulta el
-saldo; si contiene `2`, se ejecuta el depósito; con `3`, se procesa el retiro;
-y con `4`, se calcula el beneficio. Cualquier otro valor llega a
-`De Otro Modo`, evitando encadenar numerosos bloques `Si ... SiNo` para decidir
-qué operación realizar.
-
-### Solución en PSeInt
-
-<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
-  <p class="font-mono text-xs uppercase tracking-widest text-brand">
-    Tu turno
-  </p>
-  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">
-    La solución la estás construyendo tú
-  </p>
-  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">
-    Cada caso que analizas y cada decisión que escribes te acerca al algoritmo
-    completo. Confía en tu razonamiento y construye tu propia versión con
-    <code>Segun ... Hacer</code>. ¡Tú puedes!
-  </p>
-</div>
+<a href="/sis100/semana-03/sistema-bancario/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>
 
 <hr class="my-16 border-default" />
 
@@ -199,25 +186,20 @@ deberá mostrar un mensaje indicando que la selección no es válida.
   </div>
 </div>
 
-### ¿Cómo trabaja la estructura `Segun` en este ejercicio?
+### Ejemplos de funcionamiento
 
-La opción elegida determina qué medidas debe solicitar el programa y qué
-fórmulas debe aplicar. El caso `1` calcula el cuadrado; el `2`, el rectángulo;
-el `3`, el triángulo; y el `4`, el círculo. Cualquier otro valor se controla con
-`De Otro Modo` para informar que la selección no es válida.
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Cuadrado | `opcion = 1`, `lado = 4` | Área: `16`. Perímetro: `16`. |
+| Rectángulo | `opcion = 2`, `base = 5`, `altura = 3` | Área: `15`. Perímetro: `16`. |
+| Triángulo | `opcion = 3`, `base = 3`, `altura = 4`, lados: `3`, `4`, `5` | Área: `6`. Perímetro: `12`. |
+| Círculo | `opcion = 4`, `radio = 2` | Área: aproximadamente `12.57`. Circunferencia: aproximadamente `12.57`. |
+| Lado inválido | `opcion = 1`, `lado = 0` o negativo | No se puede calcular. El lado debe ser positivo. |
+| Altura inválida | `opcion = 2`, `base = 5`, `altura = 0` | No se puede calcular. Los valores deben ser positivos. |
+| Lado del triángulo inválido | `opcion = 3`, `base = 3`, `altura = 4`, lados: `3`, `0`, `5` | No se puede calcular. Todos los valores deben ser positivos. |
+| Radio inválido | `opcion = 4`, `radio = -2` | No se puede calcular. El radio debe ser positivo. |
+| Opción inexistente | `opcion = 9` | La opción seleccionada no existe. |
 
-### Solución en PSeInt
-
-<div class="mt-5 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
-  <p class="font-mono text-xs uppercase tracking-widest text-brand">
-    Tu turno
-  </p>
-  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">
-    La solución la estás construyendo tú
-  </p>
-  <p class="mx-auto mt-2 max-w-[48ch] text-sm text-secondary">
-    Ya tienes las figuras y sus fórmulas. Ahora transforma cada opción en un
-    caso de <code>Segun ... Hacer</code>, prueba tus resultados y mejora tu
-    algoritmo paso a paso. ¡Confía en lo que estás construyendo!
-  </p>
-</div>
+<a href="/sis100/semana-03/figuras-geometricas/" class="inline-flex items-center justify-center border-2 border-brand rounded-md px-5 py-3 font-mono text-sm font-bold transition-colors hover:bg-surface focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Ver resolución
+</a>

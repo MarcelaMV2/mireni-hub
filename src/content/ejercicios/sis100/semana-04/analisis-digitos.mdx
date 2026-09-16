@@ -1,0 +1,183 @@
+---
+titulo: "Resolución · Análisis de los dígitos"
+descripcion: "Validación, conteo y suma de dígitos con Mientras: explicación, PSeInt, C++ y diagrama de flujo."
+materia: "sis100"
+semana: 4
+numero: 1
+dificultad: "facil"
+tags: ["Mientras"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import DiagramaFlujo from '../../../../componentes/mdx/DiagramaFlujo.astro';
+
+Analizamos un número separando sus dígitos de derecha a izquierda. En cada vuelta contamos el dígito, lo sumamos al total y lo clasificamos como par o impar.
+
+## Datos de entrada
+
+- **`n` ← Número a analizar:** entero positivo de **5 a 10 dígitos**, entre `10000` y `9999999999`, inclusive.
+
+## Datos de salida
+
+- **`ctd` ← Cantidad de dígitos** del número ingresado.
+- **`suma` ← Suma de todos los dígitos.**
+- **`supa` ← Suma de los dígitos pares.**
+- **`suim` ← Suma de los dígitos impares.**
+
+`dig` es una variable auxiliar: guarda el dígito que se está procesando. `supa` y `suim` acumulan los valores de los dígitos, no la cantidad de pares e impares.
+
+## Análisis de resolución
+
+### 1. Validar el dato ingresado
+
+El menor número positivo de 5 dígitos es `10000` y el mayor de 10 dígitos es `9999999999`. El intervalo también garantiza que el dato sea positivo.
+
+Primero se lee `n`. Después, `Mientras n<10000 O n>9999999999` comprueba si está fuera del rango. Si es inválido, se muestra el mensaje y se vuelve a leer **dentro del ciclo**. Sin esa nueva lectura, el valor no cambiaría y el ciclo no terminaría.
+
+Se usa **O** porque basta con incumplir uno de los límites para rechazar el dato. Cuando la condición es falsa, el número está dentro del rango y se puede procesar.
+
+| Dato ingresado | ¿Se vuelve a pedir? | Motivo |
+| --- | --- | --- |
+| `45` o `9999` | Sí | Tienen menos de 5 dígitos. |
+| `0` o `-58273` | Sí | No son positivos y son menores que `10000`. |
+| `10000000000` | Sí | Tiene 11 dígitos. |
+| `10000` | No | Es el límite inferior permitido. |
+| `9999999999` | No | Es el límite superior permitido. |
+
+### 2. Inicializar el contador y los acumuladores
+
+Se asigna `0` a `ctd`, `suma`, `supa` y `suim`, porque todavía no se ha procesado ningún dígito. `ctd` aumenta de uno en uno; las otras variables aumentan según el valor del dígito obtenido.
+
+### 3. Separar el último dígito
+
+Usaremos `n = 58273`, un número válido de cinco dígitos. Con `dig <- n MOD 10` obtenemos `3`, porque el residuo de dividir `58273` entre `10` es `3`.
+
+La extracción se realiza al comenzar cada vuelta de `Mientras n>0`. El número se procesa con operaciones matemáticas, sin convertirlo en una cadena.
+
+### 4. Contar, sumar y clasificar
+
+Se ejecuta `ctd <- ctd+1` para contar el dígito y `suma <- suma+dig` para incorporarlo al total.
+
+Luego se evalúa `dig MOD 2=0`. Si el residuo es cero, el dígito es par y se suma a `supa`; en caso contrario, se suma a `suim`. Por ejemplo, `3 MOD 2 = 1`, así que el primer dígito se suma a `suim`. El dígito `0` también es par: cuenta como un dígito, aunque sumar su valor no cambia los acumuladores.
+
+### 5. Eliminar el dígito procesado
+
+`n <- Trunc(n/10)` descarta el último dígito: `Trunc(58273/10) = 5827`. Así la próxima vuelta obtiene el `7`, no vuelve a procesar el `3`.
+
+Repetimos hasta que `n` queda en `0`. Esta actualización hace que el ciclo avance y termine. No necesitamos guardar el número original porque las salidas de este ejercicio son el contador y las sumas.
+
+### 6. Seguir el proceso y mostrar los resultados
+
+Los valores de los acumuladores en la tabla son los totales después de procesar cada dígito.
+
+| Vuelta | `n` antes | `dig` | `ctd` | `suma` | `supa` | `suim` | `n` restante |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | `58273` | `3` | `1` | `3` | `0` | `3` | `5827` |
+| 2 | `5827` | `7` | `2` | `10` | `0` | `10` | `582` |
+| 3 | `582` | `2` | `3` | `12` | `2` | `10` | `58` |
+| 4 | `58` | `8` | `4` | `20` | `10` | `10` | `5` |
+| 5 | `5` | `5` | `5` | `25` | `10` | `15` | `0` |
+
+Al terminar, se muestran **5 dígitos**, **suma total 25**, **suma de pares 10** y **suma de impares 15**. Como comprobación, `supa + suim = suma`: `10 + 15 = 25`.
+
+Para el ejemplo del enunciado, `5827391640`, las salidas son `ctd = 10`, `suma = 45`, `supa = 20` y `suim = 25`.
+
+## Pseudocódigo y programa en C++
+
+Ambas versiones validan y procesan los dígitos con la estructura `Mientras` (`while`).
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Analisis_Digitos.psc" lang="text" codigo={`Algoritmo Analisis_Digitos
+    Definir n, dig,ctd,suma,supa,suim Como Entero
+    Escribir 'Ingrese un numero entero positivo entre 5 y 10 digitos:'
+    Leer n
+    Mientras n<10000 O n>9999999999 Hacer
+        Escribir 'Numero invalido'
+        Escribir 'Ingrese nuevamente un numero entre 5 y 10 digitos:'
+        Leer n
+    FinMientras
+    ctd <- 0
+    suma <- 0
+    supa <- 0
+    suim <- 0
+    Mientras n>0 Hacer
+        dig <- n MOD 10
+        ctd <- ctd+1
+        suma <- suma+dig
+        Si dig MOD 2=0 Entonces
+            supa <- supa+dig
+        SiNo
+            suim <- suim+dig
+        FinSi
+        n <- Trunc(n/10)
+    FinMientras
+    Escribir 'Cantidad de digitos: ', ctd
+    Escribir 'Suma total de digitos: ', suma
+    Escribir 'Suma de digitos pares: ', supa
+    Escribir 'Suma de digitos impares: ', suim
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="analisis_digitos.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    long long n;
+    int dig, ctd, suma, supa, suim;
+
+    cout << "Ingrese un numero entero positivo entre 5 y 10 digitos:" << endl;
+    cin >> n;
+    while (n < 10000 || n > 9999999999LL) {
+        cout << "Numero invalido" << endl;
+        cout << "Ingrese nuevamente un numero entre 5 y 10 digitos:" << endl;
+        cin >> n;
+    }
+
+    ctd = 0;
+    suma = 0;
+    supa = 0;
+    suim = 0;
+    while (n > 0) {
+        dig = n % 10;
+        ctd = ctd + 1;
+        suma = suma + dig;
+        if (dig % 2 == 0) {
+            supa = supa + dig;
+        } else {
+            suim = suim + dig;
+        }
+        n = n / 10;
+    }
+
+    cout << "Cantidad de digitos: " << ctd << endl;
+    cout << "Suma total de digitos: " << suma << endl;
+    cout << "Suma de digitos pares: " << supa << endl;
+    cout << "Suma de digitos impares: " << suim << endl;
+    return 0;
+}`} />
+
+</section>
+</div>
+
+### Equivalencias y lectura en C++
+
+`Mientras` se escribe `while`, `MOD` se escribe `%`, `O` se escribe `||` y la comparación de igualdad se escribe `==`. Como `n` es entero, `n / 10` descarta la parte decimal y equivale aquí a `Trunc(n/10)`.
+
+**`n` debe ser `long long`:** el máximo permitido, `9999999999`, supera la capacidad de un entero con signo de 32 bits. El sufijo `LL` indica que el límite también es de tipo `long long`. Los contadores y las sumas pueden ser `int`: hay como máximo 10 dígitos y su suma no supera `90`.
+
+Se lee el número con `cin >> n` y se valida la condición del ejercicio con `while`.
+
+## Diagrama de flujo
+
+<DiagramaFlujo src="/material/sis100/semana4/sumadigitos.svg" alt="Diagrama del algoritmo Analisis_Digitos: validación de 5 a 10 dígitos, extracción con MOD 10, conteo, sumas de pares e impares y resultados." />
+
+<a href="/sis100/semana-04/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

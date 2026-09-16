@@ -1,0 +1,245 @@
+---
+titulo: "Resolución · Sistema bancario"
+descripcion: "Variables, validaciones con Si y selección de operaciones con Segun en PSeInt y switch en C++."
+materia: "sis100"
+semana: 3
+numero: 1
+dificultad: "facil"
+tags: ["Segun"]
+publicado: true
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+
+El programa permite realizar **una operación** sobre el saldo ingresado. Primero valida el saldo; después selecciona una opción y valida los datos que esa operación necesita.
+
+## Datos de entrada
+
+| Variable | Tipo en PSeInt | ¿Qué representa? | ¿Cuándo se lee y cómo se valida? |
+| --- | --- | --- | --- |
+| `saldo` | Real | Dinero disponible al comenzar. | Se lee al inicio. Solo se permite continuar si `saldo > 0`. |
+| `opc` | Entero | Opción del menú: `1`, `2`, `3` o `4`. | Se lee si el saldo es válido. `Segun` selecciona el caso; `De Otro Modo` rechaza otras opciones. |
+| `monto` | Real | Cantidad que se quiere depositar o retirar. | Solo se lee en los casos `2` y `3`. Debe cumplir `monto > 0`; para retirar, además no debe superar `saldo`. |
+| `meses` | Real | Tiempo usado para calcular el beneficio. | Solo se lee en el caso `4`. Debe cumplir `meses > 0`. Al ser real, esta versión admite fracciones de mes, como `1.5`. |
+
+`opc` es entero porque identifica alternativas del menú. Los importes son reales porque pueden incluir decimales. Las variables se leen únicamente cuando su operación las necesita: consultar el saldo no requiere ingresar un monto ni una cantidad de meses.
+
+## Datos de salida y variables calculadas
+
+| Variable o mensaje | ¿Qué representa? | ¿Cómo se obtiene? |
+| --- | --- | --- |
+| `saldo` | Saldo disponible al consultar. | Se muestra el valor leído al inicio. |
+| `nuevosaldo` | Saldo resultante de un depósito o retiro. | `saldo + monto` al depositar; `saldo - monto` al retirar. Si no alcanza el saldo, se conserva con `nuevosaldo <- saldo`. |
+| `beneficio` | Rendimiento del periodo. | `saldo * 0.05 * (meses / 12)`. Es solo el beneficio, no el saldo más el beneficio. |
+| Mensajes de rechazo | Explican por qué no se realiza una operación. | Se muestran en las ramas `SiNo` o en `De Otro Modo`. |
+
+`nuevosaldo` y `beneficio` son de tipo real y **no se piden por teclado**: se calculan. Tampoco son acumuladores de un ciclo. Cada variable calculada recibe un valor antes de mostrarse en su rama, por lo que aquí no necesita comenzar en cero.
+
+## Análisis de resolución
+
+### 1. Validar el saldo con una selección doble
+
+`Si saldo > 0 Entonces` separa dos caminos. Con `saldo = 1500`, la condición es verdadera y se muestra el menú. Con `saldo = -50` o `saldo = 0`, es falsa y se ejecuta el `SiNo`; el menú no aparece.
+
+**El cero también se rechaza.** Se conserva el mensaje de tu pseudocódigo, «No se puede iniciar la cuenta con saldo negativo», aunque la condición realmente exige un saldo estrictamente positivo. Un mensaje más preciso sería «El saldo inicial debe ser mayor que cero».
+
+Este `Si` valida una vez: no vuelve a solicitar el saldo. Una estructura selectiva elige un camino; para repetir una lectura se necesitaría una estructura repetitiva, que esta resolución no utiliza.
+
+### 2. Seleccionar la operación con `Segun`
+
+Una vez aceptado el saldo, se lee `opc`. `Segun opc Hacer` ejecuta únicamente el caso correspondiente: `1` consulta, `2` deposita, `3` retira y `4` calcula el beneficio. Si se ingresa `9`, se ejecuta `De Otro Modo` y se muestra «La opcion no existe».
+
+El menú tampoco se repite: después del caso seleccionado, el programa termina. No se realizan varios movimientos en una misma ejecución.
+
+### 3. Consultar el saldo: caso 1
+
+Se muestra `saldo` directamente. No hace falta otra validación porque ya se comprobó antes de llegar al menú. Con `saldo = 1500`, se informa **Bs 1500**.
+
+### 4. Depositar: caso 2
+
+Se lee `monto` y se evalúa `monto > 0`. Si es verdadero, se calcula `nuevosaldo <- saldo + monto`. Con `saldo = 1500` y `monto = 300`, el resultado es **Bs 1800**.
+
+Si el monto es `0` o negativo, el `SiNo` muestra el rechazo y no se realiza la suma. Esto evita que un depósito negativo disminuya el saldo. El algoritmo guarda el resultado en `nuevosaldo`; no reasigna la variable `saldo`.
+
+### 5. Retirar: caso 3 y condiciones anidadas
+
+Primero se valida `monto > 0`. Si es falso, se rechaza el retiro; no se evalúa el cálculo del nuevo saldo. Restar un monto negativo aumentaría el saldo, por eso esta comprobación debe hacerse antes.
+
+Dentro de la rama válida se evalúa otro `Si`: `monto > saldo`. Si es verdadero, no alcanza el dinero y se mantiene `nuevosaldo <- saldo`. Si es falso, el monto es menor o igual al saldo y se calcula `nuevosaldo <- saldo - monto`.
+
+| Saldo | Monto solicitado | Camino elegido | Resultado |
+| --- | --- | --- | --- |
+| `1500` | `400` | Positivo y no supera el saldo. | `nuevosaldo = 1100`. |
+| `1500` | `1500` | Positivo e igual al saldo. | `nuevosaldo = 0`: se permite retirar todo. |
+| `1500` | `1800` | Positivo, pero supera el saldo. | Retiro rechazado; `nuevosaldo = 1500`. |
+| `1500` | `0` o `-100` | Falla la primera validación. | Retiro rechazado, sin restar. |
+
+Aunque el saldo **inicial** debe ser mayor que cero, el saldo **resultante** sí puede quedar en cero al retirar todo. Son condiciones distintas en momentos distintos.
+
+### 6. Calcular el beneficio: caso 4
+
+Se lee `meses`. Si `meses > 0`, se calcula `beneficio <- saldo * 0.05 * (meses / 12)`. El factor `0.05` representa el 5 % anual y dividir los meses entre `12` expresa el periodo en años.
+
+Para `saldo = 1500` y `meses = 6`, el cálculo es `1500 * 0.05 * (6 / 12) = 37.50`. Se muestra **Bs 37.50 de beneficio**. No se suma al saldo ni se calcula interés compuesto.
+
+Si `meses = 0` o es negativo, se muestra «No se puede calcular el beneficio» y no se ejecuta la fórmula.
+
+### 7. Resumen de las validaciones selectivas
+
+| Estructura | Dato que controla | Si se cumple | Si no se cumple |
+| --- | --- | --- | --- |
+| `Si saldo > 0` | Saldo inicial. | Permite entrar al menú. | Rechaza el inicio. |
+| `Segun opc` | Opción elegida. | Ejecuta uno de los casos `1` a `4`. | `De Otro Modo` informa que la opción no existe. |
+| `Si monto > 0` | Depósito o retiro. | Permite continuar con esa operación. | Rechaza el monto. |
+| `Si monto > saldo` | Disponibilidad para retirar. | Rechaza por saldo insuficiente. | Permite retirar. |
+| `Si meses > 0` | Periodo del beneficio. | Calcula el beneficio. | Rechaza el cálculo. |
+
+Observa que una condición verdadera no siempre significa «dato aceptado»: en `monto > saldo`, significa que debemos **rechazar** el retiro. Hay que leer qué pregunta la condición y qué instrucciones tiene cada rama.
+
+## Pseudocódigo y programa en C++
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Sistema_Bancario.psc" lang="text" codigo={`Algoritmo Sistema_Bancario
+    Definir opc Como Entero
+    Definir saldo, monto, meses, beneficio, nuevosaldo Como Real
+    Escribir 'Ingrese saldo inicial:'
+    Leer saldo
+    Si saldo>0 Entonces
+        Escribir '===== MENU BANCARIO ====='
+        Escribir '1. Consultar saldo'
+        Escribir '2. Depositar'
+        Escribir '3. Retirar'
+        Escribir '4. Calcular beneficio'
+        Escribir 'Seleccione una opcion:'
+        Leer opc
+        Segun opc Hacer
+            1:
+                Escribir 'Saldo disponible: Bs ', saldo
+            2:
+                Escribir 'Ingrese monto a depositar:'
+                Leer monto
+                Si monto>0 Entonces
+                    nuevosaldo <- saldo+monto
+                    Escribir 'Nuevo saldo: Bs ', nuevosaldo
+                SiNo
+                    Escribir 'No se puede realizar el deposito.'
+                FinSi
+            3:
+                Escribir 'Ingrese monto a retirar:'
+                Leer monto
+                Si monto>0 Entonces
+                    Si monto>saldo Entonces
+                        nuevosaldo <- saldo
+                        Escribir 'No se puede realizar el retiro. Saldo insuficiente.',nuevosaldo
+                    SiNo
+                        nuevosaldo <- saldo-monto
+                        Escribir 'Nuevo saldo: Bs ', nuevosaldo
+                    FinSi
+                SiNo
+                    Escribir 'No se puede realizar el retiro.'
+                FinSi
+            4:
+                Escribir 'Ingrese cantidad de meses:'
+                Leer meses
+                Si meses>0 Entonces
+                    beneficio <- saldo*0.05*(meses/12)
+                    Escribir 'Beneficio generado: Bs ', beneficio
+                SiNo
+                    Escribir 'No se puede calcular el beneficio.'
+                FinSi
+            De Otro Modo:
+                Escribir 'La opcion no existe.'
+        FinSegun
+    SiNo
+        Escribir 'No se puede iniciar la cuenta con saldo negativo.'
+    FinSi
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="sistema_bancario.cpp" lang="cpp" codigo={`#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main() {
+    int opc;
+    double saldo, monto, meses, beneficio, nuevosaldo;
+    cout << fixed << setprecision(2);
+    cout << "Ingrese saldo inicial:" << endl;
+    cin >> saldo;
+    if (saldo > 0) {
+        cout << "===== MENU BANCARIO =====" << endl;
+        cout << "1. Consultar saldo" << endl;
+        cout << "2. Depositar" << endl;
+        cout << "3. Retirar" << endl;
+        cout << "4. Calcular beneficio" << endl;
+        cout << "Seleccione una opcion:" << endl;
+        cin >> opc;
+        switch (opc) {
+            case 1:
+                cout << "Saldo disponible: Bs " << saldo << endl;
+                break;
+            case 2:
+                cout << "Ingrese monto a depositar:" << endl;
+                cin >> monto;
+                if (monto > 0) {
+                    nuevosaldo = saldo + monto;
+                    cout << "Nuevo saldo: Bs " << nuevosaldo << endl;
+                } else {
+                    cout << "No se puede realizar el deposito." << endl;
+                }
+                break;
+            case 3:
+                cout << "Ingrese monto a retirar:" << endl;
+                cin >> monto;
+                if (monto > 0) {
+                    if (monto > saldo) {
+                        nuevosaldo = saldo;
+                        cout << "No se puede realizar el retiro. Saldo insuficiente. "
+                             << nuevosaldo << endl;
+                    } else {
+                        nuevosaldo = saldo - monto;
+                        cout << "Nuevo saldo: Bs " << nuevosaldo << endl;
+                    }
+                } else {
+                    cout << "No se puede realizar el retiro." << endl;
+                }
+                break;
+            case 4:
+                cout << "Ingrese cantidad de meses:" << endl;
+                cin >> meses;
+                if (meses > 0) {
+                    beneficio = saldo * 0.05 * (meses / 12);
+                    cout << "Beneficio generado: Bs " << beneficio << endl;
+                } else {
+                    cout << "No se puede calcular el beneficio." << endl;
+                }
+                break;
+            default:
+                cout << "La opcion no existe." << endl;
+        }
+    } else {
+        cout << "No se puede iniciar la cuenta con saldo negativo." << endl;
+    }
+    return 0;
+}`} />
+
+</section>
+</div>
+
+### Equivalencias en C++
+
+`Entero` se representa con `int` y `Real` con `double`. Como `meses` es real, `meses / 12` conserva la parte decimal: para seis meses da `0.5`.
+
+`Si / SiNo` se traduce a `if / else`; `Segun` a `switch`; cada opción se escribe como `case` y `De Otro Modo` como `default`. El `break` termina el caso seleccionado para impedir que se ejecuten también los siguientes. No repite ni termina por sí mismo todo el programa.
+
+`fixed` y `setprecision(2)` muestran los importes con dos decimales.
+
+<a href="/sis100/semana-03/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>
