@@ -85,24 +85,46 @@ INSERT INTO VENDEDOR(NOMBRE,TELEFONO) VALUES('EMANUEL FLORES','12905678');`;
       <h1 class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.9rem,6vw,3.2rem)]">Resolución</h1>
     </header>
 
-    {[
-      { titulo: 'Resolución pregunta 1', imagen: 'r1.jpeg', id: 'resolucion-1' },
-      { titulo: 'Resolución ejercicio 2', imagen: 'r3.jpeg', id: 'resolucion-2' },
-    ].map(({ titulo, imagen, id }) => (
-      <section class="mt-8" aria-labelledby={id}>
-        <h2 id={id} class="font-heading uppercase text-2xl">{titulo}</h2>
-        <img
-          src={`/material/sis304/parcial1/${imagen}`}
-          alt={`${titulo} del Registro 01 de SIS304`}
-          loading="lazy"
-          class="mt-4 mx-auto block w-full h-auto"
-        />
-      </section>
-    ))}
+    <section class="mt-8" aria-labelledby="resolucion-1">
+      <h2 id="resolucion-1" class="font-heading uppercase text-2xl">Resolución pregunta 1</h2>
+      <p class="mt-3 text-secondary leading-relaxed">El ejercicio pide el <strong>MOS</strong>, que es la respuesta que deben presentar. Para llegar a él de manera clara, primero identifiquen los objetos, sus atributos y las relaciones binarias; luego elaboren el grafo de relaciones. Así podrán organizar la información del enunciado y comprender cómo se relacionan los objetos antes de construir el MOS.</p>
+      <p class="mt-3 text-secondary leading-relaxed">Si lo necesitan, también pueden elaborar el <strong>MER</strong> como apoyo. El enunciado no pide estos pasos previos como parte de la entrega, pero realizarlos puede ayudarles a construir el MOS con mayor seguridad. Si ya logran identificar correctamente los objetos, atributos y relaciones y obtener el MOS directamente, no hay problema: lo importante es que comprendan y representen bien el modelo.</p>
+      <p class="mt-3 text-secondary leading-relaxed">Primero se muestra el MOS y, a continuación, las dos imágenes de apoyo. Pueden abrir cada imagen para verla en tamaño completo.</p>
+      <div class="mt-4 grid grid-cols-3 items-start gap-2 sm:gap-4">
+        {[
+          { titulo: 'MOS', imagen: 'mos.jpeg' },
+          { titulo: 'Apoyo · r1', imagen: 'r1.jpeg' },
+          { titulo: 'Apoyo · r2', imagen: 'r2.jpeg' },
+        ].map(({ titulo, imagen }) => (
+          <figure class="min-w-0">
+            <figcaption class="mb-2 font-mono text-xs uppercase tracking-widest">{titulo}</figcaption>
+            <a href={`/material/sis304/parcial1/${imagen}`} target="_blank" rel="noopener noreferrer" aria-label={`${titulo}: abrir imagen en tamaño completo en otra pestaña`}>
+              <img
+                src={`/material/sis304/parcial1/${imagen}`}
+                alt={`${titulo} de la resolución de la pregunta 1 de SIS304`}
+                loading="lazy"
+                class="block w-full h-auto"
+              />
+            </a>
+          </figure>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-8" aria-labelledby="resolucion-2">
+      <h2 id="resolucion-2" class="font-heading uppercase text-2xl">Resolución ejercicio 2</h2>
+      <p class="mt-3 text-secondary leading-relaxed"><strong>Enunciado:</strong> Elaborar únicamente el <strong>MLGD</strong> a partir del modelo proporcionado. Ese es el resultado que deben presentar en este ejercicio.</p>
+      <img
+        src="/material/sis304/parcial1/r3.jpeg"
+        alt="Resolución ejercicio 2 del Registro 01 de SIS304"
+        loading="lazy"
+        class="mt-4 mx-auto block w-full h-auto"
+      />
+    </section>
 
     <section class="mt-8" aria-labelledby="resolucion">
       <h2 id="resolucion" class="font-heading uppercase text-2xl">Resolución ejercicio 3</h2>
-      <p class="mt-3 text-secondary leading-relaxed">Dado el modelo lógico de datos de la primera imagen, crear la base de datos BOTINES, sus tablas y relaciones mediante comandos de MySQL.</p>
+      <p class="mt-3 text-secondary leading-relaxed"><strong>Enunciado:</strong> A partir del MLGD proporcionado, <strong>crear la base de datos BOTINES en MySQL</strong>, incluyendo sus tablas y relaciones. La resolución consiste en los comandos SQL necesarios para crearla.</p>
       <Codigo archivo="botines.sql" lang="sql" codigo={codigo} />
     </section>
 
