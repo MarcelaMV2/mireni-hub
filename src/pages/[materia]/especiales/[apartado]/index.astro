@@ -111,6 +111,17 @@ const imagenesParcial = esPrimerParcial
                   loading="lazy"
                   class="mx-auto block max-h-[70vh] w-full object-contain"
                 />
+                {materia.id === 'sis304' && esPrimerParcial && indice === 0 && (
+                  <a
+                    href="/sis304/especiales/prep-primer-parcial/ejercicio-3"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="mt-4 inline-flex items-center gap-2 bg-primary text-canvas font-mono text-xs uppercase tracking-widest px-4 py-3 transition-colors hover:bg-brand"
+                  >
+                    Resolución
+                    <Icon name="tabler:arrow-up-right" width={16} height={16} />
+                  </a>
+                )}
               </div>
             </details>
           ))}
