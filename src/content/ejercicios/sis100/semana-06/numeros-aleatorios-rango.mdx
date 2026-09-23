@@ -1,0 +1,165 @@
+---
+titulo: "Ejercicio 2 · Números aleatorios en un rango"
+descripcion: "Genera N números aleatorios entre dos límites válidos y calcula sumas de pares, impares, total y promedio."
+materia: "sis100"
+semana: 6
+numero: 2
+dificultad: "media"
+tags: ["Para", "Aleatorio", "Validación", "Promedio"]
+publicado: false
+---
+
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+
+## Enunciado
+
+Desarrolla un programa que genere `n` números aleatorios dentro de un rango definido por el usuario. Se deben ingresar un límite inferior (`li`), un límite superior (`ls`) y la cantidad de números a generar (`n`).
+
+Los datos deben ser válidos:
+
+- `li` debe ser menor que `ls`.
+- `n` debe ser positivo.
+- Si un dato no cumple estas condiciones, se debe solicitar nuevamente.
+
+Luego, el programa debe mostrar cada número generado, acumular por separado la suma de pares y la suma de impares, calcular la suma total y el promedio.
+
+## Datos de entrada y salida
+
+| Tipo | Datos |
+| --- | --- |
+| Entrada | `li`, `ls` y `n` |
+| Salida | números generados, suma de pares, suma de impares, suma total y promedio |
+
+El promedio puede tener decimales; por eso se declara como `Real` en PSeInt y como `double` en C++.
+
+## Validación de datos
+
+Primero se leen los dos límites. Mientras `li >= ls`, el rango no es válido y ambos valores se piden otra vez. Por ejemplo, `li = 50` y `ls = 10` se rechazan, al igual que `li = 20` y `ls = 20`.
+
+Después se valida `n` con `Mientras n <= 0`. De esa forma no se generan cantidades negativas ni cero números. Las validaciones se realizan antes de iniciar `Para`, porque el ciclo necesita un rango y una cantidad correctos para trabajar.
+
+## Generación y acumuladores
+
+En PSeInt se usa la función **`Aleatorio(li, ls)`**, que devuelve un entero aleatorio entre ambos límites, inclusive. Cada vuelta de `Para` genera un número, lo muestra y lo suma a `sumaTotal`.
+
+Si `num MOD 2 = 0`, el número es par y se acumula en `sumaPares`; en caso contrario se acumula en `sumaImpares`. Al finalizar, el promedio se calcula con `sumaTotal / n`.
+
+## Pseudocódigo y programa en C++
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+<section class="min-w-0" aria-labelledby="codigo-pseint">
+<h3 id="codigo-pseint" class="!mt-0">PSeInt</h3>
+
+<Codigo archivo="Numeros_Aleatorios_Rango.psc" lang="text" codigo={`Algoritmo Numeros_Aleatorios_Rango
+    Definir li, ls, n, i, num, sumaPares, sumaImpares, sumaTotal Como Entero
+    Definir promedio Como Real
+
+    Escribir 'Ingrese limite inferior:'
+    Leer li
+    Escribir 'Ingrese limite superior:'
+    Leer ls
+    Mientras li>=ls Hacer
+        Escribir 'Error. El limite inferior debe ser menor al superior.'
+        Escribir 'Ingrese limite inferior:'
+        Leer li
+        Escribir 'Ingrese limite superior:'
+        Leer ls
+    FinMientras
+
+    Escribir 'Ingrese cantidad de numeros:'
+    Leer n
+    Mientras n<=0 Hacer
+        Escribir 'Error. La cantidad debe ser positiva:'
+        Leer n
+    FinMientras
+
+    sumaPares <- 0
+    sumaImpares <- 0
+    sumaTotal <- 0
+    Escribir 'Numeros generados:'
+    Para i <- 1 Hasta n Hacer
+        num <- Aleatorio(li, ls)
+        Escribir num, ' ' Sin Saltar
+        sumaTotal <- sumaTotal+num
+        Si num MOD 2=0 Entonces
+            sumaPares <- sumaPares+num
+        SiNo
+            sumaImpares <- sumaImpares+num
+        FinSi
+    FinPara
+
+    promedio <- sumaTotal/n
+    Escribir ''
+    Escribir 'Suma de pares: ', sumaPares
+    Escribir 'Suma de impares: ', sumaImpares
+    Escribir 'Suma total: ', sumaTotal
+    Escribir 'Promedio: ', promedio
+FinAlgoritmo`} />
+
+</section>
+<section class="min-w-0" aria-labelledby="codigo-cpp">
+<h3 id="codigo-cpp" class="!mt-0">C++</h3>
+
+<Codigo archivo="numeros_aleatorios_rango.cpp" lang="cpp" codigo={`#include <iostream>
+#include <random>
+using namespace std;
+
+int main() {
+    long long li, ls, n, num, sumaPares, sumaImpares, sumaTotal;
+    double promedio;
+
+    cout << "Ingrese limite inferior: ";
+    cin >> li;
+    cout << "Ingrese limite superior: ";
+    cin >> ls;
+    while (li >= ls) {
+        cout << "Error. El limite inferior debe ser menor al superior." << endl;
+        cout << "Ingrese limite inferior: ";
+        cin >> li;
+        cout << "Ingrese limite superior: ";
+        cin >> ls;
+    }
+
+    cout << "Ingrese cantidad de numeros: ";
+    cin >> n;
+    while (n <= 0) {
+        cout << "Error. La cantidad debe ser positiva: ";
+        cin >> n;
+    }
+
+    random_device semilla;
+    mt19937 generador(semilla());
+    uniform_int_distribution<long long> aleatorio(li, ls);
+    sumaPares = 0;
+    sumaImpares = 0;
+    sumaTotal = 0;
+
+    cout << "Numeros generados:" << endl;
+    for (long long i = 1; i <= n; i++) {
+        num = aleatorio(generador);
+        cout << num << " ";
+        sumaTotal = sumaTotal + num;
+        if (num % 2 == 0) {
+            sumaPares = sumaPares + num;
+        } else {
+            sumaImpares = sumaImpares + num;
+        }
+    }
+
+    promedio = static_cast<double>(sumaTotal) / n;
+    cout << endl;
+    cout << "Suma de pares: " << sumaPares << endl;
+    cout << "Suma de impares: " << sumaImpares << endl;
+    cout << "Suma total: " << sumaTotal << endl;
+    cout << "Promedio: " << promedio << endl;
+    return 0;
+}`} />
+
+</section>
+</div>
+
+En C++, `<random>` proporciona un generador y `uniform_int_distribution<long long>(li, ls)` cumple el mismo propósito que `Aleatorio(li, ls)`: producir enteros dentro del rango inclusivo. Como los resultados son aleatorios, cada ejecución puede mostrar números diferentes.
+
+<a href="/sis100/semana-06/" class="inline-flex items-center gap-2 bg-primary !text-canvas !no-underline font-mono text-[0.68rem] uppercase tracking-widest px-3.5 py-2.5 whitespace-nowrap transition-colors duration-150 hover:bg-brand focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand">
+  Volver atrás
+</a>

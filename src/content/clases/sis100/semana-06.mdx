@@ -1,0 +1,83 @@
+---
+materia: "sis100"
+semana: 6
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+## Ejercicio 1 · Generación de serie con patrones repetitivos
+
+<Enunciado>
+Desarrolle un programa que permita generar una serie numérica siguiendo un patrón repetitivo. El usuario debe ingresar la cantidad de términos **`N`** que desea mostrar.
+
+La serie debe generarse de la siguiente manera:
+
+```text
++5   -8   +10   -16   +15   -24   +20   -32   +25   -40 ...
+```
+
+Además, el programa debe calcular la suma de los términos generados. Los datos deben ser validados: `N` debe ser un valor positivo; no se aceptan números negativos ni cero. Para generar la serie debe utilizar la estructura repetitiva **Para**.
+</Enunciado>
+
+### Orientaciones
+
+- Valida que `N` sea mayor que cero antes de generar la serie. Si se ingresa cero o un número negativo, muestra un mensaje y vuelve a solicitarlo.
+- Genera exactamente `N` términos usando `Para`.
+- Observa los dos patrones: los términos positivos aumentan de `5` en `5` y los negativos disminuyen de `8` en `8`.
+- Muestra cada término de la serie y acumúlalo para obtener la suma total.
+
+### Ejemplos de funcionamiento
+
+| Caso | Dato de entrada | Resultado esperado |
+| --- | --- | --- |
+| Seis términos | `N = 6` | Serie: `+5, -8, +10, -16, +15, -24`. Suma total: `-18`. |
+| Un término | `N = 1` | Serie: `+5`. Suma total: `5`. |
+| Nueve términos | `N = 9` | Serie: `+5, -8, +10, -16, +15, -24, +20, -32, +25`. Suma total: `-5`. |
+| Cantidad igual a cero | `N = 0` | Dato inválido. La cantidad debe ser positiva. Solicitar nuevamente. |
+| Cantidad negativa | `N = -4` | Dato inválido. La cantidad debe ser positiva. Solicitar nuevamente. |
+
+<div class="mt-6 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">¡Tu turno!</p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Identifica el patrón y construye la serie</p>
+  <p class="mx-auto mt-3 max-w-[60ch] text-sm text-secondary">Presenta los datos de entrada, salida y el análisis antes de codificar tu solución.</p>
+</div>
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Generación de números aleatorios dentro de un rango
+
+<Enunciado>
+Desarrolle un programa que permita generar **`N`** números aleatorios dentro de un rango definido por el usuario.
+
+El programa debe solicitar como datos de entrada un límite inferior (**`LI`**), un límite superior (**`LS`**) y la cantidad de números aleatorios (**`N`**) que se desean generar. Debe usar la función **`Aleatorio(LI, LS)`** de PSeInt.
+
+Una vez generados los números, muestre cada uno, acumule la suma de los números pares, acumule la suma de los números impares, calcule la suma total y el promedio de los números generados.
+</Enunciado>
+
+### Orientaciones
+
+- Valida que `LI < LS`. Si los límites son iguales o el inferior es mayor, solicita ambos valores nuevamente.
+- Valida que `N` sea mayor que cero antes de comenzar a generar números.
+- Usa la función de PSeInt `Aleatorio(LI, LS)` para obtener cada número del rango, incluyendo los límites.
+- Genera los `N` números con una estructura repetitiva y muestra cada valor.
+- Si un número es par, acumúlalo en la suma de pares; si es impar, acumúlalo en la suma de impares.
+- El promedio se obtiene al dividir la suma total entre `N`.
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos de entrada | Posible salida |
+| --- | --- | --- |
+| Rango de 10 a 50 | `LI = 10`, `LS = 50`, `N = 8` | Números: `23 48 15 32 41 10 27 36`. Suma de pares: `126`. Suma de impares: `106`. Suma total: `232`. Promedio: `29`. |
+| Rango de 100 a 200 | `LI = 100`, `LS = 200`, `N = 5` | Números: `156 103 198 121 175`. Suma de pares: `354`. Suma de impares: `399`. Suma total: `753`. Promedio: `150.6`. |
+| Límites iguales | `LI = 20`, `LS = 20`, `N = 4` | Rango inválido. El límite inferior debe ser menor que el superior. Solicitar nuevamente. |
+| Límites invertidos | `LI = 50`, `LS = 10`, `N = 4` | Rango inválido. El límite inferior debe ser menor que el superior. Solicitar nuevamente. |
+| Cantidad no positiva | `LI = 10`, `LS = 50`, `N = 0` | Dato inválido. La cantidad debe ser positiva. Solicitar nuevamente. |
+
+<p class="mt-5 text-sm text-secondary">Los números de los ejemplos pueden variar en cada ejecución, porque son generados aleatoriamente. El programa debe funcionar para cualquier rango válido.</p>
+
+<div class="mt-6 border border-dashed border-brand bg-surface px-5 py-8 text-center sm:px-8">
+  <p class="font-mono text-xs uppercase tracking-widest text-brand">¡Tu turno!</p>
+  <p class="mt-3 font-heading text-2xl uppercase tracking-wide">Valida, genera y clasifica</p>
+  <p class="mx-auto mt-3 max-w-[60ch] text-sm text-secondary">Construye tu algoritmo en PSeInt usando <code>Aleatorio(LI, LS)</code> y comprueba los resultados con varios rangos válidos.</p>
+</div>
