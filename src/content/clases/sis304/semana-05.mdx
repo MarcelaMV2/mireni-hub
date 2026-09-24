@@ -1,0 +1,315 @@
+---
+materia: "sis304"
+semana: 5
+cantidadEjercicios: 6
+---
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+## Base de trabajo: REPUESTOS
+
+Aprenderemos a insertar, modificar y eliminar registros, y a resumir información mediante funciones de agregado.
+
+**Orden de trabajo:** ejecuta una sola vez la creación y las inserciones iniciales, en una base nueva. Después realiza los ejemplos de UPDATE y DELETE en el orden indicado. Estos ejemplos usan transacciones y terminan con `ROLLBACK` para conservar los datos iniciales y poder comprobar los resultados de las consultas. Cada recuadro tiene un botón **Copiar**.
+
+### Ajustes al script original
+
+- Se eliminaron las inserciones repetidas del encargado `10010` y la entrega `101`, porque sus claves primarias deben ser únicas.
+- Se insertan los proveedores antes que las compras y las compras antes que las entregas para respetar las claves foráneas.
+- Se mantienen los datos y relaciones del ejemplo. Se usa `utf8mb4`, `INT` sin ancho de visualización y `DECIMAL(10,2)` para los importes, evitando aproximaciones de `FLOAT`.
+- La clave de `COMPRA` es `(CODIGO, NIT)`: este modelo solo admite una compra por combinación de repuesto y proveedor, aunque cambie la fecha.
+- `ENTREGA` no comprueba por sí sola que la cantidad entregada no supere la comprada. Los datos originales incluyen varias entregas de una compra; una clave foránea garantiza la existencia de la compra, no el control del stock.
+
+## 1. Creación de la base de datos y tablas
+
+`REPUESTO` almacena los artículos; `ELECTRICO` y `MECANICO`, sus características. `PROVEEDOR` registra a los proveedores, `COMPRA` los relaciona con los repuestos y `ENTREGA` registra las entregas a cargo de un `ENCARGADO`.
+
+<Codigo archivo="01_creacion_repuestos.sql" lang="sql" codigo={`CREATE DATABASE REPUESTOS
+CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+
+USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    DESCRIPCION VARCHAR(35) DEFAULT ' ',
+    NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    POTENCIA INT DEFAULT 0,
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+    NIT CHAR(10) NOT NULL PRIMARY KEY,
+    NOMBREP VARCHAR(35) DEFAULT ' ',
+    CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+    CODIGO CHAR(6) NOT NULL,
+    NIT CHAR(10) NOT NULL,
+    FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CANTIDAD INT DEFAULT 0,
+    COSTO DECIMAL(10,2) DEFAULT 0.0,
+    DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+    IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+    PRIMARY KEY (CODIGO, NIT),
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+    FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+    ITEM INT NOT NULL PRIMARY KEY,
+    NOMBRE VARCHAR(35) DEFAULT ' ',
+    TELEFONO INT,
+    CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+    NE INT NOT NULL PRIMARY KEY,
+    FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CANTIDADE INT DEFAULT 0,
+    CODIGO CHAR(6),
+    NIT CHAR(10),
+    ITEM INT,
+    FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+    FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`} />
+
+## 2. Inserciones: INSERT
+
+`INSERT INTO` agrega filas. Indicar las columnas permite identificar qué valor corresponde a cada campo.
+
+**Enunciado:** registrar tres repuestos, clasificar la bujía como eléctrica y el amortiguador como mecánico; registrar dos proveedores, dos encargados, cinco compras y cuatro entregas con los datos siguientes. Cargar primero las tablas referenciadas.
+
+<Codigo archivo="02_inserciones_iniciales.sql" lang="sql" codigo={`USE REPUESTOS;
+
+INSERT INTO REPUESTO (CODIGO, DESCRIPCION, NUMSERIE) VALUES
+('R-0001', 'AMORTIGUADOR', 23456760),
+('R-0002', 'BUJIA', 23456761),
+('R-0003', 'COMIDA', 23456760);
+
+INSERT INTO ELECTRICO (CODIGO, POTENCIA) VALUES ('R-0002', 200);
+INSERT INTO MECANICO (CODIGO, ESPECIFICACION)
+VALUES ('R-0001', 'ELASTICIDAD 60%');
+
+INSERT INTO PROVEEDOR (NIT, NOMBREP, CELULAR) VALUES
+('1011112450', 'JUAN PABLO RUIZ', 75234578),
+('1011222450', 'JUAN CARLOS', 75234578);
+
+INSERT INTO ENCARGADO (ITEM, NOMBRE, TELEFONO, CIUDAD) VALUES
+(10010, 'VICTOR CASTEDO', 6456784, 'SUCRE'),
+(10011, 'CARLOS GOMES', 6456784, 'SUCRE');
+
+INSERT INTO COMPRA
+(CODIGO, NIT, FECHA, CANTIDAD, COSTO, DESCUENTO, IMPUESTO) VALUES
+('R-0001', '1011112450', NOW(), 2, 200.00, 20.00, 30.00),
+('R-0002', '1011112450', '2019-05-05', 2, 200.00, 20.00, 30.00),
+('R-0002', '1011222450', '2019-05-05', 9, 200.00, 20.00, 30.00),
+('R-0001', '1011222450', '2019-05-05', 13, 200.00, 20.00, 30.00),
+('R-0003', '1011222450', '2019-05-05', 12, 200.00, 20.00, 30.00);
+
+INSERT INTO ENTREGA (NE, FECHAE, CANTIDADE, CODIGO, NIT, ITEM) VALUES
+(101, NOW(), 2, 'R-0001', '1011112450', 10010),
+(102, NOW(), 2, 'R-0001', '1011112450', 10011),
+(103, NOW(), 2, 'R-0002', '1011112450', 10010),
+(104, NOW(), 2, 'R-0001', '1011112450', 10011);`} />
+
+## 3. Modificaciones: UPDATE
+
+`UPDATE` cambia valores de filas existentes. `SET` indica el nuevo valor y `WHERE` selecciona las filas: **sin WHERE se modifican todas las filas**.
+
+**Enunciados:** corregir la descripción de `R-0003` a `FILTRO DE ACEITE`; cambiar el celular del proveedor `1011222450` a `76543210`; aumentar en 10 % el costo de la compra de `R-0002` al proveedor `1011222450`.
+
+La última operación usa las dos columnas de la clave de `COMPRA` para seleccionar una sola compra. `START TRANSACTION` inicia la práctica y `ROLLBACK` deshace sus cambios; si se decide conservarlos, se usa `COMMIT` en lugar de `ROLLBACK`.
+
+<Codigo archivo="03_updates_practica.sql" lang="sql" codigo={`USE REPUESTOS;
+START TRANSACTION;
+
+UPDATE REPUESTO
+SET DESCRIPCION = 'FILTRO DE ACEITE'
+WHERE CODIGO = 'R-0003';
+
+UPDATE PROVEEDOR
+SET CELULAR = 76543210
+WHERE NIT = '1011222450';
+
+UPDATE COMPRA
+SET COSTO = ROUND(COSTO * 1.10, 2)
+WHERE CODIGO = 'R-0002' AND NIT = '1011222450';
+
+SELECT * FROM REPUESTO WHERE CODIGO = 'R-0003';
+SELECT * FROM PROVEEDOR WHERE NIT = '1011222450';
+SELECT * FROM COMPRA
+WHERE CODIGO = 'R-0002' AND NIT = '1011222450';
+
+ROLLBACK;`} />
+
+## 4. Eliminaciones: DELETE
+
+`DELETE FROM` elimina filas, pero conserva la tabla. **Sin WHERE se eliminan todas las filas**, si las restricciones lo permiten. Antes de borrar, consulta las filas con la misma condición.
+
+**Enunciados:** eliminar la entrega `104`; después eliminar el repuesto `R-0003` y su compra asociada. Este repuesto no tiene entregas ni registros en `ELECTRICO` o `MECANICO` en la carga inicial.
+
+Las claves foráneas impiden eliminar un padre mientras existan hijos que lo referencien. En general se revisan primero las entregas, luego las compras y los subtipos, y finalmente el repuesto. Aquí basta borrar la compra de `R-0003` antes del repuesto.
+
+<Codigo archivo="04_deletes_practica.sql" lang="sql" codigo={`USE REPUESTOS;
+START TRANSACTION;
+
+SELECT * FROM ENTREGA WHERE NE = 104;
+DELETE FROM ENTREGA WHERE NE = 104;
+
+SELECT * FROM COMPRA WHERE CODIGO = 'R-0003';
+DELETE FROM COMPRA
+WHERE CODIGO = 'R-0003' AND NIT = '1011222450';
+DELETE FROM REPUESTO WHERE CODIGO = 'R-0003';
+
+SELECT * FROM ENTREGA WHERE NE = 104;
+SELECT * FROM REPUESTO WHERE CODIGO = 'R-0003';
+-- Ambas consultas anteriores deben devolver cero filas.
+ROLLBACK;`} />
+
+## 5. ¿Qué es una función de agregado?
+
+Una función de agregado procesa un conjunto de valores y devuelve un resumen: por ejemplo, cuántas compras hay, cuántas unidades se compraron o cuál es la cantidad promedio por compra. Sirve para elaborar estadísticas y reportes.
+
+| Función | ¿Qué calcula? | ¿Cuándo usarla? |
+| --- | --- | --- |
+| `SUM(CANTIDAD)` | Suma de cantidades. | Conocer las unidades compradas. |
+| `AVG(CANTIDAD)` | Promedio de las cantidades. | Conocer las unidades promedio por compra. |
+| `COUNT(*)` | Número de filas. | Contar registros de compras, no unidades. |
+| `COUNT(columna)` | Número de valores no nulos. | Contar registros con ese dato informado. |
+| `COUNT(DISTINCT NIT)` | Número de NIT diferentes no nulos. | Contar proveedores con compras. |
+| `MIN(CANTIDAD)` | Menor cantidad. | Identificar la compra más pequeña en unidades. |
+| `MAX(CANTIDAD)` | Mayor cantidad. | Identificar la compra más grande en unidades. |
+
+`SUM`, `AVG`, `MIN` y `MAX` ignoran los valores `NULL`. Un cero sí participa en el promedio. Si no hay filas, `COUNT` devuelve 0; `SUM` y `AVG` devuelven `NULL`. Se puede usar `COALESCE(SUM(CANTIDAD), 0)` cuando se necesita mostrar cero.
+
+### ¿Siempre se usa GROUP BY?
+
+**No.** Sin `GROUP BY`, estas consultas resumen todas las filas seleccionadas en una sola fila. Con `GROUP BY`, producen una fila por grupo, por ejemplo, por proveedor o por repuesto.
+
+### Resumen global: SUM, AVG y COUNT sin GROUP BY
+
+**Enunciado:** calcular cuántos registros de compra existen, cuántas unidades se compraron, el promedio de unidades por registro y los valores mínimo y máximo.
+
+<Codigo archivo="05_resumen_global.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT COUNT(*) AS registros_compra,
+       SUM(CANTIDAD) AS total_unidades,
+       AVG(CANTIDAD) AS promedio_unidades,
+       MIN(CANTIDAD) AS menor_cantidad,
+       MAX(CANTIDAD) AS mayor_cantidad,
+       COUNT(DISTINCT NIT) AS proveedores_con_compras
+FROM COMPRA;`} />
+
+Con los datos iniciales: **5 compras, 38 unidades, promedio 7,6, mínimo 2, máximo 13 y 2 proveedores**. `COUNT(*)` responde «¿cuántas filas?»; `SUM(CANTIDAD)`, «¿cuántas unidades?».
+
+### Resumen por proveedor: GROUP BY
+
+**Enunciado:** mostrar por proveedor el número de compras, las unidades totales y el promedio de unidades por compra.
+
+`GROUP BY NIT` reúne las filas que tienen el mismo NIT y calcula los agregados dentro de cada grupo. En estos ejemplos, las columnas seleccionadas que no están dentro de una función de agregado se incluyen en `GROUP BY`; así no se mezcla un resumen con un valor individual ambiguo.
+
+<Codigo archivo="06_resumen_por_proveedor.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT NIT,
+       COUNT(*) AS registros_compra,
+       SUM(CANTIDAD) AS total_unidades,
+       ROUND(AVG(CANTIDAD), 2) AS promedio_unidades
+FROM COMPRA
+GROUP BY NIT
+ORDER BY NIT;`} />
+
+| NIT | Compras | Unidades | Promedio |
+| --- | --- | --- | --- |
+| 1011112450 | 2 | 4 | 2,00 |
+| 1011222450 | 3 | 34 | 11,33 |
+
+### Resumen por repuesto y cálculo de importes
+
+**Enunciado:** obtener las unidades y el importe bruto por repuesto, mostrando su descripción. **Para este cálculo asumimos que COSTO es el precio unitario**: el importe bruto de cada compra es `CANTIDAD * COSTO`, sin descuentos ni impuestos.
+
+<Codigo archivo="07_importes_por_repuesto.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT r.CODIGO, r.DESCRIPCION,
+       SUM(c.CANTIDAD) AS total_unidades,
+       SUM(c.CANTIDAD * c.COSTO) AS importe_bruto
+FROM REPUESTO AS r
+JOIN COMPRA AS c ON c.CODIGO = r.CODIGO
+GROUP BY r.CODIGO, r.DESCRIPCION
+ORDER BY r.CODIGO;`} />
+
+Los resultados iniciales son `R-0001`: 15 unidades y 3000,00; `R-0002`: 11 unidades y 2200,00; `R-0003`: 12 unidades y 2400,00. No se suman descuentos e impuestos sin definir antes si representan importes o porcentajes.
+
+## 6. Filtrar grupos: HAVING
+
+`HAVING` establece condiciones sobre los resultados agrupados. Se usa, por ejemplo, para mostrar solo proveedores con más de dos compras o con un promedio superior a cinco unidades. **HAVING es una cláusula, no una función de agregado.**
+
+### HAVING con COUNT
+
+**Enunciado:** mostrar los proveedores que tienen más de dos registros de compra.
+
+<Codigo archivo="08_having_count.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT NIT, COUNT(*) AS registros_compra
+FROM COMPRA
+GROUP BY NIT
+HAVING COUNT(*) > 2;`} />
+
+Devuelve al proveedor `1011222450` con 3 compras.
+
+### HAVING con AVG y SUM
+
+**Enunciado:** mostrar los proveedores cuyo promedio de unidades por compra sea mayor que 5 y cuya suma de unidades supere 20.
+
+<Codigo archivo="09_having_avg_sum.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT NIT,
+       AVG(CANTIDAD) AS promedio_unidades,
+       SUM(CANTIDAD) AS total_unidades
+FROM COMPRA
+GROUP BY NIT
+HAVING AVG(CANTIDAD) > 5 AND SUM(CANTIDAD) > 20;`} />
+
+Devuelve al proveedor `1011222450`, con un promedio aproximado de 11,33 y 34 unidades.
+
+### Diferencia entre WHERE y HAVING
+
+| Cláusula | ¿Cuándo filtra? | Ejemplo |
+| --- | --- | --- |
+| `WHERE` | Antes de agrupar: selecciona filas individuales. | Compras con cantidad mayor o igual a 9. |
+| `HAVING` | Después de agrupar: selecciona grupos según sus resultados. | Grupos que suman más de 20 unidades. |
+
+**Enunciado:** considerar únicamente compras de 9 o más unidades y mostrar los proveedores cuyo total, entre esas compras, supere 20 unidades.
+
+<Codigo archivo="10_where_y_having.sql" lang="sql" codigo={`USE REPUESTOS;
+SELECT NIT,
+       COUNT(*) AS compras_seleccionadas,
+       SUM(CANTIDAD) AS total_unidades
+FROM COMPRA
+WHERE CANTIDAD >= 9
+GROUP BY NIT
+HAVING SUM(CANTIDAD) > 20
+ORDER BY total_unidades DESC;`} />
+
+El resultado es `1011222450`: 3 compras seleccionadas y 34 unidades. Primero se filtran las filas, después se agrupan y calculan los agregados, luego se filtran los grupos y finalmente se ordenan los resultados.
+
+**Errores que debemos evitar:** escribir `WHERE SUM(CANTIDAD) > 20` (corresponde `HAVING`); confundir contar filas con sumar unidades; seleccionar `NIT` junto a una suma global sin agrupar; unir compras con varias entregas antes de sumar sus cantidades, porque esa unión puede repetir compras e inflar el total.
+
+## 7. Ejercicios propuestos
+
+Resuelve sobre la carga inicial. Para practicar modificaciones sin alterar los resultados de los demás ejercicios, utiliza `START TRANSACTION` y termina con `ROLLBACK`.
+
+1. **INSERT:** registrar el repuesto `R-0004`, descripción `ALTERNADOR`, serie `23456762`, y su característica eléctrica de 500 de potencia. Insertar primero el repuesto.
+2. **UPDATE:** cambiar la ciudad del encargado `10011` a `POTOSI` y consultar el resultado antes de deshacerlo.
+3. **DELETE:** eliminar al encargado `10011`. Identificar y eliminar primero sus entregas dentro de la misma transacción; comprobar el resultado y deshacer todo.
+4. **COUNT y SUM:** mostrar por encargado el número de entregas y la suma de unidades entregadas. Comprobación: `10010` tiene 2 entregas y 4 unidades; `10011`, 2 entregas y 4 unidades.
+5. **AVG y GROUP BY:** calcular el promedio de unidades compradas por repuesto. Comprobación: `R-0001` = 7,5; `R-0002` = 5,5; `R-0003` = 12.
+6. **HAVING:** mostrar los repuestos con al menos dos compras y más de diez unidades compradas en total. Comprobación: deben aparecer `R-0001` y `R-0002`.
+
+### Referencias
+
+Consulta la documentación de MySQL sobre [funciones de agregado](https://dev.mysql.com/doc/refman/8.4/en/aggregate-functions.html) y [agrupación con GROUP BY](https://dev.mysql.com/doc/refman/8.4/en/group-by-handling.html).

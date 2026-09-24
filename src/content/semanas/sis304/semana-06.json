@@ -1,7 +1,7 @@
 {
   "materia": "sis304",
   "numero": 6,
-  "titulo": "Vistas y desencadenadores",
-  "resumen": "CREATE VIEW, triggers BEFORE/AFTER y comprobaciones con CHECK.",
-  "estado": "bloqueada"
+  "titulo": "Procedimientos almacenados",
+  "resumen": "CREATE PROCEDURE, DELIMITER, BEGIN/END y CALL en la base REPUESTOS.",
+  "estado": "disponible"
 }

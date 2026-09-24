@@ -1,0 +1,146 @@
+---
+materia: "sis304"
+semana: 6
+cantidadEjercicios: 5
+---
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+## Procedimientos almacenados en MySQL
+
+Un **procedimiento almacenado** es un conjunto de instrucciones SQL guardado dentro del servidor de base de datos y asociado a un nombre. Se crea una vez con `CREATE PROCEDURE` y se ejecuta cada vez que se necesita mediante `CALL`.
+
+Los procedimientos son útiles cuando una consulta se repite, cuando queremos centralizar una regla de negocio o cuando una tarea necesita varias instrucciones. Pueden recibir parámetros de entrada, declarar variables locales, ejecutar consultas y modificar datos. En esta clase trabajaremos con procedimientos sin parámetros para consultar la base `REPUESTOS`.
+
+| Elemento | Función |
+| --- | --- |
+| `CREATE PROCEDURE nombre()` | Define y guarda el procedimiento. |
+| `BEGIN ... END` | Agrupa las instrucciones que se ejecutarán. |
+| `DELIMITER` | Cambia temporalmente el separador para que MySQL no cierre el procedimiento en el primer `;`. |
+| `CALL nombre()` | Ejecuta el procedimiento almacenado. |
+| `DROP PROCEDURE IF EXISTS` | Elimina una versión anterior antes de volver a crearla. |
+
+Un procedimiento puede devolver las filas de un `SELECT`, como los ejercicios de esta semana. La consulta queda guardada en el servidor, por lo que cualquier usuario con permisos puede ejecutarla con el mismo nombre. Si el procedimiento modifica datos, se debe controlar también la transacción y los permisos.
+
+## Desplegables de apoyo
+
+<details class="my-6 border border-default rounded-md bg-surface overflow-hidden">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
+  <div class="p-4 overflow-x-auto">
+    <img src="/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg" alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+  </div>
+</details>
+
+<details class="my-6 border border-default rounded-md bg-surface overflow-hidden">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
+  <div class="max-h-[351px] overflow-y-auto overflow-x-auto border-t border-default">
+    <pre class="m-0 p-4 text-[0.78rem] leading-[1.55]"><code>{`USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    DESCRIPCION VARCHAR(35) DEFAULT ' ',
+    NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    POTENCIA INT DEFAULT 0,
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+    CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+    ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+    NIT CHAR(10) NOT NULL PRIMARY KEY,
+    NOMBREP VARCHAR(35) DEFAULT ' ',
+    CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+    CODIGO CHAR(6) NOT NULL,
+    NIT CHAR(10) NOT NULL,
+    FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CANTIDAD INT DEFAULT 0,
+    COSTO DECIMAL(10,2) DEFAULT 0.0,
+    DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+    IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+    PRIMARY KEY (CODIGO, NIT),
+    FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+    FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+    ITEM INT NOT NULL PRIMARY KEY,
+    NOMBRE VARCHAR(35) DEFAULT ' ',
+    TELEFONO INT,
+    CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+    NE INT NOT NULL PRIMARY KEY,
+    FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+    CANTIDADE INT DEFAULT 0,
+    CODIGO CHAR(6),
+    NIT CHAR(10),
+    ITEM INT,
+    FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+    FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`}</code></pre>
+  </div>
+</details>
+
+## Preparación y buenas prácticas
+
+Antes de crear los procedimientos, seleccionar la base de datos. Si ya existe una versión anterior, eliminarla para evitar el error de nombre duplicado. Ejecutar cada procedimiento por separado y probarlo con `CALL`.
+
+<Codigo archivo="00_preparacion_procedimientos.sql" lang="sql" codigo={`USE REPUESTOS;
+
+DROP PROCEDURE IF EXISTS EJ_SP1;
+DROP PROCEDURE IF EXISTS EJ_SP2;
+DROP PROCEDURE IF EXISTS EJ_SP3;
+DROP PROCEDURE IF EXISTS EJ_SP4;
+DROP PROCEDURE IF EXISTS EJ_SP5;`} />
+
+`DELIMITER $$` no es una instrucción que se guarde en el procedimiento: es una orden del cliente MySQL Workbench para que el `;` interno no termine el `CREATE PROCEDURE`. Después de `END $$` se restaura con `DELIMITER ;`.
+
+## Enunciado 1 — costo real entre 150 y 250 Bs.
+
+Crear un procedimiento llamado `EJ_SP1`, sin parámetros, que liste los repuestos comprados cuyo costo real esté entre **150 y 250 Bs.** El costo real se calcula como `COSTO - DESCUENTO + IMPUESTO`.
+
+La salida debe mostrar la descripción del repuesto, el nombre del proveedor y el costo real. Relacionar `REPUESTO`, `COMPRA` y `PROVEEDOR` mediante `INNER JOIN`. Ejecutar el procedimiento con `CALL EJ_SP1()`.
+
+## Enunciado 2 — cantidad entregada por encargado
+
+Crear un procedimiento llamado `EJ_SP2`, sin parámetros, que muestre la cantidad total entregada por cada encargado.
+
+La salida debe mostrar el nombre del encargado y la suma de `CANTIDADE`. Relacionar `ENCARGADO` con `ENTREGA`, agrupar por encargado y ordenar el total de mayor a menor. Ejecutar el procedimiento con `CALL EJ_SP2()`.
+
+## Enunciado 3 — repuestos eléctricos y costo promedio
+
+Crear un procedimiento llamado `EJ_SP3`, sin parámetros, que liste los repuestos eléctricos y su costo promedio de compra.
+
+La salida debe mostrar la descripción del repuesto, la potencia en watts y el promedio de `COSTO`. Relacionar `REPUESTO`, `ELECTRICO` y `COMPRA`; agrupar por descripción y potencia. Incluir únicamente grupos que tengan al menos una compra mediante `HAVING COUNT(*) >= 1`. Ejecutar el procedimiento con `CALL EJ_SP3()`.
+
+## Enunciado 4 — descripciones que terminan en vocal
+
+Crear un procedimiento llamado `EJ_SP4`, sin parámetros, que muestre los proveedores de repuestos cuya descripción termina en una vocal.
+
+La salida debe mostrar el nombre del proveedor, la descripción del repuesto y la cantidad total comprada. Relacionar `PROVEEDOR`, `COMPRA` y `REPUESTO`; filtrar las descripciones que terminan en `A`, `E`, `I`, `O` o `U` usando `LIKE`; agrupar por proveedor y repuesto; ordenar alfabéticamente por proveedor. Ejecutar el procedimiento con `CALL EJ_SP4()`.
+
+## Enunciado 5 — cantidad superior al promedio general
+
+Crear un procedimiento llamado `EJ_SP5`, sin parámetros, que muestre los repuestos y proveedores cuya cantidad total comprada sea superior al promedio general de cantidades de la tabla `COMPRA`.
+
+El procedimiento debe declarar una variable local llamada `CPRO`, guardar en ella el resultado de `AVG(CANTIDAD)` mediante `SELECT ... INTO`, y después consultar el repuesto, proveedor y total comprado. Agrupar por repuesto y proveedor y filtrar los grupos con `HAVING SUM(CANTIDAD) > CPRO`. Ejecutar el procedimiento con `CALL EJ_SP5()`.
+
+## Checklist de revisión
+
+- El procedimiento tiene un nombre único y se elimina la versión anterior cuando corresponde.
+- `DELIMITER` se cambia antes de `CREATE PROCEDURE` y se restaura después.
+- Las instrucciones están dentro de `BEGIN ... END`.
+- Las columnas no agregadas que aparecen en el `SELECT` están incluidas en `GROUP BY`.
+- Las condiciones sobre `SUM`, `AVG` o `COUNT` se escriben en `HAVING`, no en `WHERE`.
+- Cada procedimiento se prueba con `CALL nombre()` y se comprueba que sus tablas relacionadas tengan datos.
