@@ -1,0 +1,51 @@
+---
+interface Props {
+  src: string;
+}
+
+const { src } = Astro.props;
+---
+
+<div class="absolute top-2 right-2">
+  <details class="relative">
+    <summary class="grid place-items-center list-none cursor-pointer rounded-sm border border-default bg-canvas/90 p-2 text-secondary hover:text-primary" aria-label="Más opciones de la imagen" title="Más opciones">
+      <span aria-hidden="true" class="text-lg leading-none">⋮</span>
+    </summary>
+    <button type="button" class="copiar-imagen absolute right-0 top-10 z-10 whitespace-nowrap rounded-sm border border-default bg-canvas px-3 py-2 font-mono text-[0.66rem] uppercase tracking-widest text-secondary shadow-sm hover:text-primary" aria-live="polite" data-imagen={src}>
+      Copiar imagen
+    </button>
+  </details>
+</div>
+
+<script>
+  document.querySelectorAll('.copiar-imagen').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const src = button.getAttribute('data-imagen');
+      if (!src) return;
+      try {
+        if (!('ClipboardItem' in window) || !navigator.clipboard?.write) throw new Error('Clipboard no disponible');
+        const png = (async () => {
+          const respuesta = await fetch(src);
+          if (!respuesta.ok) throw new Error('No se pudo cargar la imagen');
+          const bitmap = await createImageBitmap(await respuesta.blob());
+          const canvas = document.createElement('canvas');
+          canvas.width = bitmap.width;
+          canvas.height = bitmap.height;
+          const context = canvas.getContext('2d');
+          if (!context) throw new Error('No se pudo preparar la imagen');
+          context.drawImage(bitmap, 0, 0);
+          bitmap.close();
+          return new Promise<Blob>((resolve, reject) => canvas.toBlob(
+            (blob) => blob ? resolve(blob) : reject(new Error('No se pudo copiar')), 'image/png'
+          ));
+        })();
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]);
+        button.textContent = 'Imagen copiada';
+        setTimeout(() => { button.textContent = 'Copiar imagen'; }, 1600);
+      } catch {
+        button.textContent = 'No se pudo copiar';
+        setTimeout(() => { button.textContent = 'Copiar imagen'; }, 1600);
+      }
+    });
+  });
+</script>

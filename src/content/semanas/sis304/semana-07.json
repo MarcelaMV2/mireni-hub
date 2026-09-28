@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 7,
+  "titulo": "Procedimientos almacenados con parámetros",
+  "resumen": "Uso de parámetros de entrada para consultar, actualizar e insertar datos en la base REPUESTOS.",
+  "estado": "disponible"
+}

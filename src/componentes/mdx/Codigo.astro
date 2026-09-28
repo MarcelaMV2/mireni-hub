@@ -21,16 +21,21 @@ const { archivo, lang, codigo } = Astro.props;
       <i class="w-[9px] h-[9px] rounded-full bg-[#e0b13a]"></i>
       <i class="w-[9px] h-[9px] rounded-full bg-[#4aa96c]"></i>
     </span>
-    <span class="flex-1 font-mono text-xs text-secondary">{archivo}</span>
-    <button
-      class="copiar inline-flex items-center gap-1.5 font-mono text-[0.66rem] uppercase tracking-widest text-secondary bg-transparent border border-default rounded-sm px-2 py-1.5 transition-all duration-150 hover:text-primary hover:border-primary"
-      data-codigo={codigo}
-      type="button"
-    >
-      <Icon name="tabler:copy" width={13} height={13} class="icono-copiar" />
-      <Icon name="tabler:check" width={13} height={13} class="icono-ok hidden" />
-      <span class="texto-btn">Copiar</span>
-    </button>
+    <span class="min-w-0 flex-1 break-all font-mono text-xs text-secondary">{archivo}</span>
+    <details class="relative">
+      <summary class="grid place-items-center list-none cursor-pointer rounded-sm border border-default px-2 py-1.5 text-secondary transition-colors hover:text-primary hover:border-primary" aria-label="Más opciones del código" title="Más opciones">
+        <span aria-hidden="true" class="text-lg leading-none">⋮</span>
+      </summary>
+      <button
+        class="copiar absolute right-0 top-10 z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-default bg-canvas px-3 py-2 font-mono text-[0.66rem] uppercase tracking-widest text-secondary shadow-sm transition-all hover:text-primary hover:border-primary"
+        data-codigo={codigo}
+        type="button"
+      >
+        <Icon name="tabler:copy" width={13} height={13} class="icono-copiar" />
+        <Icon name="tabler:check" width={13} height={13} class="icono-ok hidden" />
+        <span class="texto-btn">Copiar código</span>
+      </button>
+    </details>
   </figcaption>
   <div class="[&_pre]:m-0 [&_pre]:p-4 [&_pre]:text-[0.82rem] [&_pre]:leading-[1.55] [&_pre]:overflow-x-auto [&_pre]:!bg-surface">
     <Code code={codigo} lang={lang as any} theme="github-light" />
@@ -53,7 +58,7 @@ const { archivo, lang, codigo } = Astro.props;
         setTimeout(() => {
           iconoCopiar?.classList.remove('hidden');
           iconoOk?.classList.add('hidden');
-          if (texto) texto.textContent = 'Copiar';
+          if (texto) texto.textContent = 'Copiar código';
           btn.classList.remove('!text-success', '!border-success');
         }, 1600);
       } catch {

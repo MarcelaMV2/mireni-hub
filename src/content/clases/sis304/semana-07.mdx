@@ -1,0 +1,81 @@
+---
+materia: "sis304"
+semana: 7
+cantidadEjercicios: 8
+---
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+## Parámetros de entrada
+
+Los **parámetros de entrada** son datos que se envían al procedimiento cuando se lo llama. Permiten que un mismo procedimiento trabaje con distintos valores, como una fecha, un nombre, un código o un rango de fechas. Se declaran dentro de los paréntesis de `CREATE PROCEDURE` y reciben su valor al usar `CALL`.
+
+En los ejercicios de esta semana, `IN` indica que el parámetro recibe un dato de entrada para utilizarlo dentro del procedimiento.
+
+## ¿Para qué se usa `IF EXISTS`?
+
+`IF EXISTS` permite comprobar si un registro existe antes de ejecutar una acción. De esta manera, el procedimiento puede continuar con la operación correspondiente o mostrar un mensaje cuando el proveedor, repuesto o encargado no está registrado.
+
+## Ejercicios
+
+### Ejercicio 1
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que cuente la cantidad de repuestos eléctricos y mecánicos que se han comprado en una fecha específica.</p>
+
+<Codigo archivo="ejercicio-1.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ1(IN FECHA1 DATE)\nBEGIN\nDECLARE CTM FLOAT(6,2);\nDECLARE CTE FLOAT(6,2);\nSELECT SUM(C.CANTIDAD) INTO CTM\nFROM MECANICO M INNER JOIN COMPRA C ON M.CODIGO=C.CODIGO\nWHERE DATE(C.FECHA) = FECHA1;\n\nSELECT SUM(C.CANTIDAD) INTO CTE\nFROM ELECTRICO E INNER JOIN COMPRA C ON E.CODIGO=C.CODIGO\nWHERE DATE(C.FECHA) = FECHA1;\n\nSELECT CTM AS 'CANTIDAD DE REPUESTOS MECANICOS',\n		CTE AS 'CANTIDAD DE REPUESTOS ELECTRICOS';\nEND $$\nDELIMITER ;\n\nCALL EJ1('2019-05-05');\n\nSELECT * FROM COMPRA;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 2
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que reciba como parámetro el nombre de un encargado y muestre todas las entregas que realizó, incluyendo el repuesto y la cantidad.</p>
+
+<Codigo archivo="ejercicio-2.sql" lang="sql" codigo={`USE REPUESTOS;\n\nDELIMITER $$\nCREATE PROCEDURE EJ2(IN NOMEN VARCHAR(50))\nBEGIN\nDECLARE IEN INT(6);\nIF EXISTS(SELECT * FROM ENCARGADO WHERE NOMBRE=NOMEN) THEN\n\nSET IEN = (SELECT ITEM FROM ENCARGADO WHERE NOMBRE = NOMEN);\n\nSELECT R.DESCRIPCION AS 'REPUESTO',\n		E.CANTIDADE AS 'CANTIDAD',\n        E.FECHAE AS 'FECHA'\nFROM REPUESTO R INNER JOIN ENTREGA E ON R.CODIGO=E.CODIGO\nWHERE E.ITEM = IEN;\nELSE SELECT 'EL ENCARGADO NO ESTA REGISTADO' AS MENSAJE;\nEND IF;\nEND $$\nDELIMITER ;\n\nCALL EJ2('VICTOR CASTEDO');\nSELECT * FROM ENTREGA;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 3
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que reciba el código de un repuesto y el NIT del proveedor, y actualice el costo de esa compra a un nuevo valor introducido por parámetro.</p>
+
+<Codigo archivo="ejercicio-3.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ3(IN CR CHAR(6), IN NP CHAR(10), IN NC FLOAT(6,2))\nBEGIN\nIF EXISTS(SELECT * FROM PROVEEDOR WHERE NIT=NP)THEN\nIF EXISTS(SELECT * FROM REPUESTO WHERE CODIGO=CR)THEN\nUPDATE COMPRA SET COSTO=NC WHERE CODIGO=CR AND NIT=NP;\nSELECT * FROM COMPRA WHERE CODIGO=CR AND NIT=NP;\nELSE SELECT 'REPUESTO NO REGISTRADO' AS MENSAJE; END IF;\nELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE;\nEND IF;\nEND $$\nDELIMITER ;\nCALL EJ3('R-0001','1011112450',250);\nSELECT * FROM COMPRA;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 4
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que reciba dos fechas como parámetros y muestre todas las compras registradas dentro de ese rango, calculando para cada una de ellas el costo total real tomando en cuenta el costo unitario, la cantidad adquirida, el descuento y el impuesto aplicados, de manera que se refleje el valor final pagado en cada operación.</p>
+
+<Codigo archivo="ejercicio-4.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ4(IN F1 DATE, IN F2 DATE)\nBEGIN\nDECLARE AUX DATE;\nIF(F1>F2) THEN\nSET AUX = F1;\nSET F1 = F2; \nSET F2 = AUX;	\nEND IF;\nSELECT CODIGO, NIT, FECHA, CANTIDAD,\n	(COSTO - DESCUENTO+IMPUESTO) AS 'COSTO', DESCUENTO, IMPUESTO\nFROM COMPRA \nWHERE DATE(FECHA) BETWEEN F1 AND F2;\nEND $$\nDELIMITER ;\nCALL EJ4('2025-09-30', '2019-05-04');\nSELECT * FROM COMPRA;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 5
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que reciba como parámetro un número mínimo y muestre únicamente a los proveedores cuya cantidad de compras registradas supere ese valor, permitiendo identificar a los que tienen mayor participación en las adquisiciones.</p>
+
+<Codigo archivo="ejercicio-5.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ5(IN CM INT)\nBEGIN\nSELECT P.NOMBREP AS 'PROVEEDOR',\n		COUNT(*) AS 'COMPRAS REGISTRADAS'\nFROM PROVEEDOR P INNER JOIN COMPRA C ON P.NIT=C.NIT\nGROUP BY P.NOMBREP\nHAVING COUNT(*) >= CM;\nEND $$\nDELIMITER ;\nCALL EJ5(4);`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 6
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que inserte una compra cuando solo se conoce el nombre del repuesto, el nombre del proveedor, la cantidad y el precio unitario. Use variables locales.</p>
+
+<Codigo archivo="ejercicio-6.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ6(IN DR VARCHAR(50), IN NP VARCHAR(50), IN CN INT, IN PR FLOAT(6,2))\nBEGIN\nDECLARE CR CHAR(6);\nDECLARE NIP CHAR(10);\nIF EXISTS(SELECT * FROM PROVEEDOR WHERE NOMBREP=NP)THEN\nIF EXISTS(SELECT * FROM REPUESTO WHERE DESCRIPCION=DR)THEN\nSELECT CODIGO INTO CR FROM REPUESTO WHERE DESCRIPCION=DR;\nSELECT NIT INTO NIP FROM PROVEEDOR WHERE NOMBREP=NP;\nINSERT INTO COMPRA(CODIGO,NIT,FECHA,CANTIDAD,COSTO) VALUES(CR,NIP,NOW(),CN,CN*PR);\nSELECT * FROM COMPRA WHERE CODIGO=CR AND NIT=NIP;\nELSE SELECT 'REPUESTO NO REGISTRADO' AS MENSAJE; END IF;\nELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE; END IF;\nEND $$\nDELIMITER ;\nCALL EJ6('AMORTIGUADOR2','JUAN PABLO RUIZ',5,35.50);\nSELECT * FROM REPUESTO;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 7
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que reciba el nombre de un proveedor y dos fechas, y calcule el total gastado en compras dentro de ese rango. Use variables locales para almacenar el NIT.</p>
+
+<Codigo archivo="ejercicio-7.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ7(IN NP VARCHAR(50), IN F1 DATE, IN F2 DATE)\nBEGIN\nDECLARE AUX DATE;\nDECLARE NIP CHAR(10);\nIF(F1>F2) THEN\nSET AUX = F1;\nSET F1 = F2;\nSET F2 = AUX;\nEND IF;\nIF EXISTS(SELECT * FROM PROVEEDOR WHERE NOMBREP=NP)THEN\nSELECT NIT INTO NIP FROM PROVEEDOR WHERE NOMBREP=NP;\nSELECT SUM(COSTO) AS 'COSTO TOTAL'\nFROM COMPRA \nWHERE NIT=NIP AND DATE(FECHA) BETWEEN F1 AND F2;\nELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE; END IF;\nEND $$\nDELIMITER ;\nCALL EJ7('JUAN PABLO RUIZ', '2019-05-05','2025-09-30');\nSELECT * FROM COMPRA;`} />
+
+<hr class="my-12 border-default" />
+
+### Ejercicio 8
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Que muestre los repuestos más comprados en un rango de fechas, y solo aquellos que superen una cantidad mínima.</p>
+
+<Codigo archivo="ejercicio-8.sql" lang="sql" codigo={`USE REPUESTOS;\nDELIMITER $$\nCREATE PROCEDURE EJ8(IN F1 DATE, IN F2 DATE, IN CMIN INT)\nBEGIN\nDECLARE AUX DATE;\nIF(F1>F2) THEN\nSET AUX = F1;\nSET F1 = F2;\nSET F2 = AUX;\nEND IF;\nSELECT R.DESCRIPCION AS 'REPUESTO',\n		SUM(C.CANTIDAD) AS 'CANTIDAD TOTAL'\nFROM REPUESTO R INNER JOIN COMPRA C ON R.CODIGO=C.CODIGO\nWHERE DATE(C.FECHA) BETWEEN F1 AND F2\nGROUP BY R.DESCRIPCION\nHAVING SUM(C.CANTIDAD) >= CMIN;\nEND $$\nDELIMITER ;\n\nCALL EJ8('2019-05-05','2025-09-30',16);`} />
+

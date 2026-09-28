@@ -4,6 +4,7 @@ semana: 6
 cantidadEjercicios: 5
 ---
 import Codigo from '../../../componentes/mdx/Codigo.astro';
+import MenuImagen from '../../../componentes/mdx/MenuImagen.astro';
 
 ## Procedimientos almacenados en MySQL
 
@@ -23,17 +24,19 @@ Un procedimiento puede devolver las filas de un `SELECT`, como los ejercicios de
 
 ## Desplegables de apoyo
 
-<details class="my-6 border border-default rounded-md bg-surface overflow-hidden">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start my-6">
+<details class="border border-default rounded-md bg-surface min-w-0">
   <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
-  <div class="p-4 overflow-x-auto">
+  <div class="relative p-4 border-t border-default">
     <img src="/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg" alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+    <MenuImagen src="/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg" />
   </div>
 </details>
 
-<details class="my-6 border border-default rounded-md bg-surface overflow-hidden">
+<details class="border border-default rounded-md bg-surface min-w-0">
   <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
-  <div class="max-h-[351px] overflow-y-auto overflow-x-auto border-t border-default">
-    <pre class="m-0 p-4 text-[0.78rem] leading-[1.55]"><code>{`USE REPUESTOS;
+  <div class="p-3 border-t border-default [&_figure]:!my-0 [&_figure>div]:max-h-[351px] [&_figure>div]:overflow-auto">
+    <Codigo archivo="repuestos.sql" lang="sql" codigo={`USE REPUESTOS;
 
 CREATE TABLE REPUESTO (
     CODIGO CHAR(6) NOT NULL PRIMARY KEY,
@@ -88,9 +91,10 @@ CREATE TABLE ENTREGA (
     ITEM INT,
     FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
     FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
-) ENGINE = InnoDB;`}</code></pre>
+) ENGINE = InnoDB;`} />
   </div>
 </details>
+</div>
 
 ## Preparación y buenas prácticas
 
