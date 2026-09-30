@@ -1,0 +1,65 @@
+---
+titulo: "Ejercicio 2 · Serie de sumas acumuladas"
+descripcion: "Genera y suma una serie cuyos términos se forman acumulando los números naturales desde la unidad."
+materia: "sis100"
+semana: 7
+numero: 2
+dificultad: "media"
+tags: ["Ciclos anidados", "Para"]
+publicado: true
+---
+
+## Enunciado
+
+Desarrolle un algoritmo para **generar, mostrar y sumar** la siguiente serie de números, en una cantidad de **`n` términos**:
+
+```text
+sum = 1 + 3 + 6 + 10 + 15 + 21 + 28 + 36 + 45 + 55 + ...
+```
+
+Cada término debe construirse de acuerdo con el siguiente criterio: **es la suma desde la unidad hasta la posición que ocupa ese término**.
+
+### Ejemplo
+
+Si `n = 5`, se tiene:
+
+```text
+1(1) + 3(1 + 2) + 6(1 + 2 + 3) + 10(1 + 2 + 3 + 4) + 15(1 + 2 + 3 + 4 + 5)
+```
+
+La suma de la serie es:
+
+```text
+sum = 35
+```
+
+### Datos de prueba
+
+**Entrada:**
+
+```text
+Ingrese cantidad de términos: 5
+```
+
+**Proceso:**
+
+Generar los primeros 5 términos:
+
+```text
+1 + 3 + 6 + 10 + 15
+```
+
+Realizar la suma:
+
+```text
+1 + 3 + 6 + 10 + 15 = 35
+```
+
+**Salida esperada:**
+
+```text
+Serie generada:
+1 3 6 10 15
+
+La suma de la serie es: 35
+```

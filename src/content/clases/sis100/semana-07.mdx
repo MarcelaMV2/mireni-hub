@@ -1,0 +1,286 @@
+---
+materia: "sis100"
+semana: 7
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+
+## Estructuras repetitivas anidadas
+
+Un ciclo anidado es **un ciclo dentro de otro**. Por cada vuelta del ciclo exterior, el ciclo interior realiza todas sus repeticiones. Solo cuando termina el interior, el exterior puede avanzar.
+
+En este ejercicio repetiremos dos tareas: elegir una potencia de la serie y hacer las multiplicaciones necesarias para calcularla.
+
+## Ejercicio 1 · Suma de potencias pares
+
+Este es el **Ejercicio 5 del enunciado original**, que resolveremos como primer ejemplo de la semana.
+
+<Enunciado>
+Desarrolle un algoritmo que permita calcular la suma de la siguiente serie:
+
+```text
+serie = X^2 + X^4 + X^6 + X^8 + ... + X^n
+```
+
+`X` es la base y `n` es el último exponente. Los exponentes avanzan de dos en dos. Cada potencia debe calcularse mediante **multiplicación sucesiva**, sin funciones predeterminadas de potencia ni el operador de exponenciación.
+
+Muestre la serie generada y su suma. Valide que `n` sea un número par.
+</Enunciado>
+
+Como la serie comienza en el exponente `2`, también pediremos que `n` sea **mayor o igual que 2**. Así evitamos aceptar cero o exponentes negativos. La base `X` puede ser positiva, negativa, cero o decimal.
+
+### 1. ¿Qué entra y qué sale?
+
+| Dato | Significado | Ejemplo |
+| --- | --- | --- |
+| Entrada `X` | Base de todas las potencias | `2` |
+| Entrada `n` | Último exponente, par y al menos 2 | `6` |
+| Salida | Serie generada | `2^2 + 2^4 + 2^6` |
+| Salida `suma` | Total de las potencias calculadas | `84` |
+
+**`n` no es la cantidad de términos.** Si `n = 6`, hay tres términos: los de exponentes `2`, `4` y `6`. En general, hay `n / 2` términos.
+
+### 2. Primero aprendamos a calcular una sola potencia
+
+Para calcular `2^4`, comenzamos con `potencia = 1` y multiplicamos por `2` cuatro veces:
+
+| Multiplicación `i` | Operación | Nuevo valor de `potencia` |
+| ---: | --- | ---: |
+| Inicio | Todavía no multiplicamos | `1` |
+| 1 | `1 × 2` | `2` |
+| 2 | `2 × 2` | `4` |
+| 3 | `4 × 2` | `8` |
+| 4 | `8 × 2` | `16` |
+
+¿Por qué comenzamos en `1`? Porque multiplicar por uno conserva el valor de la base. Si comenzáramos en cero, todas las multiplicaciones darían cero.
+
+```text
+potencia <- 1
+Para i <- 1 Hasta exponente Hacer
+    potencia <- potencia * x
+FinPara
+```
+
+Aquí `i` cuenta **cuántas multiplicaciones realizamos**. No cambia la base: siempre multiplicamos por el mismo `x`.
+
+### 3. Ahora repetimos ese cálculo para cada exponente
+
+El ciclo exterior elige `2`, después `4`, después `6`, hasta llegar a `n`. Dentro de cada vuelta colocamos el ciclo que calcula la potencia:
+
+```text
+suma <- 0
+Para exponente <- 2 Hasta n Con Paso 2 Hacer
+    potencia <- 1
+    Para i <- 1 Hasta exponente Hacer
+        potencia <- potencia * x
+    FinPara
+    suma <- suma + potencia
+FinPara
+```
+
+| Ciclo | Variable | Trabajo que realiza |
+| --- | --- | --- |
+| Exterior | `exponente` | Elige los exponentes pares, de `2` hasta `n` |
+| Interior | `i` | Multiplica por `x` exactamente `exponente` veces |
+
+**La suma se actualiza después de terminar el ciclo interior.** Solo entonces tenemos una potencia completa. Si sumáramos dentro del ciclo interior, agregaríamos también los resultados intermedios.
+
+### 4. ¿Qué se reinicia y qué se conserva?
+
+- **`suma` empieza en `0` una sola vez**, antes de ambos ciclos. Debe conservar el total de los términos anteriores.
+- **`potencia` empieza en `1` en cada vuelta exterior.** Cada potencia se calcula desde el inicio.
+- **`i` vuelve a `1` al entrar al `Para` interior.** Así contamos las multiplicaciones de la nueva potencia.
+- **`exponente` aumenta de `2` en `2`.** Cambia cuando el ciclo interior ya terminó y la potencia fue sumada.
+
+### 5. Seguimiento completo: `X = 2`, `n = 6`
+
+| Vuelta exterior | `exponente` | Valores de `potencia`, desde su reinicio | Actualización de `suma` |
+| ---: | ---: | --- | --- |
+| 1 | `2` | `1 → 2 → 4` | `0 + 4 = 4` |
+| 2 | `4` | `1 → 2 → 4 → 8 → 16` | `4 + 16 = 20` |
+| 3 | `6` | `1 → 2 → 4 → 8 → 16 → 32 → 64` | `20 + 64 = 84` |
+
+Después de procesar el exponente `6`, el exterior avanza a `8`. Como `8` supera a `n`, termina. En total hubo **3 vueltas exteriores y 12 multiplicaciones interiores**: `2 + 4 + 6`. El interior no tiene siempre la misma cantidad de vueltas; depende del exponente actual.
+
+### 6. Validamos antes de calcular
+
+Un número es par cuando su residuo al dividirlo entre dos es cero: `n MOD 2 = 0`. En C++ escribimos `n % 2 == 0`.
+
+Repetimos la lectura con `Mientras` si ocurre cualquiera de estos errores: `n` es menor que `2` **o** es impar. Por ejemplo, `5` produce el mensaje «Error: El valor de n debe ser par.» y se solicita nuevamente. El cálculo comienza cuando se recibe un dato válido.
+
+### 7. Solución en PSeInt
+
+<Codigo archivo="Suma_Potencias_Pares.psc" lang="text" codigo={`Algoritmo Suma_Potencias_Pares
+    Definir x, potencia, suma Como Real
+    Definir n, exponente, i Como Entero
+
+    Escribir "Ingrese valor de X:"
+    Leer x
+    Escribir "Ingrese valor de n (par y mayor o igual que 2):"
+    Leer n
+    Mientras n < 2 O n MOD 2 <> 0 Hacer
+        Si n MOD 2 <> 0 Entonces
+            Escribir "Error: El valor de n debe ser par."
+        SiNo
+            Escribir "Error: El valor de n debe ser mayor o igual que 2."
+        FinSi
+        Escribir "Ingrese nuevamente n:"
+        Leer n
+    FinMientras
+
+    suma <- 0
+    Escribir "Serie generada:"
+    Para exponente <- 2 Hasta n Con Paso 2 Hacer
+        potencia <- 1
+        Para i <- 1 Hasta exponente Hacer
+            potencia <- potencia * x
+        FinPara
+        suma <- suma + potencia
+
+        Si exponente > 2 Entonces
+            Escribir " + " Sin Saltar
+        FinSi
+        Si x < 0 Entonces
+            Escribir "(", x, ")^", exponente Sin Saltar
+        SiNo
+            Escribir x, "^", exponente Sin Saltar
+        FinSi
+    FinPara
+    Escribir ""
+    Escribir "Suma de la serie: ", suma
+FinAlgoritmo`} />
+
+### 8. El mismo algoritmo en C++
+
+<Codigo archivo="suma_potencias_pares.cpp" lang="cpp" codigo={`#include <iostream>
+using namespace std;
+
+int main() {
+    double x, potencia, suma;
+    int n;
+
+    cout << "Ingrese valor de X: ";
+    cin >> x;
+    cout << "Ingrese valor de n (par y mayor o igual que 2): ";
+    cin >> n;
+    while (n < 2 || n % 2 != 0) {
+        if (n % 2 != 0) {
+            cout << "Error: El valor de n debe ser par." << endl;
+        } else {
+            cout << "Error: El valor de n debe ser mayor o igual que 2." << endl;
+        }
+        cout << "Ingrese nuevamente n: ";
+        cin >> n;
+    }
+
+    suma = 0;
+    cout << "Serie generada:" << endl;
+    for (long long exponente = 2; exponente <= n; exponente += 2) {
+        potencia = 1;
+        for (long long i = 1; i <= exponente; i++) {
+            potencia = potencia * x;
+        }
+        suma = suma + potencia;
+
+        if (exponente > 2) {
+            cout << " + ";
+        }
+        if (x < 0) {
+            cout << "(" << x << ")^" << exponente;
+        } else {
+            cout << x << "^" << exponente;
+        }
+    }
+    cout << endl;
+    cout << "Suma de la serie: " << suma << endl;
+    return 0;
+}`} />
+
+El símbolo `^` aparece **dentro de un texto de salida** para representar la potencia. El cálculo se hace únicamente con `potencia * x`; en C++, `^` no es un operador de potencia.
+
+La condición `exponente > 2` coloca el signo `+` antes de cada término excepto el primero. Si la base es negativa, se muestra entre paréntesis para que `(-2)^2` no se confunda con `-2^2`.
+
+Estas versiones didácticas suponen entradas numéricas, con `n` entero, y valores cuyos resultados caben en los tipos numéricos utilizados.
+
+### 9. Comprobemos los resultados
+
+Para los datos del enunciado, la salida es:
+
+```text
+Serie generada:
+2^2 + 2^4 + 2^6
+Suma de la serie: 84
+```
+
+| Entrada | Resultado esperado |
+| --- | --- |
+| `X = 2`, `n = 2` | Un término: `2^2`. Suma: `4`. |
+| `X = 2`, `n = 6` | Tres términos. Suma: `84`. |
+| `X = 0`, `n = 6` | Todas las potencias son cero. Suma: `0`. |
+| `X = -2`, `n = 6` | `(-2)^2 + (-2)^4 + (-2)^6`. Suma: `84`. |
+| `X = 0.5`, `n = 4` | `0.25 + 0.0625`. Suma: `0.3125`. |
+| `n = 5` | Error: el exponente debe ser par. Solicitar nuevamente. |
+| `n = 0` o `n = -2` | Error: el exponente debe ser al menos 2. Solicitar nuevamente. |
+
+### Para explicar en clase
+
+Antes de ejecutar, pregunta: **si `X = 3` y `n = 4`, ¿cuántos términos tendremos, cuántas multiplicaciones necesita cada uno y cuánto suman?**
+
+Son dos términos: `3^2 = 9` y `3^4 = 81`. El interior realiza primero dos multiplicaciones y luego cuatro. La suma final es `90`.
+
+## Ejercicio 2 · Serie de sumas acumuladas
+
+Desarrolle un algoritmo para **generar, mostrar y sumar** la siguiente serie de números, en una cantidad de **`n` términos**:
+
+```text
+sum = 1 + 3 + 6 + 10 + 15 + 21 + 28 + 36 + 45 + 55 + ...
+```
+
+Cada término debe construirse de acuerdo con el siguiente criterio: **es la suma desde la unidad hasta la posición que ocupa ese término**.
+
+### Ejemplo
+
+Si `n = 5`, se tiene:
+
+```text
+1(1) + 3(1 + 2) + 6(1 + 2 + 3) + 10(1 + 2 + 3 + 4) + 15(1 + 2 + 3 + 4 + 5)
+```
+
+La suma de la serie es:
+
+```text
+sum = 35
+```
+
+### Datos de prueba
+
+**Entrada:**
+
+```text
+Ingrese cantidad de términos: 5
+```
+
+**Proceso:**
+
+Generar los primeros 5 términos:
+
+```text
+1 + 3 + 6 + 10 + 15
+```
+
+Realizar la suma:
+
+```text
+1 + 3 + 6 + 10 + 15 = 35
+```
+
+**Salida esperada:**
+
+```text
+Serie generada:
+1 3 6 10 15
+
+La suma de la serie es: 35
+```

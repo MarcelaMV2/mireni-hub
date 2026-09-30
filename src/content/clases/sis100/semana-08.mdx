@@ -1,0 +1,90 @@
+---
+materia: "sis100"
+semana: 8
+cantidadEjercicios: 2
+---
+
+## ¿Qué es la modularidad?
+
+La **programación modular** consiste en dividir un problema grande en partes más pequeñas llamadas **módulos**. Cada módulo se encarga de una tarea específica y el programa principal coordina el trabajo de todos ellos.
+
+Un módulo puede recibir datos, procesarlos y devolver un resultado. Por ejemplo, un programa puede tener un módulo para leer datos, otro para calcular una suma y otro para mostrar los resultados.
+
+### ¿Por qué dividir el programa?
+
+La modularidad permite:
+
+- Entender el problema por partes.
+- Escribir y revisar cada tarea de manera independiente.
+- Reutilizar un módulo en otros programas.
+- Encontrar errores con mayor facilidad.
+- Evitar que el programa principal se vuelva demasiado extenso.
+
+Cada módulo debe tener una **responsabilidad clara**. Si un módulo genera un número, su trabajo es generar el número; si otro separa sus dígitos, no debería encargarse también de comprobar si es primo.
+
+### Programa principal y módulos
+
+El **programa principal** organiza el orden general del algoritmo. Los módulos realizan las tareas concretas cuando el programa principal los llama.
+
+```text
+Algoritmo Principal
+    dato <- ModuloLeerDato()
+    resultado <- ModuloProcesar(dato)
+    ModuloMostrar(resultado)
+FinAlgoritmo
+```
+
+La idea es que cada módulo pueda entenderse por separado y que sus nombres indiquen claramente qué tarea realiza. En PSeInt, los módulos pueden escribirse como `SubProceso` o `Funcion`, según necesiten devolver un resultado.
+
+## Ejercicio 1 · Primer y último dígito
+
+### Enunciado
+
+Desarrolle un algoritmo aplicando la **programación modular** que permita leer una cantidad `n` de números enteros positivos de tres dígitos, comparar el primer y último dígito de cada número y mostrar y sumar aquellos cuyos dígitos comparados sean iguales. La cantidad `n` debe ser positiva y los números ingresados deben estar entre `100` y `999`; los datos inválidos deben solicitarse nuevamente.
+
+### Ejemplo
+
+**Entrada:**
+
+```text
+Cantidad de números: 5
+Números: 121, 305, 484, 790, 898
+```
+
+| Número | Primer dígito | Último dígito | ¿Coinciden? |
+| ---: | ---: | ---: | --- |
+| 121 | 1 | 1 | Sí |
+| 305 | 3 | 5 | No |
+| 484 | 4 | 4 | Sí |
+| 790 | 7 | 0 | No |
+| 898 | 8 | 8 | Sí |
+
+**Salida esperada:**
+
+```text
+Números con primer y último dígito iguales: 121, 484, 898
+Suma: 121 + 484 + 898 = 1503
+```
+
+## Ejercicio 2 · Número aleatorio de tres dígitos
+
+### Enunciado
+
+Desarrolle un algoritmo aplicando la **programación modular** que genere aleatoriamente un número entero positivo de tres dígitos, comprendido entre `100` y `999`. El algoritmo debe mostrar sus dígitos de forma horizontal, calcular la suma de sus dígitos, verificar si el número es primo y presentar todos los resultados desde el programa principal.
+
+### Ejemplo
+
+**Número generado:**
+
+```text
+Número: 137
+```
+
+**Salida esperada:**
+
+```text
+Dígitos: 1 3 7
+Suma de los dígitos: 11
+¿Es primo?: Sí
+```
+

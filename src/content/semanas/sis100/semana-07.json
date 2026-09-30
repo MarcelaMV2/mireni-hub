@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 7,
+  "titulo": "Estructuras repetitivas anidadas",
+  "resumen": "Uso de ciclos dentro de otros ciclos para resolver problemas organizados por filas, columnas y niveles de repetición.",
+  "estado": "disponible"
+}
