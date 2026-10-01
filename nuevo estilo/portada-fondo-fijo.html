@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mireni Hub | Marcela Miranda Veniz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --font: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  }
+  /* Oscuro: azul marino profundo con brillo cian */
+  :root[data-theme="dark"] {
+    --bg: #060a24;
+    --glow: #12246e;
+    --text: #f1f4ff;
+    --muted: #a7b3da;
+    --accent: #1677ff;
+    --accent-ink: #ffffff;
+    --cyan: #52cbff;
+    --glass: rgba(255, 255, 255, .055);
+    --glass-2: rgba(255, 255, 255, .09);
+    --line: rgba(130, 168, 255, .22);
+    --f-top: #1c2d78; --f-left: #111a4c; --f-right: #182469;
+    --cube-a: #57d0ff; --cube-b: #2a8fe0; --cube-c: #1a5cc0;
+    --ink-face: #8fd8ff;
+    --shadow: 0 30px 80px rgba(0, 0, 0, .45);
+  }
+  /* Claro: blanco azulado, mismo azul como acento */
+  :root[data-theme="light"] {
+    --bg: #f3f6ff;
+    --glow: #d6e3ff;
+    --text: #0d1638;
+    --muted: #4c5b86;
+    --accent: #2563eb;
+    --accent-ink: #ffffff;
+    --cyan: #0a8fd6;
+    --glass: rgba(255, 255, 255, .72);
+    --glass-2: rgba(255, 255, 255, .95);
+    --line: rgba(37, 99, 235, .18);
+    --f-top: #ffffff; --f-left: #c7d6f7; --f-right: #adc2f2;
+    --cube-a: #7fd6ff; --cube-b: #4aa3ee; --cube-c: #2f74d6;
+    --ink-face: #1d4fb8;
+    --shadow: 0 30px 70px rgba(37, 99, 235, .16);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; min-height: 100vh;
+    font-family: var(--font); font-size: 17px; line-height: 1.6; color: var(--text);
+    background:
+      radial-gradient(900px 620px at 78% 28%, var(--glow), transparent 70%),
+      var(--bg);
+    -webkit-font-smoothing: antialiased;
+    transition: background .3s, color .3s;
+  }
+  a { color: inherit; text-decoration: none; }
+  svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 8px; }
+  .wrap { width: min(1200px, 100% - 48px); margin-inline: auto; }
+
+  /* Navegación */
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 0; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.45rem; letter-spacing: -0.02em; }
+  .logo .mk {
+    width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center;
+    background: linear-gradient(145deg, var(--accent), var(--cyan)); color: #fff; font-size: .9rem; font-weight: 700;
+  }
+  .pill {
+    display: flex; gap: 4px; padding: 6px; border-radius: 14px;
+    background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(10px);
+  }
+  .pill a { padding: 8px 16px; border-radius: 9px; font-size: .95rem; color: var(--muted); transition: background .15s, color .15s; }
+  .pill a:hover { color: var(--text); background: var(--glass-2); }
+  .pill a.on { background: var(--accent); color: var(--accent-ink); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 13px 22px; border-radius: 12px; font: inherit; font-weight: 500; font-size: .98rem; cursor: pointer;
+    border: 1px solid var(--line); color: var(--text); background: var(--glass);
+    backdrop-filter: blur(10px);
+    transition: transform .15s, border-color .15s, background .15s;
+  }
+  .btn:hover { transform: translateY(-2px); border-color: var(--cyan); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); box-shadow: 0 10px 30px -10px var(--accent); }
+  .theme { width: 46px; height: 46px; padding: 0; border-radius: 12px; }
+  .theme .moon { display: none; }
+  :root[data-theme="dark"] .theme .moon { display: block; }
+  :root[data-theme="dark"] .theme .sun { display: none; }
+
+  /* Portada */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); gap: 24px; align-items: center; padding: 28px 0 56px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 10px; padding: 8px 16px; border-radius: 999px;
+    background: var(--glass); border: 1px solid var(--line); font-size: .92rem; color: var(--muted);
+  }
+  .badge svg.i { color: var(--cyan); }
+  h1 { margin: 24px 0 0; font-weight: 500; font-size: clamp(2.6rem, 5.6vw, 4.3rem); line-height: 1.06; letter-spacing: -0.035em; }
+  .by { margin: 18px 0 0; font-size: 1.3rem; font-weight: 500; color: var(--cyan); }
+  .lead { margin: 18px 0 0; max-width: 50ch; color: var(--muted); font-size: 1.05rem; }
+  .cta { margin-top: 34px; display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .contact { margin-top: 44px; }
+  .contact p { margin: 0 0 12px; font-size: .95rem; color: var(--muted); }
+  .contact ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .contact a {
+    width: 48px; height: 48px; border-radius: 13px; display: grid; place-items: center;
+    background: var(--glass); border: 1px solid var(--line); transition: transform .15s, border-color .15s, color .15s;
+  }
+  .contact a:hover { transform: translateY(-3px); border-color: var(--cyan); color: var(--cyan); }
+  .contact a svg.i { width: 21px; height: 21px; }
+
+  /* Ilustración */
+  .art { position: relative; }
+  .art svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .bob { animation: bob 7s ease-in-out infinite; }
+  .drift { animation: drift 6s ease-in-out infinite; }
+  .drift:nth-of-type(2n) { animation-duration: 8s; animation-delay: -2s; }
+  .drift:nth-of-type(3n) { animation-duration: 5.5s; animation-delay: -3.5s; }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .spin { transform-origin: 260px 205px; }
+  .face-txt { font-family: var(--mono); font-size: 8.5px; fill: var(--ink-face); }
+
+  /* Materias */
+  .subjects { padding: 24px 0 80px; }
+  .subjects h2 { margin: 0; font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 500; letter-spacing: -0.03em; }
+  .subjects > .wrap > p { margin: 8px 0 28px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+  .card {
+    padding: 28px; border-radius: 22px; display: flex; flex-direction: column; gap: 14px;
+    background: var(--glass); border: 1px solid var(--line); backdrop-filter: blur(12px);
+    box-shadow: var(--shadow); scroll-margin-top: 24px;
+    transition: border-color .2s, transform .2s;
+  }
+  .card:hover { border-color: var(--cyan); transform: translateY(-3px); }
+  .card-top { display: flex; align-items: center; justify-content: space-between; }
+  .ico { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; color: var(--cyan); background: var(--glass-2); border: 1px solid var(--line); }
+  .ico svg.i { width: 23px; height: 23px; }
+  .chip { font-family: var(--mono); font-size: .85rem; font-weight: 500; color: var(--cyan); padding: 4px 12px; border-radius: 999px; border: 1px solid var(--line); }
+  .card h3 { margin: 6px 0 0; font-size: 1.55rem; font-weight: 600; letter-spacing: -0.02em; }
+  .card p { margin: 0; color: var(--muted); }
+  .tags { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .tags li { font-size: .84rem; padding: 4px 12px; border-radius: 999px; background: var(--glass-2); color: var(--muted); }
+  .open { margin-top: auto; padding-top: 18px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; font-weight: 500; }
+  .open svg.i { transition: transform .15s; color: var(--cyan); }
+  .card:hover .open svg.i { transform: translate(3px, -3px); }
+
+  footer { padding: 0 0 44px; text-align: center; color: var(--muted); font-size: .92rem; }
+
+  @media (max-width: 900px) {
+    .pill { display: none; }
+    .hero { grid-template-columns: 1fr; padding-top: 8px; }
+    .art { order: -1; max-width: 420px; margin-inline: auto; }
+    .grid { grid-template-columns: 1fr; }
+    .nav-right .btn:not(.theme) { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+  /* ===== Fondo fijo: la ilustración queda quieta y todo lo demás se desliza encima ===== */
+  body { background: radial-gradient(900px 640px at 74% 50%, var(--glow), transparent 70%), var(--bg); background-attachment: fixed; }
+  :root[data-theme="dark"]  { --card: rgba(9, 16, 58, .58); }
+  :root[data-theme="light"] { --card: rgba(255, 255, 255, .76); }
+  .stage { position: fixed; inset: 0; z-index: 0; pointer-events: none; display: flex; align-items: center; justify-content: flex-end; padding: 0 max(3vw, calc((100vw - 1200px) / 2)) 0 0; }
+  .stage svg { height: min(88vh, 700px); width: auto; max-width: 60vw; display: block; overflow: visible; }
+  .wrap, .subjects { position: relative; z-index: 1; }
+  .hero { grid-template-columns: minmax(0, 1fr); min-height: calc(100vh - 120px); padding-bottom: 72px; }
+  .hero > div { max-width: 620px; }
+  .card { background: var(--card); }
+  @media (max-width: 900px) {
+    .stage { justify-content: center; padding: 0; opacity: .4; }
+    .stage svg { height: 72vh; max-width: 100%; }
+    .hero { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="github" viewBox="0 0 24 24"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.4 5.4 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></symbol>
+  <symbol id="linkedin" viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></symbol>
+  <symbol id="instagram" viewBox="0 0 24 24"><rect width="20" height="20" x="2" y="2" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></symbol>
+  <symbol id="facebook" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></symbol>
+  <symbol id="mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+  <symbol id="db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></symbol>
+  <symbol id="code" viewBox="0 0 24 24"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></symbol>
+  <symbol id="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+  <symbol id="moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></symbol>
+  <symbol id="book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+</svg>
+
+<!-- Fondo fijo: se queda quieto mientras el contenido se desliza encima -->
+<div class="stage" aria-hidden="true">
+<svg viewBox="0 0 520 560" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <symbol id="mini" viewBox="0 0 20 23">
+            <polygon points="10,0 20,5.75 10,11.5 0,5.75" fill="var(--cube-a)"/>
+            <polygon points="0,5.75 10,11.5 10,23 0,17.25" fill="var(--cube-c)"/>
+            <polygon points="10,11.5 20,5.75 20,17.25 10,23" fill="var(--cube-b)"/>
+          </symbol>
+          <radialGradient id="ground" cx="50%" cy="50%" r="50%">
+            <stop offset="0" stop-color="var(--cyan)" stop-opacity=".55"/>
+            <stop offset="1" stop-color="var(--cyan)" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="beam" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="var(--cyan)" stop-opacity=".8"/>
+            <stop offset="1" stop-color="var(--cyan)" stop-opacity="0"/>
+          </linearGradient>
+          <filter id="blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6"/></filter>
+          <filter id="soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2"/></filter>
+        </defs>
+
+        <ellipse cx="260" cy="448" rx="190" ry="44" fill="url(#ground)"/>
+
+        <g class="bob">
+          <!-- resplandor del borde inferior -->
+          <path d="M130 355 L260 430 L390 355" fill="none" stroke="var(--cyan)" stroke-width="5" opacity=".6" filter="url(#blur)"/>
+
+          <!-- caras -->
+          <polygon points="130,205 260,280 260,430 130,355" fill="var(--f-left)"/>
+          <polygon points="260,280 390,205 390,355 260,430" fill="var(--f-right)"/>
+          <polygon points="260,130 390,205 260,280 130,205" fill="var(--f-top)"/>
+          <polyline points="130,205 260,280 390,205" fill="none" stroke="var(--cyan)" stroke-opacity=".5" stroke-width="1.2"/>
+          <line x1="260" y1="280" x2="260" y2="430" stroke="var(--cyan)" stroke-opacity=".5" stroke-width="1.2"/>
+          <path d="M130 355 L260 430 L390 355" fill="none" stroke="var(--cyan)" stroke-width="2"/>
+          <path d="M130 205 L260 130 L390 205" fill="none" stroke="var(--cyan)" stroke-opacity=".6" stroke-width="1.2"/>
+
+          <!-- cara izquierda: SQL -->
+          <g transform="matrix(1 0.577 0 1 130 205)">
+            <text class="face-txt" x="14" y="30" opacity=".95">CREATE TRIGGER</text>
+            <text class="face-txt" x="14" y="46" opacity=".75">AFTER UPDATE ON</text>
+            <text class="face-txt" x="14" y="62" opacity=".75">  producto</text>
+            <text class="face-txt" x="14" y="78" opacity=".75">FOR EACH ROW</text>
+            <text class="face-txt" x="14" y="94" opacity=".95">BEGIN</text>
+            <text class="face-txt" x="14" y="110" opacity=".6">  INSERT INTO</text>
+            <text class="face-txt" x="14" y="126" opacity=".95">END;</text>
+          </g>
+
+          <!-- cara derecha: C++ -->
+          <g transform="matrix(1 -0.577 0 1 260 280)">
+            <text class="face-txt" x="14" y="30" opacity=".95">void swap(int *a,</text>
+            <text class="face-txt" x="14" y="46" opacity=".75">          int *b) {</text>
+            <text class="face-txt" x="14" y="62" opacity=".75">  int t = *a;</text>
+            <text class="face-txt" x="14" y="78" opacity=".75">  *a = *b;</text>
+            <text class="face-txt" x="14" y="94" opacity=".75">  *b = t;</text>
+            <text class="face-txt" x="14" y="110" opacity=".95">}</text>
+          </g>
+
+          <!-- cara superior: anillos y aspas -->
+          <ellipse cx="260" cy="205" rx="72" ry="41.5" fill="none" stroke="var(--cyan)" stroke-opacity=".8" stroke-width="1.4"/>
+          <ellipse cx="260" cy="205" rx="50" ry="29" fill="none" stroke="var(--cyan)" stroke-opacity=".6" stroke-width="1"/>
+          <g id="blades" class="spin" stroke="var(--cyan)" stroke-opacity=".55" stroke-width="1"></g>
+          <ellipse cx="260" cy="205" rx="26" ry="15" fill="var(--cyan)" opacity=".55" filter="url(#soft)"/>
+          <ellipse cx="260" cy="205" rx="14" ry="8" fill="var(--cyan)"/>
+
+          <!-- holograma -->
+          <ellipse cx="260" cy="150" rx="54" ry="31" fill="var(--cyan)" fill-opacity=".1" stroke="var(--cyan)" stroke-opacity=".8" stroke-width="1.2"/>
+          <ellipse cx="260" cy="150" rx="30" ry="17" fill="none" stroke="var(--cyan)" stroke-opacity=".5"/>
+          <rect x="236" y="56" width="1.6" height="70" fill="url(#beam)"/>
+          <rect x="260" y="36" width="1.6" height="90" fill="url(#beam)"/>
+          <rect x="284" y="68" width="1.6" height="58" fill="url(#beam)"/>
+          <rect x="248" y="80" width="1.2" height="44" fill="url(#beam)"/>
+          <rect x="274" y="92" width="1.2" height="32" fill="url(#beam)"/>
+        </g>
+
+        <!-- cubos flotantes -->
+        <use class="drift" href="#mini" x="392" y="92" width="18" height="21"/>
+        <use class="drift" href="#mini" x="146" y="150" width="14" height="16"/>
+        <use class="drift" href="#mini" x="412" y="186" width="16" height="18"/>
+        <use class="drift" href="#mini" x="82" y="256" width="20" height="23"/>
+        <use class="drift" href="#mini" x="438" y="296" width="22" height="25"/>
+        <use class="drift" href="#mini" x="106" y="400" width="18" height="21"/>
+        <use class="drift" href="#mini" x="402" y="420" width="20" height="23"/>
+        <use class="drift" href="#mini" x="326" y="468" width="14" height="16"/>
+        <use class="drift" href="#mini" x="196" y="104" width="12" height="14"/>
+        <use class="drift" href="#mini" x="472" y="228" width="12" height="14"/>
+        <use class="drift" href="#mini" x="66" y="334" width="14" height="16"/>
+        <use class="drift" href="#mini" x="306" y="52" width="12" height="14"/>
+      </svg>
+</div>
+
+<div class="wrap">
+  <header class="nav">
+    <a class="logo" href="#inicio"><span class="mk">MM</span>Mireni Hub</a>
+    <nav class="pill" aria-label="Principal">
+      <a class="on" href="#inicio">Inicio</a>
+      <a href="#materias">Materias</a>
+      <a href="#sis100">SIS100</a>
+      <a href="#sis304">SIS304</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <div class="nav-right">
+      <a class="btn" href="https://github.com/MarcelaMV2">GitHub</a>
+      <a class="btn primary" href="mailto:tu-correo@ejemplo.com">Escríbeme</a>
+      <button class="btn theme" id="theme" type="button" aria-label="Cambiar entre modo claro y oscuro"><svg class="i sun"><use href="#sun"/></svg><svg class="i moon"><use href="#moon"/></svg></button>
+    </div>
+  </header>
+
+  <section class="hero" id="inicio">
+    <div>
+      <span class="badge"><svg class="i"><use href="#book"/></svg>Repositorio de auxiliatura en la USFX</span>
+      <h1>Welcome to<br>Mireni Hub</h1>
+      <p class="by">by Marcela Miranda Veniz</p>
+      <p class="lead">Publico acá los ejercicios resueltos de las materias en las que soy auxiliar. Cada resolución trae enunciado, código comentado y explicación paso a paso, pensado para repasar antes de la prueba.</p>
+      <div class="cta">
+        <a class="btn primary" href="#materias">Ver materias</a>
+        <a class="btn" href="#sis304"><svg class="i"><use href="#db"/></svg>Base de datos II</a>
+      </div>
+
+      <div class="contact" id="contacto">
+        <p>Canales de contacto</p>
+        <ul>
+          <li><a href="https://github.com/MarcelaMV2" aria-label="GitHub"><svg class="i"><use href="#github"/></svg></a></li>
+          <li><a href="#" aria-label="LinkedIn"><svg class="i"><use href="#linkedin"/></svg></a></li>
+          <li><a href="#" aria-label="Instagram"><svg class="i"><use href="#instagram"/></svg></a></li>
+          <li><a href="#" aria-label="Facebook"><svg class="i"><use href="#facebook"/></svg></a></li>
+          <li><a href="mailto:tu-correo@ejemplo.com" aria-label="Correo"><svg class="i"><use href="#mail"/></svg></a></li>
+        </ul>
+      </div>
+    </div>
+
+    
+  </section>
+</div>
+
+<section class="subjects" id="materias">
+  <div class="wrap">
+    <h2>Materias</h2>
+    <p>Elige una para ver sus ejercicios resueltos.</p>
+    <div class="grid">
+      <article class="card" id="sis304">
+        <div class="card-top"><span class="ico"><svg class="i"><use href="#db"/></svg></span><span class="chip">SIS304</span></div>
+        <h3>Base de datos II</h3>
+        <p>Procedimientos, parámetros, funciones, transacciones y triggers sobre MySQL.</p>
+        <ul class="tags"><li>Procedimientos</li><li>Funciones</li><li>Transacciones</li><li>Triggers</li></ul>
+        <a class="open" href="#"><span>Ver ejercicios</span><svg class="i"><use href="#arrow"/></svg></a>
+      </article>
+      <article class="card" id="sis100">
+        <div class="card-top"><span class="ico"><svg class="i"><use href="#code"/></svg></span><span class="chip">SIS100</span></div>
+        <h3>Programación básica</h3>
+        <p>Fundamentos de C++: control de flujo, funciones, arreglos y punteros.</p>
+        <ul class="tags"><li>Control de flujo</li><li>Funciones</li><li>Arreglos</li><li>Punteros</li></ul>
+        <a class="open" href="#"><span>Ver ejercicios</span><svg class="i"><use href="#arrow"/></svg></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<footer class="wrap">Marcela Miranda Veniz, auxiliar de docencia, Universidad San Francisco Xavier de Chuquisaca</footer>
+
+<script>
+  // Aspas del ventilador en la cara superior
+  (function () {
+    var g = document.getElementById('blades'), ns = 'http://www.w3.org/2000/svg';
+    for (var i = 0; i < 20; i++) {
+      var a = (i / 20) * Math.PI * 2;
+      var l = document.createElementNS(ns, 'line');
+      l.setAttribute('x1', 260 + 16 * Math.cos(a)); l.setAttribute('y1', 205 + 9.2 * Math.sin(a));
+      l.setAttribute('x2', 260 + 68 * Math.cos(a)); l.setAttribute('y2', 205 + 39 * Math.sin(a));
+      g.appendChild(l);
+    }
+  })();
+
+  // Tema claro / oscuro (empieza en oscuro, o según el sistema)
+  (function () {
+    var root = document.documentElement, btn = document.getElementById('theme');
+    var saved = null;
+    try { saved = localStorage.getItem('mireni-theme-c'); } catch (e) {}
+    var dark = saved ? saved === 'dark' : !window.matchMedia('(prefers-color-scheme: light)').matches;
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.addEventListener('click', function () {
+      dark = !dark;
+      root.setAttribute('data-theme', dark ? 'dark' : 'light');
+      try { localStorage.setItem('mireni-theme-c', dark ? 'dark' : 'light'); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

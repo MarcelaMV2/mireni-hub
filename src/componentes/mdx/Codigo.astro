@@ -1,65 +1,98 @@
 ---
-import { Code } from 'astro:components';
+import { Code } from "astro:components";
 
 // Bloque de código con título de archivo, botón copiar y resaltado (Shiki).
 // Uso en MDX:
 //   <Codigo archivo="sp_stock_categoria.sql" lang="sql" codigo={`CREATE PROCEDURE ...`} />
-import { Icon } from 'astro-icon/components';
+// Con `plegado` el bloque arranca contraído (se despliega con el botón
+// "plegar"), útil para no mostrar la resolución a simple vista.
+import { Icon } from "astro-icon/components";
 
 interface Props {
   archivo: string;
   lang: string;
   codigo: string;
+  plegado?: boolean;
 }
-const { archivo, lang, codigo } = Astro.props;
+const { archivo, lang, codigo, plegado = false } = Astro.props;
 ---
 
-<figure class="border border-default rounded-md overflow-hidden my-6 bg-surface">
-  <figcaption class="flex items-center gap-3 px-3 py-2 border-b border-default bg-surface">
-    <span class="inline-flex gap-[5px]">
-      <i class="w-[9px] h-[9px] rounded-full bg-[#e05c4a]"></i>
-      <i class="w-[9px] h-[9px] rounded-full bg-[#e0b13a]"></i>
-      <i class="w-[9px] h-[9px] rounded-full bg-[#4aa96c]"></i>
-    </span>
-    <span class="min-w-0 flex-1 break-all font-mono text-xs text-secondary">{archivo}</span>
-    <details class="relative">
-      <summary class="grid place-items-center list-none cursor-pointer rounded-sm border border-default px-2 py-1.5 text-secondary transition-colors hover:text-primary hover:border-primary" aria-label="Más opciones del código" title="Más opciones">
-        <span aria-hidden="true" class="text-lg leading-none">⋮</span>
-      </summary>
+<figure
+  class:list={["code-editor", plegado && "is-closed"]}
+  data-code-editor
+>
+  <figcaption class="code-editor-head">
+    <span class="code-editor-dots" aria-hidden="true"
+      ><i></i><i></i><i></i></span
+    >
+    <span class="code-editor-file">{archivo}</span>
+    <span class="code-editor-lang">{lang === "sql" ? "MySQL" : lang}</span>
+    <div class="code-editor-tools">
       <button
-        class="copiar absolute right-0 top-10 z-10 inline-flex items-center gap-1.5 whitespace-nowrap rounded-sm border border-default bg-canvas px-3 py-2 font-mono text-[0.66rem] uppercase tracking-widest text-secondary shadow-sm transition-all hover:text-primary hover:border-primary"
+        class="code-editor-tool copiar"
         data-codigo={codigo}
         type="button"
+        aria-label="Copiar código"
       >
-        <Icon name="tabler:copy" width={13} height={13} class="icono-copiar" />
-        <Icon name="tabler:check" width={13} height={13} class="icono-ok hidden" />
-        <span class="texto-btn">Copiar código</span>
+        <Icon name="tabler:copy" width={16} height={16} class="icono-copiar" />
+        <Icon
+          name="tabler:check"
+          width={16}
+          height={16}
+          class="icono-ok hidden"
+        />
+        <span class="texto-btn">Copiar</span>
       </button>
-    </details>
+      <button
+        class="code-editor-tool plegar"
+        type="button"
+        aria-label="Contraer o expandir código"
+        aria-expanded={!plegado}
+      >
+        <Icon name="tabler:chevron-up" width={16} height={16} />
+      </button>
+    </div>
   </figcaption>
-  <div class="[&_pre]:m-0 [&_pre]:p-4 [&_pre]:text-[0.82rem] [&_pre]:leading-[1.55] [&_pre]:overflow-x-auto [&_pre]:!bg-surface">
-    <Code code={codigo} lang={lang as any} theme="github-light" />
+  <div class="code-editor-body">
+    <div class="code-editor-code code-editor-code-dark">
+      <Code code={codigo} lang={lang as any} theme="github-dark" />
+    </div>
+    <div class="code-editor-code code-editor-code-light">
+      <Code code={codigo} lang={lang as any} theme="github-light" />
+    </div>
   </div>
+  <figcaption class="code-editor-foot">
+    <span
+      >{codigo.split("\n").length}
+      {codigo.split("\n").length === 1 ? "línea" : "líneas"}</span
+    >
+    <span>UTF-8</span>
+  </figcaption>
 </figure>
 
 <script>
-  document.querySelectorAll('.copiar').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const codigo = btn.getAttribute('data-codigo') ?? '';
-      const iconoCopiar = btn.querySelector('.icono-copiar');
-      const iconoOk = btn.querySelector('.icono-ok');
-      const texto = btn.querySelector('.texto-btn');
+  document.querySelectorAll(".code-editor").forEach((editor) => {
+    const fold = editor.querySelector(".plegar");
+    fold?.addEventListener("click", () => editor.classList.toggle("is-closed"));
+  });
+
+  document.querySelectorAll(".code-editor .copiar").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const codigo = btn.getAttribute("data-codigo") ?? "";
+      const iconoCopiar = btn.querySelector(".icono-copiar");
+      const iconoOk = btn.querySelector(".icono-ok");
+      const texto = btn.querySelector(".texto-btn");
       try {
         await navigator.clipboard.writeText(codigo);
-        iconoCopiar?.classList.add('hidden');
-        iconoOk?.classList.remove('hidden');
-        if (texto) texto.textContent = 'Copiado';
-        btn.classList.add('!text-success', '!border-success');
+        iconoCopiar?.classList.add("hidden");
+        iconoOk?.classList.remove("hidden");
+        if (texto) texto.textContent = "Copiado";
+        btn.classList.add("!text-success", "!border-success");
         setTimeout(() => {
-          iconoCopiar?.classList.remove('hidden');
-          iconoOk?.classList.add('hidden');
-          if (texto) texto.textContent = 'Copiar código';
-          btn.classList.remove('!text-success', '!border-success');
+          iconoCopiar?.classList.remove("hidden");
+          iconoOk?.classList.add("hidden");
+          if (texto) texto.textContent = "Copiar código";
+          btn.classList.remove("!text-success", "!border-success");
         }, 1600);
       } catch {
         /* clipboard no disponible */

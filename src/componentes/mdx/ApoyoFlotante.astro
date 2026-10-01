@@ -1,0 +1,140 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  /** Ruta de la imagen a mostrar en el primer diálogo. */
+  imagenSrc: string;
+  imagenAlt: string;
+  /** Código SQL a mostrar en el segundo diálogo. */
+  sql: string;
+  /** Nombre del archivo SQL, para la cabecera del diálogo. */
+  sqlArchivo: string;
+  imagenTitulo: string;
+  sqlTitulo: string;
+  /** Oculta la barra flotante sin borrar el contenido. */
+  oculto?: boolean;
+}
+
+const {
+  imagenSrc,
+  imagenAlt,
+  sql,
+  sqlArchivo,
+  imagenTitulo,
+  sqlTitulo,
+  oculto = false,
+} = Astro.props;
+---
+
+<!--
+  Acceso al material de apoyo en móvil. En escritorio estos mismos
+  contenidos viven en los <details> del propio artículo, así que aquí sólo
+  se exponen los dos botones flotantes que abren cada uno en un diálogo.
+-->
+<div
+  class:list={["apoyo-flotante", oculto && "apoyo-oculto"]}
+  data-apoyo-flotante
+>
+  <div class="apoyo-flotante-barra">
+    <button
+      type="button"
+      class="apoyo-flotante-btn"
+      data-apoyo-abrir="apoyo-dialogo-imagen"
+      aria-haspopup="dialog"
+      aria-label={imagenTitulo}
+      title={imagenTitulo}
+    >
+      <Icon name="tabler:photo" width={20} height={20} aria-hidden="true" />
+    </button>
+
+    <button
+      type="button"
+      class="apoyo-flotante-btn"
+      data-apoyo-abrir="apoyo-dialogo-sql"
+      aria-haspopup="dialog"
+      aria-label={sqlTitulo}
+      title={sqlTitulo}
+    >
+      <Icon name="tabler:database" width={20} height={20} aria-hidden="true" />
+    </button>
+  </div>
+
+  <dialog
+    class="apoyo-dialogo"
+    id="apoyo-dialogo-imagen"
+    data-apoyo-dialogo
+    aria-label={imagenTitulo}
+  >
+    <div class="apoyo-dialogo-head">
+      <h2>{imagenTitulo}</h2>
+      <button type="button" class="apoyo-dialogo-cerrar" data-apoyo-cerrar>
+        <Icon name="tabler:x" width={20} height={20} aria-hidden="true" />
+        <span class="sr-only">Cerrar</span>
+      </button>
+    </div>
+    <div class="apoyo-dialogo-body">
+      <img
+        src={imagenSrc}
+        alt={imagenAlt}
+        width="1020"
+        height="351"
+        loading="lazy"
+      />
+    </div>
+  </dialog>
+
+  <dialog
+    class="apoyo-dialogo"
+    id="apoyo-dialogo-sql"
+    data-apoyo-dialogo
+    aria-label={sqlTitulo}
+  >
+    <div class="apoyo-dialogo-head">
+      <h2>{sqlTitulo}</h2>
+      <button type="button" class="apoyo-dialogo-cerrar" data-apoyo-cerrar>
+        <Icon name="tabler:x" width={20} height={20} aria-hidden="true" />
+        <span class="sr-only">Cerrar</span>
+      </button>
+    </div>
+    <div class="apoyo-dialogo-body">
+      <pre class="apoyo-dialogo-codigo"><code>{sql}</code></pre>
+      <p class="apoyo-dialogo-archivo">{sqlArchivo}</p>
+    </div>
+  </dialog>
+</div>
+
+<script>
+  document.querySelectorAll("[data-apoyo-flotante]").forEach((raiz) => {
+    // El componente vive dentro del artículo, y `.semana-wrap` tiene
+    // `position: relative; z-index: 1`, lo que crea un stacking context que
+    // deja la barra fija atrapada por debajo de otros elementos (p. ej. la
+    // dev-toolbar de Astro, que se come los clics). Se mueve al <body> para
+    // que su `position: fixed` se resuelva contra la ventana.
+    document.body.appendChild(raiz);
+
+    const dialogos = Array.from(
+      raiz.querySelectorAll("[data-apoyo-dialogo]"),
+    ) as HTMLDialogElement[];
+
+    raiz
+      .querySelectorAll("[data-apoyo-abrir]")
+      .forEach((boton) => {
+        boton.addEventListener("click", () => {
+          const id = boton.getAttribute("data-apoyo-abrir");
+          const dialogo = dialogos.find((d) => d.id === id);
+          dialogo?.showModal();
+        });
+      });
+
+    raiz.querySelectorAll("[data-apoyo-cerrar]").forEach((boton) => {
+      boton.addEventListener("click", () => boton.closest("dialog")?.close());
+    });
+
+    // Cerrar con Escape o clic en el fondo oscurecido.
+    dialogos.forEach((dialogo) => {
+      dialogo.addEventListener("click", (evento) => {
+        if (evento.target === dialogo) dialogo.close();
+      });
+    });
+  });
+</script>

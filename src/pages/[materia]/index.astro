@@ -3,9 +3,11 @@ import { getCollection } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import { Icon } from "astro-icon/components";
 import Layout from "../../componentes/Layout.astro";
+import MateriaFondo from "../../componentes/MateriaFondo.astro";
 import Breadcrumb from "../../componentes/Breadcrumb.astro";
 import SemanaCard from "../../componentes/SemanaCard.astro";
 import ApartadoCard from "../../componentes/ApartadoCard.astro";
+import "../../estilos/materia.css";
 
 export const getStaticPaths = (async () => {
   const materias = await getCollection("materias");
@@ -41,92 +43,130 @@ function slugSemana(id: string) {
 
 <Layout
   titulo={`${materia.data.nombre} · ${materia.data.sigla}`}
-  marcaDerecha={materia.data.sigla}
+  variante="materia"
 >
-  <div class="max-w-[1120px] mx-auto px-4 md:px-8">
-    <div class="flex flex-col gap-4 pt-8 pb-6">
-      <Breadcrumb
-        items={[{ texto: "Inicio", href: "/" }, { texto: materia.data.sigla }]}
-      />
-
-      <div class="flex items-center gap-4">
-        <span
-          class="grid place-items-center w-14 h-14 border-2 border-primary rounded-md shrink-0"
-        >
-          <Icon name={iconos[materia.data.icono]} width={26} height={26} />
-        </span>
-        <h1
-          class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(2rem,7vw,3.4rem)]"
-        >
-          {materia.data.nombre}
-        </h1>
-      </div>
-
-      <!-- <div class="flex gap-2 flex-wrap">
-        <span
-          class="font-mono text-xs uppercase tracking-widest border border-primary rounded-md px-2.5 py-1"
-        >
-          {materia.data.sigla}
-        </span>
+  <MateriaFondo />
+  <div class="materia-main">
+    <div class="materia-wrap">
+      <section class="materia-head">
+        <Breadcrumb
+          items={[
+            { texto: "Inicio", href: "/" },
+            { texto: materia.data.sigla },
+          ]}
+        />
+        <div class="materia-title">
+          <span class="materia-title-icon">
+            <Icon name={iconos[materia.data.icono]} width={30} height={30} />
+          </span>
+          <h1>{materia.data.nombre}</h1>
+        </div>
+        <p class="materia-description">
+          {materia.data.descripcion} Cada semana trae los ejercicios de la clase con
+          su resolución.
+        </p>
         {
-          materia.data.meta.map((m) => (
-            <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
-              {m}
-            </span>
-          ))
+          materialExtra && (
+            <a class="materia-material" href={`/${materia.id}/material`}>
+              <Icon name="tabler:photo" width={16} height={16} />
+              Ver material extra
+            </a>
+          )
         }
-      </div> -->
+      </section>
+
+      <section aria-labelledby="semanas-title">
+        <div class="materia-bar">
+          <div>
+            <h2 id="semanas-title">Clases por semana</h2>
+            <small data-week-count>{semanas.length} semanas publicadas</small>
+          </div>
+          <label class="materia-search">
+            <Icon name="tabler:search" width={18} height={18} />
+            <input
+              data-week-search
+              type="search"
+              placeholder="Buscar un tema, por ejemplo triggers"
+              aria-label="Buscar en las semanas"
+              autocomplete="off"
+            />
+          </label>
+        </div>
+
+        <ol class="materia-weeks" data-week-list>
+          {
+            semanas.map((s) => (
+              <li
+                data-week-item
+                data-search-text={`${s.data.titulo} ${s.data.resumen}`}
+              >
+                <SemanaCard
+                  numero={s.data.numero}
+                  titulo={s.data.titulo}
+                  resumen={s.data.resumen}
+                  estado={s.data.estado}
+                  href={`/${materia.id}/${slugSemana(s.id)}`}
+                />
+              </li>
+            ))
+          }
+        </ol>
+        <p class="materia-empty" data-week-empty>
+          No hay semanas con ese tema. Prueba con otra palabra.
+        </p>
+      </section>
 
       {
-        materialExtra && (
-          <a
-            href={`/${materia.id}/material`}
-            class="inline-flex items-center gap-2 self-start font-mono text-xs uppercase tracking-widest border bg-primary text-canvas px-3 py-2 hover:bg-brand hover:text-canvas transition-colors duration-150"
-          >
-            <Icon name="tabler:photo" width={16} height={16} />
-            Material conseguido
-          </a>
+        apartados.length > 0 && (
+          <section class="materia-special">
+            <h2>Apartados especiales</h2>
+            <div class="materia-special-grid">
+              {apartados.map((a) => (
+                <ApartadoCard
+                  tipo={a.data.tipo}
+                  titulo={a.data.titulo}
+                  subtitulo={a.data.subtitulo}
+                  href={`/${materia.id}/especiales/${a.id.split("/").pop()}`}
+                />
+              ))}
+            </div>
+          </section>
         )
       }
     </div>
-
-    <section class="mt-8 border-t-2 border-primary pt-4">
-      <p class="text-xs uppercase tracking-widest text-secondary mb-2">
-        Semanas
-      </p>
-      <div class="flex flex-col">
-        {
-          semanas.map((s) => (
-            <SemanaCard
-              numero={s.data.numero}
-              titulo={s.data.titulo}
-              resumen={s.data.resumen}
-              estado={s.data.estado}
-              href={`/${materia.id}/${slugSemana(s.id)}`}
-            />
-          ))
-        }
-      </div>
-    </section>
-
-    {
-      apartados.length > 0 && (
-        <section class="mt-8 border-t-2 border-primary pt-4">
-          <p class="text-xs uppercase tracking-widest text-secondary mb-2">
-            Apartados especiales
-          </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
-            {apartados.map((a) => (
-              <ApartadoCard
-                tipo={a.data.tipo}
-                titulo={a.data.titulo}
-                subtitulo={a.data.subtitulo}
-                href={`/${materia.id}/especiales/${a.id.split("/").pop()}`}
-              />
-            ))}
-          </div>
-        </section>
-      )
-    }
   </div>
+
+  <script>
+    const search = document.querySelector("[data-week-search]");
+    const items = Array.from(document.querySelectorAll("[data-week-item]"));
+    const count = document.querySelector("[data-week-count]");
+    const empty = document.querySelector("[data-week-empty]");
+
+    const normalize = (value: string) =>
+      value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
+
+    if (search instanceof HTMLInputElement && count && empty) {
+      const update = () => {
+        const term = normalize(search.value.trim());
+        let visible = 0;
+        items.forEach((item) => {
+          const matches =
+            !term ||
+            normalize(item.getAttribute("data-search-text") || "").includes(
+              term,
+            );
+          item.toggleAttribute("hidden", !matches);
+          if (matches) visible += 1;
+        });
+        count.textContent = term
+          ? `${visible} de ${items.length} semanas`
+          : `${items.length} semanas publicadas`;
+        empty.classList.toggle("is-visible", visible === 0);
+      };
+      search.addEventListener("input", update);
+    }
+  </script>
 </Layout>

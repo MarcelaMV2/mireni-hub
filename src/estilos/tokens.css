@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme {
-
   /* ==========================
       FONTS
   ========================== */
@@ -24,8 +23,8 @@
   /* Body */
   --text-lg: 1.125rem;
   --text-md: 1rem;
-  --text-sm: .875rem;
-  --text-xs: .75rem;
+  --text-sm: 0.875rem;
+  --text-xs: 0.75rem;
 
   /* ==========================
       LINE HEIGHT
@@ -51,39 +50,56 @@
   ========================== */
 
   --base-white: #ffffff;
-  --base-black: #111110;
+  --base-black: #060a24;
 
-  /* Neutral */
-  --neutral-50: #FBF9F5;
-  --neutral-100: #F4F1EA;
-  --neutral-200: #DCD7CC;
-  --neutral-300: #B7B2A8;
-  --neutral-400: #6B6862;
-  /* --neutral-500: #111110;  ← idéntico a base-black, evalúa si lo necesitas */
+  /* Azul nocturno de la nueva identidad visual */
+  --navy-950: #060a24;
+  --navy-900: #080d2f;
+  --navy-800: #111a4c;
+  --navy-700: #182469;
+  --blue-500: #1677ff;
+  --cyan-500: #52cbff;
+  --cyan-100: rgba(82, 203, 255, 0.12);
 
-  /* Brand */
-  --red-500: #D9382C;
-  --red-100: #FBE9E7;
+  /* Texto y superficies */
+  --neutral-50: #f1f4ff;
+  --neutral-100: #a7b3da;
+  --neutral-200: rgba(130, 168, 255, 0.22);
+  --neutral-300: #6b77a8;
+  --neutral-400: #a7b3da;
+
+  /* Superficies translúcidas para el efecto glass */
+  --surface-glass: rgba(255, 255, 255, 0.055);
+  --surface-glass-strong: rgba(255, 255, 255, 0.09);
+  --surface-card: rgba(9, 16, 58, 0.62);
+  --glow-blue: #12246e;
 
   /* Status */
-  --green-500: #2E9E5B;
-  --yellow-500: #E0912F;
+  --green-500: #5fdca0;
+  --yellow-500: #ffc46b;
+  --red-500: #ff7a8a;
+  --red-100: rgba(255, 122, 138, 0.12);
 
   /* ==========================
       SEMANTIC COLORS
   ========================== */
 
-  --color-canvas: var(--neutral-100);
-  --color-surface: var(--neutral-50);
+  --color-canvas: var(--navy-950);
+  --color-surface: var(--surface-card);
 
-  --color-primary: var(--base-black);
-  --color-secondary: var(--neutral-400);
+  --color-primary: var(--neutral-50);
+  --color-secondary: var(--neutral-100);
   --color-tertiary: var(--neutral-300);
 
   --color-default: var(--neutral-200);
 
-  --color-brand: var(--red-500);
-  --color-brand-subtle: var(--red-100);
+  --color-brand: var(--blue-500);
+  --color-brand-subtle: var(--cyan-100);
+
+  --color-cyan: var(--cyan-500);
+  --color-glow: var(--glow-blue);
+  --color-glass: var(--surface-glass);
+  --color-glass-strong: var(--surface-glass-strong);
 
   --color-success: var(--green-500);
   --color-warning: var(--yellow-500);
@@ -93,9 +109,9 @@
       SPACING
   ========================== */
 
-  --space-1: .25rem;
-  --space-2: .5rem;
-  --space-3: .75rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
   --space-4: 1rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
@@ -114,14 +130,27 @@
       SHADOW
   ========================== */
 
-  --shadow-card:
-      0 1px 2px rgba(17,17,16,.04),
-      0 8px 24px rgba(17,17,16,.05);
+  --shadow-card: 0 24px 60px rgba(0, 0, 0, 0.35);
 
   /* ==========================
       LAYOUT
   ========================== */
 
   --container: 1120px;
+}
 
+:root[data-theme="light"] {
+  --color-canvas: #f3f6ff;
+  --color-surface: rgba(255, 255, 255, 0.8);
+  --color-primary: #0d1638;
+  --color-secondary: #4c5b86;
+  --color-tertiary: #8691b5;
+  --color-default: rgba(37, 99, 235, 0.18);
+  --color-brand: #2563eb;
+  --color-brand-subtle: rgba(10, 143, 214, 0.1);
+  --color-cyan: #0a8fd6;
+  --color-glow: #d6e3ff;
+  --color-glass: rgba(255, 255, 255, 0.72);
+  --color-glass-strong: rgba(255, 255, 255, 0.95);
+  --shadow-card: 0 24px 50px rgba(37, 99, 235, 0.12);
 }

@@ -1,0 +1,272 @@
+<div class="portada-stage" aria-hidden="true">
+  <svg viewBox="0 0 520 560" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="portada-mini" viewBox="0 0 20 23">
+        <polygon points="10,0 20,5.75 10,11.5 0,5.75" fill="var(--cube-a)"
+        ></polygon>
+        <polygon points="0,5.75 10,11.5 10,23 0,17.25" fill="var(--cube-c)"
+        ></polygon>
+        <polygon points="10,11.5 20,5.75 20,17.25 10,23" fill="var(--cube-b)"
+        ></polygon>
+      </symbol>
+      <radialGradient id="portada-ground" cx="50%" cy="50%" r="50%">
+        <stop offset="0" stop-color="var(--color-cyan)" stop-opacity=".55"
+        ></stop>
+        <stop offset="1" stop-color="var(--color-cyan)" stop-opacity="0"></stop>
+      </radialGradient>
+      <linearGradient id="portada-beam" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0" stop-color="var(--color-cyan)" stop-opacity=".8"
+        ></stop>
+        <stop offset="1" stop-color="var(--color-cyan)" stop-opacity="0"></stop>
+      </linearGradient>
+      <filter id="portada-blur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="6"></feGaussianBlur>
+      </filter>
+      <filter id="portada-soft" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="2"></feGaussianBlur>
+      </filter>
+    </defs>
+
+    <ellipse cx="260" cy="448" rx="190" ry="44" fill="url(#portada-ground)"
+    ></ellipse>
+
+    <g class="portada-bob">
+      <path
+        d="M130 355 L260 430 L390 355"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-width="5"
+        opacity=".6"
+        filter="url(#portada-blur)"></path>
+      <polygon points="130,205 260,280 260,430 130,355" fill="var(--f-left)"
+      ></polygon>
+      <polygon points="260,280 390,205 390,355 260,430" fill="var(--f-right)"
+      ></polygon>
+      <polygon points="260,130 390,205 260,280 130,205" fill="var(--f-top)"
+      ></polygon>
+      <polyline
+        points="130,205 260,280 390,205"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".5"
+        stroke-width="1.2"></polyline>
+      <line
+        x1="260"
+        y1="280"
+        x2="260"
+        y2="430"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".5"
+        stroke-width="1.2"></line>
+      <path
+        d="M130 355 L260 430 L390 355"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-width="2"></path>
+      <path
+        d="M130 205 L260 130 L390 205"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".6"
+        stroke-width="1.2"></path>
+
+      <g transform="matrix(1 0.577 0 1 130 205)">
+        <text class="portada-face-text" x="14" y="30">CREATE TRIGGER</text>
+        <text class="portada-face-text" x="14" y="46" opacity=".75"
+          >AFTER UPDATE ON</text
+        >
+        <text class="portada-face-text" x="14" y="62" opacity=".75">
+          producto</text
+        >
+        <text class="portada-face-text" x="14" y="78" opacity=".75"
+          >FOR EACH ROW</text
+        >
+        <text class="portada-face-text" x="14" y="94">BEGIN</text>
+        <text class="portada-face-text" x="14" y="110" opacity=".6">
+          INSERT INTO</text
+        >
+        <text class="portada-face-text" x="14" y="126">END;</text>
+      </g>
+      <g transform="matrix(1 -0.577 0 1 260 280)">
+        <text class="portada-face-text" x="14" y="30">void swap(int *a,</text>
+        <text class="portada-face-text" x="14" y="46" opacity=".75">
+          int *b) &#123;</text
+        >
+        <text class="portada-face-text" x="14" y="62" opacity=".75">
+          int t = *a;</text
+        >
+        <text class="portada-face-text" x="14" y="78" opacity=".75">
+          *a = *b;</text
+        >
+        <text class="portada-face-text" x="14" y="94" opacity=".75">
+          *b = t;</text
+        >
+        <text class="portada-face-text" x="14" y="110">&#125;</text>
+      </g>
+
+      <ellipse
+        cx="260"
+        cy="205"
+        rx="72"
+        ry="41.5"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".8"
+        stroke-width="1.4"></ellipse>
+      <ellipse
+        cx="260"
+        cy="205"
+        rx="50"
+        ry="29"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".6"></ellipse>
+      <g
+        id="portada-blades"
+        class="portada-spin"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".55"
+        stroke-width="1"></g>
+      <ellipse
+        cx="260"
+        cy="205"
+        rx="26"
+        ry="15"
+        fill="var(--color-cyan)"
+        opacity=".55"
+        filter="url(#portada-soft)"></ellipse>
+      <ellipse cx="260" cy="205" rx="14" ry="8" fill="var(--color-cyan)"
+      ></ellipse>
+      <ellipse
+        cx="260"
+        cy="150"
+        rx="54"
+        ry="31"
+        fill="var(--color-cyan)"
+        fill-opacity=".1"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".8"
+        stroke-width="1.2"></ellipse>
+      <ellipse
+        cx="260"
+        cy="150"
+        rx="30"
+        ry="17"
+        fill="none"
+        stroke="var(--color-cyan)"
+        stroke-opacity=".5"></ellipse>
+      <rect x="236" y="56" width="1.6" height="70" fill="url(#portada-beam)"
+      ></rect>
+      <rect x="260" y="36" width="1.6" height="90" fill="url(#portada-beam)"
+      ></rect>
+      <rect x="284" y="68" width="1.6" height="58" fill="url(#portada-beam)"
+      ></rect>
+      <rect x="248" y="80" width="1.2" height="44" fill="url(#portada-beam)"
+      ></rect>
+      <rect x="274" y="92" width="1.2" height="32" fill="url(#portada-beam)"
+      ></rect>
+    </g>
+
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="392"
+      y="92"
+      width="18"
+      height="21"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="146"
+      y="150"
+      width="14"
+      height="16"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="412"
+      y="186"
+      width="16"
+      height="18"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="82"
+      y="256"
+      width="20"
+      height="23"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="438"
+      y="296"
+      width="22"
+      height="25"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="106"
+      y="400"
+      width="18"
+      height="21"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="402"
+      y="420"
+      width="20"
+      height="23"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="326"
+      y="468"
+      width="14"
+      height="16"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="196"
+      y="104"
+      width="12"
+      height="14"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="472"
+      y="228"
+      width="12"
+      height="14"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="66"
+      y="334"
+      width="14"
+      height="16"></use>
+    <use
+      class="portada-drift"
+      href="#portada-mini"
+      x="306"
+      y="52"
+      width="12"
+      height="14"></use>
+  </svg>
+</div>
+
+<script>
+  const blades = document.querySelector("#portada-blades");
+  const svgNamespace = "http://www.w3.org/2000/svg";
+
+  if (blades) {
+    for (let index = 0; index < 20; index += 1) {
+      const angle = (index / 20) * Math.PI * 2;
+      const line = document.createElementNS(svgNamespace, "line");
+      line.setAttribute("x1", String(260 + 16 * Math.cos(angle)));
+      line.setAttribute("y1", String(205 + 9.2 * Math.sin(angle)));
+      line.setAttribute("x2", String(260 + 68 * Math.cos(angle)));
+      line.setAttribute("y2", String(205 + 39 * Math.sin(angle)));
+      blades.appendChild(line);
+    }
+  }
+</script>

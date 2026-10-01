@@ -1,16 +1,17 @@
 ---
 import "../estilos/global.css";
-import Header from "./Header.astro";
 import Footer from "./Footer.astro";
+import Header from "./Header.astro";
 
 interface Props {
   titulo: string;
   descripcion?: string;
   /** ítem recuadrado a la derecha del header (ej: "SIS304", "Semana 1") */
   marcaDerecha?: string;
+  variante?: "default" | "portada" | "materia" | "semana";
 }
 
-const { titulo, descripcion, marcaDerecha } = Astro.props;
+const { titulo, descripcion, marcaDerecha, variante = "default" } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,11 +30,17 @@ const { titulo, descripcion, marcaDerecha } = Astro.props;
       rel="stylesheet"
     />
   </head>
-  <body>
-    <Header marcaDerecha={marcaDerecha} />
+  <body
+    class:list={{
+      "portada-page": variante === "portada",
+      "materia-page": variante === "materia",
+      "semana-page": variante === "semana",
+    }}
+  >
+    <Header />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer variante={variante} />
   </body>
 </html>

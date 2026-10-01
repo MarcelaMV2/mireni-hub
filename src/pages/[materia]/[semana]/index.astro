@@ -1,21 +1,24 @@
 ---
-import { getCollection, render } from 'astro:content';
-import type { GetStaticPaths } from 'astro';
-import { Icon } from 'astro-icon/components';
-import Layout from '../../../componentes/Layout.astro';
-import Breadcrumb from '../../../componentes/Breadcrumb.astro';
-import EjercicioCard from '../../../componentes/EjercicioCard.astro';
-import '../../../estilos/contenido.css';
+import { getCollection, render } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import { Icon } from "astro-icon/components";
+import Layout from "../../../componentes/Layout.astro";
+import MateriaFondo from "../../../componentes/MateriaFondo.astro";
+import Breadcrumb from "../../../componentes/Breadcrumb.astro";
+import EjercicioCard from "../../../componentes/EjercicioCard.astro";
+import "../../../estilos/contenido.css";
+import "../../../estilos/materia.css";
+import "../../../estilos/semana.css";
 
 export const getStaticPaths = (async () => {
-  const materias = await getCollection('materias');
-  const semanas = await getCollection('semanas');
+  const materias = await getCollection("materias");
+  const semanas = await getCollection("semanas");
 
   return semanas
-    .filter((s) => s.data.estado === 'disponible')
+    .filter((s) => s.data.estado === "disponible")
     .map((s) => {
       const materia = materias.find((m) => m.id === s.data.materia.id)!;
-      const slug = s.id.split('/').pop()!;
+      const slug = s.id.split("/").pop()!;
       return {
         params: { materia: materia.id, semana: slug },
         props: { materia, semana: s },
@@ -25,66 +28,131 @@ export const getStaticPaths = (async () => {
 
 const { materia, semana } = Astro.props;
 
-const ejercicios = (await getCollection('ejercicios'))
-  .filter((e) =>
-    e.data.publicado &&
-    e.data.materia.id === materia.id &&
-    e.data.semana === semana.data.numero
+const ejercicios = (await getCollection("ejercicios"))
+  .filter(
+    (e) =>
+      e.data.publicado &&
+      e.data.materia.id === materia.id &&
+      e.data.semana === semana.data.numero,
   )
   .sort((a, b) => a.data.numero - b.data.numero);
 
-const clase = (await getCollection('clases')).find(
+const clase = (await getCollection("clases")).find(
   (c) =>
-    c.data.materia.id === materia.id &&
-    c.data.semana === semana.data.numero
+    c.data.materia.id === materia.id && c.data.semana === semana.data.numero,
 );
 const ClaseContent = clase ? (await render(clase)).Content : null;
 ---
 
 <Layout
   titulo={`Semana ${semana.data.numero} · ${materia.data.nombre}`}
-  marcaDerecha={`Semana ${semana.data.numero}`}
+  variante="semana"
 >
-  <div class="max-w-[1120px] mx-auto px-4 md:px-8">
+  <MateriaFondo />
+  <div class="semana-main">
+    <div class="semana-wrap">
+      <section class="semana-head">
+        <Breadcrumb
+          items={[
+            { texto: "Inicio", href: "/" },
+            { texto: materia.data.sigla, href: `/${materia.id}` },
+            { texto: `Semana ${semana.data.numero}` },
+          ]}
+        />
+        <div class="semana-title">
+          <span class="semana-title-icon"
+            ><Icon name="tabler:code" width={28} height={28} /></span
+          >
+          <div class="semana-title-copy">
+            <span class="semana-week-chip">Semana {semana.data.numero}</span>
+            <h1>{semana.data.titulo}</h1>
+          </div>
+        </div>
+      </section>
 
-    <div class="flex flex-col gap-4 pt-8 pb-6 border-b border-default">
-      <Breadcrumb
-        items={[
-          { texto: 'Inicio', href: '/' },
-          { texto: materia.data.sigla, href: `/${materia.id}` },
-          { texto: `Semana ${semana.data.numero}` },
-        ]}
-      />
+      <div class="semana-layout">
+        <aside class="semana-toc" aria-label="En esta página">
+          <h2>
+            <Icon name="tabler:list" width={18} height={18} />En esta página
+          </h2>
+          <ul data-semana-toc></ul>
+        </aside>
 
-      <div class="flex items-center gap-4">
-        <span class="grid place-items-center w-[52px] h-[52px] border-2 border-primary shrink-0">
-          <Icon name="tabler:code" width={24} height={24} />
-        </span>
-        <h1 class="font-heading uppercase tracking-tight leading-[0.9] text-[clamp(1.8rem,6vw,3rem)]">
-          Semana {semana.data.numero} — {semana.data.titulo}
-        </h1>
+        <div>
+          {
+            ClaseContent ? (
+              <article class="semana-article prosa">
+                <ClaseContent />
+              </article>
+            ) : (
+              <section class="semana-article semana-exercises">
+                {ejercicios.map((e) => (
+                  <EjercicioCard
+                    numero={e.data.numero}
+                    titulo={e.data.titulo}
+                    descripcion={e.data.descripcion}
+                    dificultad={e.data.dificultad}
+                    tags={e.data.tags}
+                    href={`/${materia.id}/${semana.id.split("/").pop()}/${e.id.split("/").pop()}`}
+                  />
+                ))}
+              </section>
+            )
+          }
+        </div>
       </div>
 
+      <nav class="semana-pager" aria-label="Navegación de semanas">
+        <a href={`/${materia.id}`}>
+          <Icon name="tabler:arrow-left" width={20} height={20} />
+          <span
+            ><small>Volver a</small><strong
+              >Todas las semanas de {materia.data.sigla}</strong
+            ></span
+          >
+        </a>
+      </nav>
     </div>
-
-    {ClaseContent ? (
-      <article class="prosa max-w-none py-6">
-        <ClaseContent />
-      </article>
-    ) : (
-      <section class="flex flex-col gap-4 py-6">
-        {ejercicios.map((e) => (
-          <EjercicioCard
-            numero={e.data.numero}
-            titulo={e.data.titulo}
-            descripcion={e.data.descripcion}
-            dificultad={e.data.dificultad}
-            tags={e.data.tags}
-            href={`/${materia.id}/${semana.id.split('/').pop()}/${e.id.split('/').pop()}`}
-          />
-        ))}
-      </section>
-    )}
-
   </div>
 </Layout>
+
+<script>
+  const article = document.querySelector(".semana-article");
+  const toc = document.querySelector("[data-semana-toc]");
+
+  if (article && toc) {
+    const headings = Array.from(article.querySelectorAll("h2, h3")).filter(
+      (heading) => /ejercicio|enunciado/i.test(heading.textContent || ""),
+    );
+    headings.forEach((heading, index) => {
+      if (!heading.id) heading.id = `seccion-${index + 1}`;
+    });
+
+    toc.innerHTML = headings
+      .map((heading) => {
+        const level = heading.tagName === "H3" ? "is-sub" : "";
+        return `<li><a class="${level}" href="#${heading.id}">${heading.textContent || ""}</a></li>`;
+      })
+      .join("");
+
+    const links = Array.from(toc.querySelectorAll("a"));
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              links.forEach((link) =>
+                link.classList.toggle(
+                  "is-active",
+                  link.getAttribute("href") === `#${entry.target.id}`,
+                ),
+              );
+            }
+          });
+        },
+        { rootMargin: "-15% 0px -75% 0px" },
+      );
+      headings.forEach((heading) => observer.observe(heading));
+    }
+  }
+</script>

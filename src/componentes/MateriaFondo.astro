@@ -1,0 +1,175 @@
+<div class="materia-bg" aria-hidden="true">
+  <div class="materia-bg-dots"></div>
+  <canvas class="materia-bg-network"></canvas>
+</div>
+
+<script>
+  const canvas = document.querySelector(".materia-bg-network");
+
+  if (canvas instanceof HTMLCanvasElement) {
+    const context = canvas.getContext("2d");
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (context) {
+      let width = 0;
+      let height = 0;
+      let nodes: Array<{
+        x: number;
+        y: number;
+        vx: number;
+        vy: number;
+        radius: number;
+        phase: number;
+        frequency: number;
+        hub: boolean;
+      }> = [];
+      let frame = 0;
+      let lastTime = 0;
+      let elapsed = 0;
+      let cyan = [82, 203, 255];
+      let accent = [22, 119, 255];
+
+      const parseColor = (value: string) => {
+        const hex = value.trim().replace("#", "");
+        if (hex.length !== 6) return [82, 203, 255];
+        return [
+          Number.parseInt(hex.slice(0, 2), 16),
+          Number.parseInt(hex.slice(2, 4), 16),
+          Number.parseInt(hex.slice(4, 6), 16),
+        ];
+      };
+
+      const rgba = (color: number[], alpha: number) =>
+        `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${alpha.toFixed(3)})`;
+
+      const readColors = () => {
+        const styles = getComputedStyle(document.documentElement);
+        cyan = parseColor(styles.getPropertyValue("--cyan-500"));
+        accent = parseColor(styles.getPropertyValue("--blue-500"));
+      };
+
+      const visibility = (x: number) => {
+        const distance = Math.abs(x - width / 2) / (width / 2);
+        const strength = Math.min(1, Math.max(0, (distance - 0.18) / 0.5));
+        return (0.2 + 0.8 * strength) * (width < 900 ? 0.55 : 1);
+      };
+
+      const resize = () => {
+        const devicePixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * devicePixelRatio;
+        canvas.height = height * devicePixelRatio;
+        context.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+        const count = Math.max(
+          24,
+          Math.min(64, Math.round((width * height) / 30000)),
+        );
+        nodes = Array.from({ length: count }, (_, index) => {
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 3 + Math.random() * 6;
+          return {
+            x: Math.random() * width,
+            y: Math.random() * height,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            radius: 1 + Math.random() * 1.2,
+            phase: Math.random() * Math.PI * 2,
+            frequency: 0.35 + Math.random() * 0.7,
+            hub: index % 9 === 0,
+          };
+        });
+      };
+
+      const draw = () => {
+        context.clearRect(0, 0, width, height);
+        context.lineWidth = 1;
+        context.setLineDash([3, 9]);
+        context.lineDashOffset = -elapsed * 4;
+
+        for (let index = 0; index < nodes.length; index += 1) {
+          const first = nodes[index];
+          for (let next = index + 1; next < nodes.length; next += 1) {
+            const second = nodes[next];
+            const distance = Math.hypot(first.x - second.x, first.y - second.y);
+            if (distance >= 150) continue;
+            const alpha =
+              (1 - distance / 150) * 0.3 * visibility((first.x + second.x) / 2);
+            if (alpha < 0.01) continue;
+            context.strokeStyle = rgba(cyan, alpha);
+            context.beginPath();
+            context.moveTo(first.x, first.y);
+            context.lineTo(second.x, second.y);
+            context.stroke();
+          }
+        }
+
+        context.setLineDash([]);
+        nodes.forEach((node) => {
+          const twinkle =
+            0.35 +
+            0.65 *
+              (0.5 + 0.5 * Math.sin(elapsed * node.frequency + node.phase));
+          const strength = visibility(node.x);
+          if (node.hub) {
+            context.fillStyle = rgba(accent, 0.1 * strength * twinkle);
+            context.beginPath();
+            context.arc(node.x, node.y, node.radius * 5, 0, Math.PI * 2);
+            context.fill();
+          }
+          context.fillStyle = rgba(cyan, 0.85 * twinkle * strength);
+          context.beginPath();
+          context.arc(
+            node.x,
+            node.y,
+            node.hub ? node.radius + 0.6 : node.radius,
+            0,
+            Math.PI * 2,
+          );
+          context.fill();
+        });
+      };
+
+      const animate = (time: number) => {
+        frame = requestAnimationFrame(animate);
+        if (document.hidden || time - lastTime < 33) return;
+        const delta = Math.min((time - lastTime) / 1000, 0.1);
+        lastTime = time;
+        elapsed += delta;
+        nodes.forEach((node) => {
+          node.x += node.vx * delta;
+          node.y += node.vy * delta;
+          if (node.x < -20) node.x = width + 20;
+          else if (node.x > width + 20) node.x = -20;
+          if (node.y < -20) node.y = height + 20;
+          else if (node.y > height + 20) node.y = -20;
+        });
+        draw();
+      };
+
+      readColors();
+      resize();
+      draw();
+      if (!reduceMotion) frame = requestAnimationFrame(animate);
+
+      window.addEventListener("resize", () => {
+        resize();
+        if (reduceMotion) draw();
+      });
+      new MutationObserver(() => {
+        readColors();
+        if (reduceMotion) draw();
+      }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
+
+      window.addEventListener("pagehide", () => cancelAnimationFrame(frame), {
+        once: true,
+      });
+    }
+  }
+</script>

@@ -14,9 +14,295 @@
     scroll-behavior: smooth;
   }
 
+  /* ─────────────────────────────────────────────────────────────
+      HEADER  ·  alto único del header fijo.
+      Todo el `top:` de los elementos sticky (toc, imágenes de BD)
+      y el `padding-top` de <main> se derivan de esta variable, así
+      el header mide lo mismo en portada, materia y semana.
+      ───────────────────────────────────────────────────────────── */
+  :root {
+    --header-h: 74px;
+  }
+
+  @media (max-width: 900px) {
+    :root {
+      --header-h: 70px;
+    }
+  }
+
   body {
     font-family: var(--font-body);
-    background-color: var(--color-canvas);
+    background:
+      radial-gradient(
+        900px 620px at 78% 28%,
+        var(--color-glow),
+        transparent 70%
+      ),
+      var(--color-canvas);
     color: var(--color-primary);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+      HEADER  ·  un solo bloque para todas las páginas.
+      El marcado vive en componentes/Header.astro; aquí sólo se
+      declara su aspecto, sin variantes por ruta.
+      ───────────────────────────────────────────────────────────── */
+
+  .portada-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 20;
+    height: var(--header-h);
+    border-bottom: 1px solid transparent;
+    background: color-mix(in srgb, var(--color-canvas) 78%, transparent);
+    backdrop-filter: blur(14px);
+    transition: border-color 0.2s ease;
+  }
+
+  .portada-header.is-scrolled {
+    border-bottom-color: var(--color-default);
+  }
+
+  /* El contenedor del header se llama `portada-nav` y NO reutiliza
+     `.portada-wrap`: esa clase está en la capa `components` (portada.css) y,
+     al estar en otra capa @layer, ganaría por orden de capa pese a tener
+     menos especificidad, descuadrando el header de la portada. Así el ancho
+     queda definido en un único sitio y todas las páginas alinean al píxel. */
+  .portada-header .portada-nav {
+    display: flex;
+    width: min(1120px, calc(100% - 48px));
+    height: 100%;
+    margin-inline: auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .portada-header .portada-logo {
+    display: block;
+    color: var(--color-primary);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .portada-header .portada-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border: 1px solid var(--color-default);
+    border-radius: 14px;
+    background: var(--color-glass);
+    backdrop-filter: blur(10px);
+  }
+
+  .portada-header .portada-pill a {
+    padding: 8px 16px;
+    border-radius: 9px;
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+
+  .portada-header .portada-pill a:hover,
+  .portada-header .portada-pill a.is-active {
+    background: var(--color-brand);
+    color: #fff;
+  }
+
+  .portada-header .portada-menu-divider {
+    width: 1px;
+    height: 24px;
+    margin: 0 4px 0 6px;
+    background: var(--color-default);
+  }
+
+  .portada-header .portada-theme {
+    display: grid;
+    width: 40px;
+    min-height: 34px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--color-primary);
+    font: inherit;
+    font-size: 0.98rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.15s,
+      border-color 0.15s,
+      color 0.15s,
+      transform 0.15s;
+  }
+
+  .portada-header .portada-theme:hover {
+    background: var(--color-glass-strong);
+    transform: translateY(-2px);
+  }
+
+  .portada-header .portada-moon {
+    display: none;
+  }
+  :root[data-theme="dark"] .portada-header .portada-sun {
+    display: none;
+  }
+  :root[data-theme="dark"] .portada-header .portada-moon {
+    display: block;
+  }
+
+  .portada-header .portada-mobile-menu {
+    display: none;
+    position: relative;
+  }
+  .portada-header .portada-mobile-menu summary {
+    display: grid;
+    width: 38px;
+    height: 34px;
+    place-items: center;
+    border: 1px solid var(--color-default);
+    border-radius: 9px;
+    background: var(--color-glass);
+    color: var(--color-primary);
+    cursor: pointer;
+    list-style: none;
+  }
+  .portada-header .portada-mobile-menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .portada-header .portada-mobile-menu-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    display: flex;
+    min-width: 150px;
+    flex-direction: column;
+    gap: 2px;
+    padding: 6px;
+    border: 1px solid var(--color-default);
+    border-radius: 12px;
+    background: var(--color-canvas);
+    box-shadow: var(--shadow-card);
+    backdrop-filter: blur(14px);
+  }
+  .portada-header .portada-mobile-menu-panel a {
+    padding: 9px 12px;
+    border-radius: 8px;
+    color: var(--color-secondary);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+  .portada-header .portada-mobile-menu-panel a:hover,
+  .portada-header .portada-mobile-menu-panel a.is-active {
+    background: var(--color-glass-strong);
+    color: var(--color-primary);
+  }
+
+  /* El header es fijo: <main> siempre empieza por debajo de él.
+     Se usa `~` y no `+` porque Astro inyecta los <script> del
+     componente entre <header> y <main>. */
+  .portada-header ~ main {
+    padding-top: var(--header-h);
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+      HEADER · responsive — idéntico en todas las páginas.
+      Por debajo de 900px la píldora se aplana y sus enlaces pasan al
+      menú desplegable; el botón de tema permanece visible.
+      ───────────────────────────────────────────────────────────── */
+  @media (max-width: 1100px) {
+    .portada-header .portada-pill {
+      max-width: 58vw;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .portada-header .portada-pill::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .portada-header .portada-nav {
+      width: min(100% - 32px, 1120px);
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    /* El logo queda a la izquierda y el toggle de tema se agrupa junto a
+       la hamburguesa. `margin-left: auto` absorbe el espacio libre para
+       que ambos controles terminen pegados al borde derecho. */
+    .portada-header .portada-pill {
+      gap: 0;
+      margin-left: auto;
+      padding: 0;
+      border-color: transparent;
+      background: transparent;
+    }
+
+    .portada-header .portada-pill a,
+    .portada-header .portada-menu-divider {
+      display: none;
+    }
+
+    .portada-header .portada-mobile-menu {
+      display: block;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .portada-header .portada-logo {
+      font-size: 1.08rem;
+    }
+    .portada-header .portada-theme {
+      width: 40px;
+      min-height: 40px;
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────────────
+      BREADCRUMB
+      ───────────────────────────────────────────────────────────── */
+
+  .site-breadcrumb {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 18px;
+    color: var(--color-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+    text-transform: uppercase;
+  }
+
+  .site-breadcrumb a {
+    color: var(--color-secondary);
+    text-decoration: none;
+  }
+  .site-breadcrumb a:hover {
+    color: var(--color-primary);
+  }
+  .site-breadcrumb .separator {
+    color: var(--color-tertiary);
+  }
+  .site-breadcrumb .current {
+    color: var(--color-cyan);
   }
 }
