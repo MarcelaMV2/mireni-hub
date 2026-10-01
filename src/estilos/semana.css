@@ -446,9 +446,9 @@
     display: none;
   }
 
-  /* Desactivación temporal del material de apoyo (semana 7). El markup se
-     conserva tal cual; para volver a mostrarlo basta con quitar la clase
-     `apoyo-oculto` del <h2>, de la sección y de <ApoyoFlotante oculto>. */
+  /* Desactivación del material de apoyo cuando una clase lo requiere: basta
+     con poner `apoyo-oculto` en el <h2>, en la sección y pasar `oculto` a
+     <ApoyoFlotante>. El markup se conserva tal cual. */
   .apoyo-oculto {
     display: none !important;
   }
