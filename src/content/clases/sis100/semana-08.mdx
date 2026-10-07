@@ -4,11 +4,26 @@ semana: 8
 cantidadEjercicios: 2
 ---
 
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
 ## ¿Qué es la modularidad?
 
 La **programación modular** consiste en dividir un problema grande en partes más pequeñas llamadas **módulos**. Cada módulo se encarga de una tarea específica y el programa principal coordina el trabajo de todos ellos.
 
 Un módulo puede recibir datos, procesarlos y devolver un resultado. Por ejemplo, un programa puede tener un módulo para leer datos, otro para calcular una suma y otro para mostrar los resultados.
+
+### Conceptos básicos de programación modular
+
+| Concepto | Descripción | Ejemplo |
+| --- | --- | --- |
+| **Programación modular** | Técnica que divide un problema en partes pequeñas llamadas **módulos** o subalgoritmos, donde cada uno realiza una tarea específica y el algoritmo principal coordina su ejecución. | — |
+| **Subalgoritmo** | Parte del programa que realiza una función determinada. Puede recibir datos, procesarlos y devolver un resultado o mostrar información. | — |
+| **Función Tipo A** | Subalgoritmo que devuelve un valor mediante un resultado. | `resultado ← CalcularSuma(a,b)` |
+| **Función Tipo B** | Subalgoritmo que no devuelve valores, solo realiza una acción como mostrar información. | `MostrarResultado()` |
+| **Algoritmo principal** | Módulo encargado de organizar el programa, llamar a las funciones y controlar el proceso general. | — |
+| **Ordinograma** | Representación gráfica de un algoritmo mediante símbolos que muestran la secuencia de pasos. | — |
+| **Variable local** | Variable creada dentro de un módulo y solo puede utilizarse dentro de él. | — |
+| **Variable global** | Variable declarada en el algoritmo principal y puede ser utilizada por diferentes módulos. | — |
 
 ### ¿Por qué dividir el programa?
 
@@ -36,55 +51,56 @@ FinAlgoritmo
 
 La idea es que cada módulo pueda entenderse por separado y que sus nombres indiquen claramente qué tarea realiza. En PSeInt, los módulos pueden escribirse como `SubProceso` o `Funcion`, según necesiten devolver un resultado.
 
-## Ejercicio 1 · Primer y último dígito
+## Ejercicio 1 · Ordenamiento y comparación de un número de tres dígitos
 
-### Enunciado
+<Enunciado>
+Desarrolle un algoritmo aplicando programación modular que permita ingresar un número entero positivo de tres dígitos.
 
-Desarrolle un algoritmo aplicando la **programación modular** que permita leer una cantidad `n` de números enteros positivos de tres dígitos, comparar el primer y último dígito de cada número y mostrar y sumar aquellos cuyos dígitos comparados sean iguales. La cantidad `n` debe ser positiva y los números ingresados deben estar entre `100` y `999`; los datos inválidos deben solicitarse nuevamente.
+El algoritmo debe:
 
-### Ejemplo
+- Verificar que el número ingresado corresponda a un valor de tres dígitos.
+- Separar los dígitos que conforman el número.
+- Formar un nuevo número ordenando sus dígitos de mayor a menor.
+- Calcular la diferencia entre el número ordenado y el número original.
+- Mostrar el número ingresado, el número formado con los dígitos ordenados y el resultado obtenido.
 
-**Entrada:**
+Además, deberá indicar mediante un mensaje la situación correspondiente:
 
-```text
-Cantidad de números: 5
-Números: 121, 305, 484, 790, 898
-```
+- Si la diferencia es igual a cero, indicar que ambos números son iguales.
+- Si la diferencia es mayor a cero, indicar que el número ordenado es mayor al número ingresado.
 
-| Número | Primer dígito | Último dígito | ¿Coinciden? |
-| ---: | ---: | ---: | --- |
-| 121 | 1 | 1 | Sí |
-| 305 | 3 | 5 | No |
-| 484 | 4 | 4 | Sí |
-| 790 | 7 | 0 | No |
-| 898 | 8 | 8 | Sí |
+El algoritmo debe desarrollarse utilizando únicamente tres funciones, aplicando funciones de tipo A y tipo B, y el algoritmo principal debe realizar la llamada a dichas funciones.
+</Enunciado>
 
-**Salida esperada:**
+### Ejemplos de funcionamiento
 
-```text
-Números con primer y último dígito iguales: 121, 484, 898
-Suma: 121 + 484 + 898 = 1503
-```
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Dígitos distintos | Número: `582` | Número ingresado: `582`. Número ordenado: `852`. Diferencia: `270`. El número ordenado es mayor al número ingresado. |
+| Dígitos repetidos | Número: `777` | Número ingresado: `777`. Número ordenado: `777`. Diferencia: `0`. Los números son iguales. |
+
+<hr class="my-16 border-default" />
 
 ## Ejercicio 2 · Número aleatorio de tres dígitos
 
-### Enunciado
+<Enunciado>
+Desarrolle un algoritmo aplicando programación modular que genere aleatoriamente un número entero positivo de tres dígitos comprendido entre `100` y `999`.
 
-Desarrolle un algoritmo aplicando la **programación modular** que genere aleatoriamente un número entero positivo de tres dígitos, comprendido entre `100` y `999`. El algoritmo debe mostrar sus dígitos de forma horizontal, calcular la suma de sus dígitos, verificar si el número es primo y presentar todos los resultados desde el programa principal.
+El algoritmo debe analizar el número generado mediante los siguientes procesos:
 
-### Ejemplo
+- Separar los dígitos que conforman el número.
+- Calcular la suma de sus dígitos.
+- Determinar si el número generado es primo o no.
 
-**Número generado:**
+Finalmente, deberá presentar todos los resultados obtenidos desde el algoritmo principal.
 
-```text
-Número: 137
-```
+El algoritmo debe desarrollarse utilizando tres funciones, aplicando funciones de tipo A y tipo B, donde el algoritmo principal deberá realizar la llamada a dichas funciones.
+</Enunciado>
 
-**Salida esperada:**
+### Ejemplos de funcionamiento
 
-```text
-Dígitos: 1 3 7
-Suma de los dígitos: 11
-¿Es primo?: Sí
-```
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Número primo | Número generado: `137` | Dígitos: `1 3 7`. Suma de los dígitos: `11`. ¿El número es primo?: Sí. |
+| Número no primo | Número generado: `142` | Dígitos: `1 4 2`. Suma de los dígitos: `7`. ¿El número es primo?: No. |
 
