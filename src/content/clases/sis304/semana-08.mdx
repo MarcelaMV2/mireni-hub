@@ -1,0 +1,297 @@
+---
+materia: "sis304"
+semana: 8
+cantidadEjercicios: 8
+---
+
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+import MenuImagen from '../../../componentes/mdx/MenuImagen.astro';
+import ApoyoFlotante from '../../../componentes/mdx/ApoyoFlotante.astro';
+
+export const sqlRepuestos = `USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+DESCRIPCION VARCHAR(35) DEFAULT ' ',
+NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+POTENCIA INT DEFAULT 0,
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+NIT CHAR(10) NOT NULL PRIMARY KEY,
+NOMBREP VARCHAR(35) DEFAULT ' ',
+CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+CODIGO CHAR(6) NOT NULL,
+NIT CHAR(10) NOT NULL,
+FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDAD INT DEFAULT 0,
+COSTO DECIMAL(10,2) DEFAULT 0.0,
+DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+PRIMARY KEY (CODIGO, NIT),
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+ITEM INT NOT NULL PRIMARY KEY,
+NOMBRE VARCHAR(35) DEFAULT ' ',
+TELEFONO INT,
+CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+NE INT NOT NULL PRIMARY KEY,
+FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDADE INT DEFAULT 0,
+CODIGO CHAR(6),
+NIT CHAR(10),
+ITEM INT,
+FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`;
+
+export const imagenMlgd = "/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg";
+
+## Parámetros de salida
+
+Un parámetro **`OUT`** permite que un procedimiento devuelva un valor a quien lo ejecuta. A diferencia de un parámetro `IN`, su contenido se asigna dentro del procedimiento y se recibe mediante una variable de usuario.
+
+```sql
+CALL PS1('AMORTIGUADOR', 'JUAN PABLO RUIZ', @CTC);
+SELECT @CTC AS 'COSTO TOTAL';
+```
+
+La variable `@CTC` existe en la sesión de MySQL y recibe el valor que el procedimiento asignó a `CTC`. Un procedimiento puede tener varios parámetros de salida; por ejemplo, `OUT TRC INT, OUT GTC FLOAT(6,2)` devuelve una cantidad y un monto.
+
+## Desplegables de apoyo
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start my-6 semana-apoyo-desplegables">
+<details open class="semana-imagen-sticky border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
+  <div class="relative p-4 border-t border-default">
+    <img src={imagenMlgd} alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+    <MenuImagen src={imagenMlgd} />
+  </div>
+</details>
+
+<details class="border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
+  <div class="p-3 border-t border-default [&_figure]:!my-0 [&_figure>div]:max-h-[351px] [&_figure>div]:overflow-auto">
+    <Codigo archivo="repuestos.sql" lang="sql" codigo={sqlRepuestos} />
+  </div>
+</details>
+</div>
+
+<ApoyoFlotante
+  imagenSrc={imagenMlgd}
+  imagenAlt="Modelo lógico global de datos de REPUESTOS"
+  imagenTitulo="Modelo Lógico Global de Datos"
+  sql={sqlRepuestos}
+  sqlArchivo="repuestos.sql"
+  sqlTitulo="Base de datos de la semana 5"
+/>
+
+## Ejercicio 1
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba el nombre de un repuesto y el nombre de un proveedor, y devuelva mediante un parámetro de salida el costo total de esa compra.</p>
+
+<Codigo archivo="ejercicio-1.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS1(IN NR VARCHAR(50), IN NP VARCHAR(50), OUT CTC FLOAT(6,2))
+BEGIN
+DECLARE COD CHAR(6);
+DECLARE NITP CHAR(10);
+IF EXISTS (SELECT * FROM PROVEEDOR WHERE NOMBREP=NP) THEN
+  IF EXISTS (SELECT * FROM REPUESTO WHERE DESCRIPCION=NR) THEN
+    SELECT CODIGO INTO COD FROM REPUESTO WHERE DESCRIPCION = NR;
+    SELECT NIT INTO NITP FROM PROVEEDOR WHERE NOMBREP = NP;
+    SELECT (COSTO - DESCUENTO + IMPUESTO) INTO CTC
+    FROM COMPRA WHERE NIT = NITP AND CODIGO = COD LIMIT 1;
+  ELSE SELECT 'REPUESTO NO REGISTRADO' AS MENSAJE;
+  END IF;
+ELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE;
+END IF;
+END $$
+DELIMITER ;
+CALL PS1('AMORTIGUADOR', 'JUAN PABLO RUIZ', @CTC);
+SELECT @CTC AS 'COSTO TOTAL';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 2
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba la descripción de un repuesto y devuelva en un parámetro de salida la cantidad total que se entregó.</p>
+
+<Codigo archivo="ejercicio-2.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS2(IN DR VARCHAR(50), OUT CTE INT)
+BEGIN
+IF EXISTS (SELECT * FROM REPUESTO WHERE DESCRIPCION = DR) THEN
+  SELECT SUM(E.CANTIDADE) INTO CTE
+  FROM ENTREGA E INNER JOIN REPUESTO R ON E.CODIGO = R.CODIGO
+  WHERE R.DESCRIPCION = DR;
+ELSE SELECT 'REPUESTO NO REGISTRADO' AS MENSAJE;
+END IF;
+END $$
+DELIMITER ;
+CALL PS2('BUJIA', @CTE);
+SELECT @CTE AS 'CANTIDAD TOTAL ENTREGADA';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 3
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que devuelva en dos parámetros de salida la descripción y el costo del repuesto más caro comprado.</p>
+
+<Codigo archivo="ejercicio-3.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS3(OUT DR VARCHAR(50), OUT CT FLOAT(6,2))
+BEGIN
+SELECT R.DESCRIPCION, C.COSTO INTO DR, CT
+FROM REPUESTO R INNER JOIN COMPRA C ON R.CODIGO = C.CODIGO
+ORDER BY C.COSTO DESC LIMIT 1;
+END $$
+DELIMITER ;
+CALL PS3(@DR, @CT);
+SELECT @DR AS 'REPUESTO', @CT AS 'COSTO';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 4
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba dos fechas y devuelva en un parámetro de salida la cantidad total de repuestos comprados dentro del rango. Si las fechas llegan invertidas, ordénelas antes de consultar.</p>
+
+<Codigo archivo="ejercicio-4.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS4(IN F1 DATE, IN F2 DATE, OUT CTRC INT)
+BEGIN
+DECLARE AUX DATE;
+IF F1 > F2 THEN
+  SET AUX = F1; SET F1 = F2; SET F2 = AUX;
+END IF;
+SELECT SUM(CANTIDAD) INTO CTRC
+FROM COMPRA WHERE DATE(FECHA) BETWEEN F1 AND F2;
+END $$
+DELIMITER ;
+CALL PS4('2019-02-15', '2025-10-07', @CTRC);
+SELECT @CTRC AS 'CANTIDAD TOTAL DE REPUESTOS COMPRADOS';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 5
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba un año y el nombre de un proveedor, y devuelva en parámetros de salida el total de repuestos comprados y el gasto total de ese proveedor durante el año.</p>
+
+<Codigo archivo="ejercicio-5.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS5(IN ANIO INT, IN NP VARCHAR(50), OUT TRC INT, OUT GTC FLOAT(6,2))
+BEGIN
+DECLARE NITP CHAR(10);
+IF EXISTS (SELECT * FROM PROVEEDOR WHERE NOMBREP=NP) THEN
+  SET NITP = (SELECT NIT FROM PROVEEDOR WHERE NOMBREP = NP);
+  SELECT SUM(CANTIDAD), SUM(COSTO - DESCUENTO + IMPUESTO)
+  INTO TRC, GTC FROM COMPRA
+  WHERE NIT = NITP AND YEAR(FECHA) = ANIO;
+ELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE;
+END IF;
+END $$
+DELIMITER ;
+CALL PS5(2019, 'JUAN PABLO RUIZ', @TRC, @GTC);
+SELECT @TRC AS 'CANTIDAD TOTAL', @GTC AS 'GASTO TOTAL';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 6
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba el nombre de un encargado y devuelva mediante parámetros de salida el promedio y la cantidad máxima de repuestos entregados por él.</p>
+
+<Codigo archivo="ejercicio-6.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS6(IN NOE VARCHAR(50), OUT PCE FLOAT(6,2), OUT MRE INT)
+BEGIN
+DECLARE IE INT;
+IF EXISTS (SELECT * FROM ENCARGADO WHERE NOMBRE=NOE) THEN
+  SET IE = (SELECT ITEM FROM ENCARGADO WHERE NOMBRE = NOE);
+  SELECT AVG(CANTIDADE), MAX(CANTIDADE)
+  INTO PCE, MRE FROM ENTREGA WHERE ITEM = IE;
+ELSE SELECT 'ENCARGADO NO REGISTRADO' AS MENSAJE;
+END IF;
+END $$
+DELIMITER ;
+CALL PS6('VICTOR CASTEDO', @PCE, @MRE);
+SELECT @PCE AS 'PROMEDIO', @MRE AS 'CANTIDAD MAXIMA';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 7
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba dos meses del año en curso y devuelva la descripción del repuesto más entregado y la cantidad total entregada, usando dos parámetros de salida.</p>
+
+<Codigo archivo="ejercicio-7.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS7(IN M1 INT, IN M2 INT, OUT DR VARCHAR(50), OUT RME INT)
+BEGIN
+DECLARE AUX INT;
+IF M1 > M2 THEN SET AUX = M1; SET M1 = M2; SET M2 = AUX; END IF;
+SELECT R.DESCRIPCION, SUM(E.CANTIDADE) INTO DR, RME
+FROM REPUESTO R INNER JOIN ENTREGA E ON R.CODIGO = R.CODIGO
+WHERE MONTH(FECHAE) BETWEEN M1 AND M2 AND YEAR(FECHAE)=YEAR(CURDATE())
+GROUP BY R.DESCRIPCION
+ORDER BY SUM(E.CANTIDADE) DESC LIMIT 1;
+END $$
+DELIMITER ;
+CALL PS7(2, 10, @DR, @RME);
+SELECT @DR AS 'REPUESTO MAS ENTREGADO', @RME AS 'CANTIDAD TOTAL ENTREGADA';`} />
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 8
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear un procedimiento que reciba el nombre de un repuesto y el nombre de un proveedor, y devuelva en un parámetro de salida el porcentaje que representa ese repuesto sobre el total comprado al proveedor.</p>
+
+<Codigo archivo="ejercicio-8.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE PROCEDURE PS8(IN DR VARCHAR(50), IN NP VARCHAR(50), OUT PPR FLOAT(6,2))
+BEGIN
+DECLARE COD CHAR(6);
+DECLARE NITP CHAR(10);
+DECLARE CP INT;
+DECLARE CR INT;
+IF EXISTS(SELECT * FROM REPUESTO WHERE DESCRIPCION=DR)THEN
+  IF EXISTS (SELECT * FROM PROVEEDOR WHERE NOMBREP=NP) THEN
+    SELECT CODIGO INTO COD FROM REPUESTO WHERE DESCRIPCION = DR;
+    SELECT NIT INTO NITP FROM PROVEEDOR WHERE NOMBREP = NP;
+    SELECT SUM(CANTIDAD) INTO CP FROM COMPRA WHERE NIT = NITP;
+    SELECT SUM(CANTIDAD) INTO CR
+    FROM COMPRA WHERE NIT = NITP AND CODIGO = COD;
+    SET PPR = (CR*100)/CP;
+  ELSE SELECT 'PROVEEDOR NO REGISTRADO' AS MENSAJE;
+  END IF;
+ELSE SELECT 'REPUESTO NO REGISTRADO' AS MENSAJE;
+END IF;
+END $$
+DELIMITER ;
+CALL PS8('AMORTIGUADOR', 'CARLA', @PPR);
+SELECT @PPR AS 'PORCENTAJE DEL REPUESTO';`} />
+
+## Checklist de revisión
+
+- Declarar cada parámetro de salida con `OUT` y un tipo adecuado.
+- Ejecutar `CALL` pasando una variable de sesión, como `@CTC`.
+- Consultar el valor devuelto con `SELECT @CTC`.
+- Validar nombres y relaciones antes de guardar resultados en variables locales.
