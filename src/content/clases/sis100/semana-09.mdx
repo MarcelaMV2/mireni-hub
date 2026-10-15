@@ -1,0 +1,108 @@
+---
+materia: "sis100"
+semana: 9
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+## Funciones de tipo C
+
+En la semana anterior vimos que un programa modular se divide en módulos y que el **algoritmo principal** es el encargado de llamarlos. También conocimos dos formas de módulo:
+
+| Tipo | ¿Devuelve un valor? | Forma de devolver | Parámetros | Ejemplo de llamada |
+| --- | --- | --- | --- | --- |
+| **Tipo A** | Sí | Con el resultado de la función | De entrada | `resultado <- CalcularPotencia(x, k)` |
+| **Tipo B** | No | Solo realiza una acción, como mostrar | De entrada | `MostrarResultado(x, n, suma)` |
+| **Tipo C** | No por sentencia de retorno | Por los parámetros, que llegan modificados | De entrada y de salida | `Descomponer(monto, b200, b100, ...)` |
+
+Una **función de tipo C** recibe variables por parámetro y **las devuelve modificadas por ese mismo parámetro**. Es decir, el parámetro es **de entrada y de salida a la vez**: entra con un valor y sale con la información que el módulo produjo.
+
+### Un parámetro que entra y sale
+
+Imagina que le prestas una libreta a un compañero: se la entregas en blanco (**entrada**) y te la devuelve con las notas escritas (**salida**). El canal es el mismo; lo que cambia es el contenido al volver.
+
+```text
+SubProceso Duplicar(numero Por Referencia)
+    numero <- numero * 2
+FinSubProceso
+```
+
+Aquí `numero` entra con un valor y sale con el doble. Un parámetro así se dice que es **entrada/salida** (in-out):
+
+- **Entrada**: el módulo puede leer el valor que traía.
+- **Salida**: el módulo deja un nuevo valor en él, y quien llamó lo recibe.
+
+En **PSeInt** los parámetros se pasan **Por Referencia** por defecto, por eso el módulo modifica la variable original. En **C++** esto se logra colocando `&` antes del nombre del parámetro (`double &x`).
+
+### ¿Por qué usar tipo C?
+
+- Permite que un módulo entregue **más de un resultado** a la vez.
+- Deja claro **qué variables se van a llenar** dentro del módulo.
+- Evita depender de variables globales: la comunicación ocurre por los parámetros.
+
+## Ejercicio 1 · Retiro de dinero en un cajero automático
+
+<Enunciado>
+Desarrolle un algoritmo aplicando programación modular que permita simular el retiro de dinero de un cajero automático.
+
+Un cajero automático cuenta con billetes de Bs 200, 100, 50, 20 y 10 para entregar los montos de retiro. Se debe ingresar un monto y entregarlo usando la menor cantidad de billetes posible.
+
+El algoritmo debe:
+
+- Leer el monto, validando que sea un número entero mayor a cero y que el cajero pueda entregarlo exactamente con los billetes con los que cuenta. Si el monto no es válido, se vuelve a solicitar.
+- Descomponer el monto empezando por el billete de mayor denominación y terminando por el de menor, obteniendo la cantidad de billetes de cada tipo.
+- Calcular la cantidad total de billetes entregados.
+- Mostrar el monto retirado, la cantidad de billetes de cada denominación (solo las que se usaron) y la cantidad total de billetes.
+
+Además, deberá indicar mediante un mensaje la situación correspondiente:
+
+- Si el total de billetes entregados es menor o igual a 5, indicar que la entrega es compacta.
+- Si el total de billetes entregados es mayor a 5, indicar que la entrega es de muchos billetes.
+
+El algoritmo debe desarrollarse utilizando únicamente tres módulos, aplicando funciones de tipo C, y el algoritmo principal debe realizar la llamada a dichos módulos.
+</Enunciado>
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Entrega compacta | Monto: `370` | Monto: `370`. Billetes de 200: `1`. Billetes de 100: `1`. Billetes de 50: `1`. Billetes de 20: `1`. Total de billetes: `4`. Entrega compacta. |
+| Muchos billetes | Monto: `590` | Monto: `590`. Billetes de 200: `2`. Billetes de 100: `1`. Billetes de 50: `1`. Billetes de 20: `2`. Total de billetes: `6`. Entrega de muchos billetes. |
+| Monto no disponible | Monto: `205` | Error: monto no disponible. Ingrese un monto que el cajero pueda entregar. Se vuelve a solicitar el dato. |
+| Dato inválido | Monto: `-50` | Error: el monto debe ser mayor a cero. Se vuelve a solicitar el dato. |
+
+<hr class="my-16 border-default" />
+
+## Ejercicio 2 · Suma de una serie de n términos
+
+<Enunciado>
+Desarrolle un algoritmo aplicando programación modular que permita calcular la suma de una serie de n términos.
+
+Se deben ingresar un número real positivo x y un número entero positivo n, que indica la cantidad de términos de la siguiente serie:
+
+`S = x¹/1 + x²/2 + x³/3 + ... + xⁿ/n`
+
+El algoritmo debe:
+
+- Leer el valor de x y el valor de n, validando que ambos sean mayores a cero.
+- Calcular cada potencia xᵏ mediante multiplicación sucesiva. No se permite usar el operador ^ ni la función pow.
+- Dividir cada potencia entre su exponente k y acumular el resultado en la suma.
+- Mostrar el valor de x, el valor de n y la suma total de la serie.
+
+El algoritmo debe desarrollarse utilizando únicamente tres módulos, aplicando funciones de tipo C:
+
+- Un módulo para la lectura y validación de los datos, donde x y n son parámetros de salida.
+- Un módulo para calcular la potencia por multiplicación sucesiva, donde la base y el exponente son parámetros de entrada.
+- Un módulo para calcular la suma de la serie, donde x y n son parámetros de entrada y la suma es el parámetro de salida.
+
+El algoritmo principal debe realizar la llamada a dichos módulos y mostrar los resultados.
+</Enunciado>
+
+### Ejemplos de funcionamiento
+
+| Caso | Datos de entrada | Datos de salida / respuesta del programa |
+| --- | --- | --- |
+| Datos válidos | `x: 2`, `n: 4` | `x: 2`. `n: 4`. Suma de la serie: `10.67` (`2/1 + 4/2 + 8/3 + 16/4`) |
+| Datos válidos | `x: 3`, `n: 3` | `x: 3`. `n: 3`. Suma de la serie: `16.5` (`3/1 + 9/2 + 27/3`) |
+| Dato inválido | `x: 2`, `n: -5` | Error: `n` debe ser mayor a cero. Se vuelve a solicitar el dato. |

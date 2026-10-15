@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 9,
+  "titulo": "Funciones de tipo C",
+  "resumen": "Funciones cuyos parámetros son de entrada y de salida a la vez: el módulo recibe variables, las procesa y devuelve los resultados por esos mismos parámetros.",
+  "estado": "disponible"
+}
