@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 9,
+  "titulo": "Funciones",
+  "resumen": "Funciones almacenadas en MySQL: creación, parámetros, RETURN, READS SQL DATA, DETERMINISTIC y uso con la base de datos REPUESTOS.",
+  "estado": "disponible"
+}
