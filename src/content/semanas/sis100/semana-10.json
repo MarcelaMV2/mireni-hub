@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 10,
+  "titulo": "Recursividad",
+  "resumen": "Diseño de algoritmos modulares y programas en C++ utilizando módulos recursivos para resolver series numéricas y encontrar números primos.",
+  "estado": "disponible"
+}
