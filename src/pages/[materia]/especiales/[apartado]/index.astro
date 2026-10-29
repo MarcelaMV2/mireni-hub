@@ -1,10 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
 import type { GetStaticPaths } from 'astro';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Icon } from 'astro-icon/components';
 import Layout from '../../../../componentes/Layout.astro';
 import Breadcrumb from '../../../../componentes/Breadcrumb.astro';
 import EjercicioCard from '../../../../componentes/EjercicioCard.astro';
+import Codigo from '../../../../componentes/mdx/Codigo.astro';
+import '../../../../estilos/contenido.css';
 
 export const getStaticPaths = (async () => {
   const materias = await getCollection('materias');
@@ -34,13 +38,20 @@ const grupos = (['I', 'II'] as const)
 
 const slugAp = apartado.id.split('/').pop()!;
 const esPrimerParcial = slugAp === 'prep-primer-parcial';
+const esSegundoParcial = slugAp === 'prep-segundo-parcial';
 const esParcialSis100 = esPrimerParcial && materia.id === 'sis100';
+const esSegundoParcialSis304 = esSegundoParcial && materia.id === 'sis304';
 const esPractica = apartado.data.tipo === 'practica';
 const imagenesParcial = esPrimerParcial
   ? (esParcialSis100
       ? [1, 2, 3, 4].map((n) => `/material/sis100/parcial1/p${n}.png`)
       : [1, 2, 3].map((n) => `/material/sis304/parcial1/pp${n}.jpeg`))
   : [];
+const tieneContenidoPropio = imagenesParcial.length > 0 || esSegundoParcialSis304;
+const leerSqlParcial2 = (archivo: string) =>
+  readFileSync(join(process.cwd(), 'public/material/sis304/parcial2', archivo), 'utf-8');
+const sqlBd1 = esSegundoParcialSis304 ? leerSqlParcial2('bd1.sql') : '';
+const sqlBd2 = esSegundoParcialSis304 ? leerSqlParcial2('bd2.sql') : '';
 ---
 
 <Layout titulo={`${apartado.data.titulo} · ${materia.data.sigla}`} marcaDerecha={apartado.data.titulo}>
@@ -69,10 +80,14 @@ const imagenesParcial = esPrimerParcial
           {materia.data.sigla} · {materia.data.nombre}
         </span>
         <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
-          {imagenesParcial.length > 0 ? `${imagenesParcial.length} láminas de repaso` : `${retos.length} ejercicios`}
+          {imagenesParcial.length > 0
+            ? `${imagenesParcial.length} láminas de repaso`
+            : esSegundoParcialSis304
+              ? '3 láminas · 2 scripts SQL'
+              : `${retos.length} ejercicios`}
         </span>
         <span class="font-mono text-xs uppercase tracking-widest border border-default rounded-md px-2.5 py-1 text-secondary">
-          {esParcialSis100 ? 'Teoría · Práctica' : 'Diagrama de flujo · Prueba de escritorio'}
+          {esParcialSis100 ? 'Teoría · Práctica' : materia.id === 'sis304' ? 'Modelo · SQL' : 'Diagrama de flujo · Prueba de escritorio'}
         </span>
       </div>
     </header>
@@ -84,6 +99,62 @@ const imagenesParcial = esPrimerParcial
         <p class="mt-3 leading-relaxed">Practiquen con los ejercicios de estas imágenes y de las semanas anteriores. Identifiquen los <strong>datos de entrada y salida</strong>, escriban su análisis y comprueben el algoritmo con una prueba de escritorio y ejecutando el programa.</p>
         <p class="mt-3 leading-relaxed">Intenten resolverlos antes de consultar las soluciones y prueben datos válidos e inválidos. <strong>¡Mucho éxito!</strong></p>
       </aside>
+    )}
+
+    {esSegundoParcialSis304 && (
+      <section class="mt-8 border-t-2 border-primary pt-4" aria-labelledby="segundo-parcial-material">
+        <p class="text-xs uppercase tracking-widest text-secondary mb-3">
+          Prepárate para el reto
+        </p>
+
+        <div class="flex flex-col gap-8">
+          <figure>
+            <figcaption class="mb-2 font-mono text-xs uppercase tracking-widest">
+              Lámina 01
+            </figcaption>
+            <a href="/material/sis304/parcial2/imagen1.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Abrir la lámina 1 del segundo parcial en otra pestaña">
+              <img
+                src="/material/sis304/parcial2/imagen1.jpeg"
+                alt={`Lámina 1 del segundo parcial de ${materia.data.sigla}`}
+                loading="lazy"
+                class="mx-auto block max-h-[70vh] w-full border border-default bg-surface-muted object-contain p-2"
+              />
+            </a>
+          </figure>
+
+          <Codigo archivo="bd1.sql" lang="sql" codigo={sqlBd1} plegado />
+
+          <figure>
+            <figcaption class="mb-2 font-mono text-xs uppercase tracking-widest">
+              Lámina 02
+            </figcaption>
+            <a href="/material/sis304/parcial2/imagen2.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Abrir la lámina 2 del segundo parcial en otra pestaña">
+              <img
+                src="/material/sis304/parcial2/imagen2.jpeg"
+                alt={`Lámina 2 del segundo parcial de ${materia.data.sigla}`}
+                loading="lazy"
+                class="mx-auto block max-h-[70vh] w-full border border-default bg-surface-muted object-contain p-2"
+              />
+            </a>
+          </figure>
+
+          <figure>
+            <figcaption class="mb-2 font-mono text-xs uppercase tracking-widest">
+              Lámina 03
+            </figcaption>
+            <a href="/material/sis304/parcial2/imagen3.jpeg" target="_blank" rel="noopener noreferrer" aria-label="Abrir la lámina 3 del segundo parcial en otra pestaña">
+              <img
+                src="/material/sis304/parcial2/imagen3.jpeg"
+                alt={`Lámina 3 del segundo parcial de ${materia.data.sigla}`}
+                loading="lazy"
+                class="mx-auto block max-h-[70vh] w-full border border-default bg-surface-muted object-contain p-2"
+              />
+            </a>
+          </figure>
+
+          <Codigo archivo="bd2.sql" lang="sql" codigo={sqlBd2} plegado />
+        </div>
+      </section>
     )}
 
     {imagenesParcial.length > 0 && (
@@ -129,7 +200,7 @@ const imagenesParcial = esPrimerParcial
       </section>
     )}
 
-    {retos.length === 0 ? (imagenesParcial.length === 0 && (
+    {retos.length === 0 ? (!tieneContenidoPropio && (
       <p class="mt-8 text-secondary">
         Todavía no hay ejercicios cargados en este apartado.
       </p>

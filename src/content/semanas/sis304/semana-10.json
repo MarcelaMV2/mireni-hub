@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 10,
+  "titulo": "Transacciones con procedimientos almacenados",
+  "resumen": "Uso de START TRANSACTION, COMMIT, ROLLBACK y SIGNAL dentro de procedimientos almacenados sobre la base REPUESTOS.",
+  "estado": "disponible"
+}
