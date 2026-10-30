@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 11,
+  "titulo": "Multiplicación rusa y modularidad",
+  "resumen": "Aplicación de módulos para multiplicar enteros mediante duplicaciones, divisiones enteras y selección de filas impares.",
+  "estado": "disponible"
+}
