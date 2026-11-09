@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 11,
+  "titulo": "Vistas (tablas virtuales)",
+  "resumen": "Creación de vistas con CREATE VIEW: atributos calculados, filtros, agrupaciones y subconsultas sobre la base REPUESTOS.",
+  "estado": "disponible"
+}

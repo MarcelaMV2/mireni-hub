@@ -1,0 +1,275 @@
+---
+materia: "sis304"
+semana: 11
+cantidadEjercicios: 12
+---
+
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+import MenuImagen from '../../../componentes/mdx/MenuImagen.astro';
+import ApoyoFlotante from '../../../componentes/mdx/ApoyoFlotante.astro';
+
+export const sqlRepuestos = `USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+DESCRIPCION VARCHAR(35) DEFAULT ' ',
+NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+POTENCIA INT DEFAULT 0,
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+NIT CHAR(10) NOT NULL PRIMARY KEY,
+NOMBREP VARCHAR(35) DEFAULT ' ',
+CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+CODIGO CHAR(6) NOT NULL,
+NIT CHAR(10) NOT NULL,
+FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDAD INT DEFAULT 0,
+COSTO DECIMAL(10,2) DEFAULT 0.0,
+DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+PRIMARY KEY (CODIGO, NIT),
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+ITEM INT NOT NULL PRIMARY KEY,
+NOMBRE VARCHAR(35) DEFAULT ' ',
+TELEFONO INT,
+CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+NE INT NOT NULL PRIMARY KEY,
+FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDADE INT DEFAULT 0,
+CODIGO CHAR(6),
+NIT CHAR(10),
+ITEM INT,
+FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`;
+
+export const imagenMlgd = "/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg";
+
+## ¿Qué es una vista (tabla virtual)?
+
+Una **vista** es una tabla virtual cuyo contenido está definido por un `SELECT`. No almacena datos físicamente: cada vez que se consulta, ejecuta la consulta que la define y devuelve el resultado actualizado.
+
+Se crean con `CREATE VIEW` y se consultan igual que una tabla normal con `SELECT * FROM`.
+
+### Estructura básica
+
+```sql
+CREATE VIEW NOMBRE_VISTA
+AS
+SELECT columnas
+FROM tabla
+WHERE condicion;
+
+-- Consultar la vista:
+SELECT * FROM NOMBRE_VISTA;
+```
+
+| Parte | Para qué sirve |
+| --- | --- |
+| `CREATE VIEW` | Define la tabla virtual con un nombre |
+| `AS` | Introduce el `SELECT` que define el contenido de la vista |
+| `SELECT * FROM` | Consulta el resultado de la vista como si fuera una tabla |
+
+<h2>Desplegables de apoyo</h2>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start my-6 semana-apoyo-desplegables">
+<details open class="semana-imagen-sticky border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
+  <div class="relative p-4 border-t border-default">
+    <img src={imagenMlgd} alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+    <MenuImagen src={imagenMlgd} />
+  </div>
+</details>
+
+<details class="border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
+  <div class="p-3 border-t border-default [&_figure]:!my-0 [&_figure>div]:max-h-[351px] [&_figure>div]:overflow-auto">
+    <Codigo archivo="repuestos.sql" lang="sql" codigo={sqlRepuestos} />
+  </div>
+</details>
+</div>
+
+<ApoyoFlotante
+  imagenSrc={imagenMlgd}
+  imagenAlt="Modelo lógico global de datos de REPUESTOS"
+  imagenTitulo="Modelo Lógico Global de Datos"
+  sql={sqlRepuestos}
+  sqlArchivo="repuestos.sql"
+  sqlTitulo="Base de datos de la semana 5"
+/>
+
+## Ejercicio 1
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre los repuestos comprados junto con su proveedor y su costo real, calculado como costo menos descuento más impuesto.</p>
+
+<Codigo archivo="ejercicio-1.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO1
+AS
+SELECT R.DESCRIPCION AS REPUESTO,
+       P.NOMBREP     AS PROVEEDOR,
+       (C.COSTO - C.DESCUENTO + C.IMPUESTO) AS 'COSTO REAL Bs.'
+FROM REPUESTO R INNER JOIN COMPRA    C ON R.CODIGO = C.CODIGO
+                INNER JOIN PROVEEDOR P ON C.NIT    = P.NIT;
+
+SELECT * FROM EJERCICIO1;`} />
+
+<p><strong>Nota:</strong> el costo real se calcula como un <strong>atributo calculado</strong> directamente en el <code>SELECT</code>: <code>COSTO - DESCUENTO + IMPUESTO</code>. No existe como columna en la tabla, se genera al momento de consultar la vista.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 2
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre los encargados de la ciudad de Sucre ordenados alfabéticamente por nombre.</p>
+
+<Codigo archivo="ejercicio-2.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO2
+AS
+SELECT NOMBRE   AS ENCARGADO,
+       TELEFONO AS TELEFONO,
+       CIUDAD   AS CIUDAD
+FROM ENCARGADO
+WHERE CIUDAD = 'SUCRE'
+ORDER BY NOMBRE ASC;
+
+SELECT * FROM EJERCICIO2;`} />
+
+<p><strong>Nota:</strong> <code>ORDER BY NOMBRE ASC</code> ordena los resultados de la A a la Z. <code>ASC</code> es el orden por defecto y puede omitirse, pero se escribe por claridad.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 3
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre la cantidad de entregas realizadas por cada encargado.</p>
+
+<Codigo archivo="ejercicio-3.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO3
+AS
+SELECT E.NOMBRE        AS ENCARGADO,
+       COUNT(EN.NE)    AS 'CANTIDAD DE ENTREGAS'
+FROM ENCARGADO E INNER JOIN ENTREGA EN ON E.ITEM = EN.ITEM
+GROUP BY E.NOMBRE;
+
+SELECT * FROM EJERCICIO3;`} />
+
+<p><strong>Nota:</strong> <code>GROUP BY E.NOMBRE</code> divide el resultado en grupos por cada encargado. Dentro de cada grupo, <code>COUNT(EN.NE)</code> cuenta cuántas entregas tiene registradas.</p>
+
+```text
+ENCARGADO        | CANTIDAD DE ENTREGAS
+-----------------+---------------------
+VICTOR CASTEDO   |        2
+CARLOS GOMES     |        2
+```
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 4
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre la cantidad mínima y máxima entregada, separada por repuesto.</p>
+
+<Codigo archivo="ejercicio-4.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO4
+AS
+SELECT R.DESCRIPCION      AS REPUESTO,
+       MIN(EN.CANTIDADE)  AS 'CANTIDAD MINIMA',
+       MAX(EN.CANTIDADE)  AS 'CANTIDAD MAXIMA'
+FROM REPUESTO R INNER JOIN ENTREGA EN ON R.CODIGO = EN.CODIGO
+GROUP BY R.DESCRIPCION;
+
+SELECT * FROM EJERCICIO4;`} />
+
+<p><strong>Nota:</strong> <code>MIN</code> y <code>MAX</code> trabajan dentro de cada grupo definido por <code>GROUP BY</code>. Cada fila del resultado representa un repuesto distinto con su rango de cantidades entregadas.</p>
+
+```text
+REPUESTO      | CANTIDAD MINIMA | CANTIDAD MAXIMA
+--------------+-----------------+----------------
+AMORTIGUADOR  |        2        |        2
+BUJIA         |        2        |        2
+```
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 5
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre las compras realizadas en el mes de mayo del 2019.</p>
+
+<Codigo archivo="ejercicio-5.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO5
+AS
+SELECT C.FECHA        AS 'FECHA COMPRA',
+       R.DESCRIPCION  AS MATERIAL,
+       P.NOMBREP      AS PROVEEDOR,
+       C.CANTIDAD     AS CANTIDAD,
+       C.CANTIDAD * C.COSTO AS 'COSTO TOTAL Bs.'
+FROM COMPRA C INNER JOIN REPUESTO  R ON C.CODIGO = R.CODIGO
+              INNER JOIN PROVEEDOR P ON C.NIT    = P.NIT
+WHERE MONTH(C.FECHA) = 5 AND YEAR(C.FECHA) = 2019;
+
+SELECT * FROM EJERCICIO5;`} />
+
+<p><strong>Nota:</strong> <code>MONTH(C.FECHA) = 5</code> extrae el número de mes y lo compara con 5 (mayo). <code>YEAR(C.FECHA) = 2019</code> filtra solo ese año. Ambas condiciones deben cumplirse al mismo tiempo con <code>AND</code>.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 6
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Crear una vista que muestre los repuestos cuya descripción tenga una vocal en la segunda letra, con saldo positivo de entregas.</p>
+
+<Codigo archivo="ejercicio-6.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+CREATE VIEW EJERCICIO6
+AS
+SELECT R.DESCRIPCION   AS REPUESTO,
+       SUM(EN.CANTIDADE) AS 'TOTAL ENTREGADO'
+FROM REPUESTO R INNER JOIN ENTREGA EN ON R.CODIGO = EN.CODIGO
+WHERE R.DESCRIPCION LIKE '_A%' OR R.DESCRIPCION LIKE '_E%' OR
+      R.DESCRIPCION LIKE '_I%' OR R.DESCRIPCION LIKE '_O%' OR
+      R.DESCRIPCION LIKE '_U%'
+GROUP BY R.DESCRIPCION
+HAVING SUM(EN.CANTIDADE) > 0;
+
+SELECT * FROM EJERCICIO6;`} />
+
+<p><strong>Nota:</strong> el guion bajo <code>_</code> representa <strong>exactamente un carácter</strong> en esa posición. Entonces <code>'_A%'</code> significa: cualquier primer carácter, luego la letra A, luego cualquier cosa. Así se detecta que la <strong>segunda letra</strong> es una vocal. <code>HAVING SUM(...) &gt; 0</code> filtra grupos cuyo total es positivo, equivalente a verificar que haya stock entregado.</p>
+
+<hr class="my-12 border-default" />
+
+## Problemas propuestos
+
+Los problemas R7 al R12 se proponen como práctica para resolver por parte de los estudiantes de la asignatura.
+
+1. **R7.** Vista que muestre el nombre del encargado y la cantidad promedio y máxima de repuestos entregados, correspondientes al día actual. Incluir solamente los encargados que tengan por lo menos una entrega registrada hoy.
+2. **R8.** Vista que muestre el repuesto más solicitado (con mayor cantidad total entregada), mostrando su código, descripción y cantidad total.
+3. **R9.** Tabla virtual que muestre el porcentaje de entregas de cada repuesto respecto al total comprado. Incluir solo los repuestos cuyo costo sea mayor al promedio de todos los costos de compra.
+4. **R10.** Vista que muestre el proveedor que más dinero ha generado en compras (costo total). Mostrar nombre del proveedor y el monto total.
+5. **R11.** Tabla virtual que muestre las entregas realizadas el segundo semestre de 2019, ordenadas cronológicamente. Incluir: fecha de entrega, número de entrega, descripción del repuesto, cantidad entregada y nombre del encargado.
+6. **R12.** Vista que muestre los repuestos cuya descripción comience con las letras A, B o C, incluyendo solo aquellos cuya cantidad total entregada supere el 50% de la cantidad máxima entregada entre todos los repuestos.
+
+## Checklist de revisión
+
+- Definir la vista con `CREATE VIEW nombre AS SELECT ...`.
+- Usar alias claros para las columnas calculadas y las funciones de agregado.
+- Aplicar `WHERE` antes de agrupar y `HAVING` después de `GROUP BY`.
+- Combinar tablas con `INNER JOIN ... ON` respetando las claves foráneas.
+- Consultar el resultado con `SELECT * FROM nombre_vista` para comprobarlo.
+- Recordar que la vista no guarda datos: siempre refleja el estado actual de las tablas.
