@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 12,
+  "titulo": "Vectores",
+  "resumen": "Almacenamiento y recorrido de datos en vectores para clasificar estudiantes según sus calificaciones y calcular promedios.",
+  "estado": "disponible"
+}

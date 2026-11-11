@@ -1,0 +1,40 @@
+---
+materia: "sis100"
+semana: 12
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+## ¿Qué es un vector?
+
+Un **vector** es una estructura que permite almacenar varios datos del mismo tipo bajo un solo nombre. Cada elemento ocupa una posición a la que se accede mediante un **índice**. Los ciclos permiten recorrer sus elementos para ingresar, consultar y procesar información. Por ejemplo, podemos usar un vector de nombres y otro de calificaciones, manteniendo los datos de cada estudiante en la misma posición de ambos vectores.
+
+## Ejercicio 1 · Clasificación de estudiantes según sus calificaciones
+
+<Enunciado>
+Desarrollar un algoritmo modular mediante un diagrama de flujo que permita ingresar por teclado una cantidad **N de estudiantes, comprendida entre 1 y 30**. El algoritmo deberá solicitar por teclado el nombre de cada estudiante y almacenarlo en un vector general de nombres. Para cada estudiante, se deberá generar automáticamente una calificación aleatoria comprendida entre **1 y 100**, almacenándola en un vector de notas.
+
+Posteriormente, considerando que la **nota mínima de aprobación es 51 puntos**, el algoritmo deberá clasificar a los estudiantes en dos grupos: aprobados y reprobados, almacenando sus respectivos nombres y calificaciones en vectores independientes.
+
+Finalmente, el algoritmo deberá:
+
+a) Mostrar la lista general de estudiantes con sus respectivas calificaciones.
+
+b) Mostrar la lista de estudiantes aprobados con sus calificaciones.
+
+c) Mostrar la lista de estudiantes reprobados con sus calificaciones.
+
+d) Calcular y mostrar el **promedio general de calificaciones de todos los estudiantes**.
+
+e) Mostrar al **estudiante con la mayor nota**, indicando su nombre y calificación.
+
+f) Mostrar al **estudiante con la menor nota**, indicando su nombre y calificación.
+
+</Enunciado>
+
+## Ejercicio 2 · Multiplicación de vectores en orden inverso
+
+<Enunciado>
+Desarrolle un algoritmo modular para que lea dos vectores **A** y **B** de **n elementos** cada uno y multiplique el primer elemento de A con el último elemento de B y luego el segundo elemento de A por el elemento **n − 1** de B y así sucesivamente hasta llegar al elemento **n** de A por el primer elemento de B. El resultado de cada multiplicación deberá almacenarse en un vector **C**.
+</Enunciado>
