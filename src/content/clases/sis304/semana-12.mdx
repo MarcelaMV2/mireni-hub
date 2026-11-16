@@ -1,0 +1,226 @@
+---
+materia: "sis304"
+semana: 12
+cantidadEjercicios: 12
+---
+
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+import MenuImagen from '../../../componentes/mdx/MenuImagen.astro';
+import ApoyoFlotante from '../../../componentes/mdx/ApoyoFlotante.astro';
+
+export const sqlRepuestos = `USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+DESCRIPCION VARCHAR(35) DEFAULT ' ',
+NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+POTENCIA INT DEFAULT 0,
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+NIT CHAR(10) NOT NULL PRIMARY KEY,
+NOMBREP VARCHAR(35) DEFAULT ' ',
+CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+CODIGO CHAR(6) NOT NULL,
+NIT CHAR(10) NOT NULL,
+FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDAD INT DEFAULT 0,
+COSTO DECIMAL(10,2) DEFAULT 0.0,
+DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+PRIMARY KEY (CODIGO, NIT),
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+ITEM INT NOT NULL PRIMARY KEY,
+NOMBRE VARCHAR(35) DEFAULT ' ',
+TELEFONO INT,
+CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+NE INT NOT NULL PRIMARY KEY,
+FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDADE INT DEFAULT 0,
+CODIGO CHAR(6),
+NIT CHAR(10),
+ITEM INT,
+FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`;
+
+export const imagenMlgd = "/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg";
+
+## ¿Qué es una comprobación (`CHECK`)?
+
+Una **restricción `CHECK`** es una regla que MySQL evalúa cuando se intenta insertar o actualizar una fila. Si la condición resulta falsa, la operación se rechaza. Se puede agregar a una tabla existente con `ALTER TABLE`.
+
+En MySQL, las restricciones `CHECK` se aplican desde la versión **8.0.16**. La condición debe referirse a columnas de la misma fila; no puede consultar otras tablas ni contener subconsultas.
+
+### Estructura básica
+
+```sql
+ALTER TABLE NOMBRE_TABLA
+ADD CONSTRAINT NOMBRE_RESTRICCION
+CHECK (condicion);
+```
+
+| Parte | Para qué sirve |
+| --- | --- |
+| `ALTER TABLE` | Modifica la estructura de una tabla existente |
+| `ADD CONSTRAINT` | Agrega una restricción con nombre, único dentro de la base de datos |
+| `CHECK (condicion)` | Define la regla que debe cumplir cada fila |
+
+### Recursos útiles dentro de un `CHECK`
+
+| Recurso | Para qué sirve |
+| --- | --- |
+| `> 0`, `>= 0` | Comprobar que un número sea positivo o no negativo |
+| `BETWEEN x AND y` | Comprobar que un valor esté dentro de un rango, incluidos los extremos |
+| `LIKE '%'` y `LIKE '_'` | Comparar texto con comodines: `%` representa cualquier secuencia y `_` un carácter |
+| `REGEXP` | Comprobar que un texto cumpla un patrón regular |
+| `DAY(fecha)`, `MONTH(fecha)`, `YEAR(fecha)` | Extraer partes de una fecha |
+| `MOD(n, 2)` | Obtener el residuo; permite distinguir números pares e impares |
+| `IS NOT NULL` | Comprobar que un valor no sea nulo |
+| `TRIM(texto) <> ''` | Comprobar que un texto no esté vacío ni contenga solo espacios |
+
+> **Sobre los patrones:** MySQL `LIKE` solo reconoce `%` y `_` como comodines. Los patrones `[A-Z]` y `[0-9]` no son clases de caracteres válidas en `LIKE`; para esos casos se usa `REGEXP`.
+
+> Una condición `CHECK` que resulta `UNKNOWN` por un valor `NULL` se acepta. Si la columna debe tener un valor, hay que combinar la regla con `IS NOT NULL` o declarar la columna `NOT NULL`.
+
+<h2>Desplegables de apoyo</h2>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start my-6 semana-apoyo-desplegables">
+<details open class="semana-imagen-sticky border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
+  <div class="relative p-4 border-t border-default">
+    <img src={imagenMlgd} alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+    <MenuImagen src={imagenMlgd} />
+  </div>
+</details>
+
+<details class="border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
+  <div class="p-3 border-t border-default [&_figure]:!my-0 [&_figure>div]:max-h-[351px] [&_figure>div]:overflow-auto">
+    <Codigo archivo="repuestos.sql" lang="sql" codigo={sqlRepuestos} />
+  </div>
+</details>
+</div>
+
+<ApoyoFlotante
+  imagenSrc={imagenMlgd}
+  imagenAlt="Modelo lógico global de datos de REPUESTOS"
+  imagenTitulo="Modelo Lógico Global de Datos"
+  sql={sqlRepuestos}
+  sqlArchivo="repuestos.sql"
+  sqlTitulo="Base de datos de la semana 5"
+/>
+
+## Ejercicio 1
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que el costo de compra sea un valor positivo.</p>
+
+<Codigo archivo="ejercicio-1.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE COMPRA
+ADD CONSTRAINT CHK_COMPRA_COSTO_POSITIVO CHECK (COSTO > 0);`} />
+
+<p><strong>Nota:</strong> <code>COSTO &gt; 0</code> rechaza valores menores o iguales a cero. No se permiten compras gratuitas ni con costo negativo.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 2
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que la cantidad de compra sea positiva y no supere los cuatro dígitos.</p>
+
+<Codigo archivo="ejercicio-2.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE COMPRA
+ADD CONSTRAINT CHK_COMPRA_CANTIDAD CHECK (CANTIDAD BETWEEN 1 AND 9999);`} />
+
+<p><strong>Nota:</strong> <code>BETWEEN 1 AND 9999</code> incluye ambos extremos y equivale a <code>CANTIDAD &gt;= 1 AND CANTIDAD &lt;= 9999</code>.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 3
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que el código de repuesto tenga el formato <code>R-XXXX</code>, donde cada <code>X</code> es un dígito.</p>
+
+<Codigo archivo="ejercicio-3.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE REPUESTO
+ADD CONSTRAINT CHK_REPUESTO_CODIGO CHECK (CODIGO REGEXP '^R-[0-9]{4}$');`} />
+
+<p><strong>Nota:</strong> se usa <code>REGEXP</code> porque MySQL <code>LIKE</code> no interpreta <code>[0-9]</code> como un dígito. En la expresión regular, <code>^</code> y <code>$</code> indican el inicio y el final del texto, y <code>{'{4}'}</code> exige cuatro dígitos.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 4
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que el teléfono del encargado tenga el formato de Sucre: siete dígitos y comience con <code>64</code>.</p>
+
+<Codigo archivo="ejercicio-4.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE ENCARGADO
+ADD CONSTRAINT CHK_ENCARGADO_TELEFONO CHECK (TELEFONO BETWEEN 6400000 AND 6499999);`} />
+
+<p><strong>Nota:</strong> como <code>TELEFONO</code> es de tipo numérico, el rango <code>6400000</code>–<code>6499999</code> garantiza que tenga siete dígitos y empiece con <code>64</code>. El uso de <code>BETWEEN</code> evita convertir el número a texto.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 5
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que el día de una entrega esté entre el día 1 y el día 10 de cada mes.</p>
+
+<Codigo archivo="ejercicio-5.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE ENTREGA
+ADD CONSTRAINT CHK_ENTREGA_DIA_MES CHECK (DAY(FECHAE) BETWEEN 1 AND 10);`} />
+
+<p><strong>Nota:</strong> <code>DAY(FECHAE)</code> extrae el número de día. La condición permite esos primeros diez días, sin importar el mes o el año.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 6
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Validar que la fecha de compra corresponda al segundo semestre del año 2019.</p>
+
+<Codigo archivo="ejercicio-6.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+ALTER TABLE COMPRA
+ADD CONSTRAINT CHK_COMPRA_FECHA_SEMESTRE_2019 CHECK (
+    MONTH(FECHA) BETWEEN 7 AND 12
+    AND YEAR(FECHA) = 2019
+);`} />
+
+<p><strong>Nota:</strong> las dos condiciones deben cumplirse: <code>MONTH(FECHA) BETWEEN 7 AND 12</code> acepta julio a diciembre, y <code>YEAR(FECHA) = 2019</code> limita el año.</p>
+
+## Problemas propuestos
+
+Los problemas R7 al R12 se proponen como práctica para resolver por parte de los estudiantes de la asignatura.
+
+1. **R7.** Validar en la tabla `ENTREGA` que la cantidad entregada sea positiva y no tenga más de cuatro dígitos.
+2. **R8.** Validar en la tabla `COMPRA` que el descuento no sea negativo ni supere los 500 Bs.
+3. **R9.** Validar que la descripción del repuesto mecánico no sea nula ni esté vacía.
+4. **R10.** Validar el NIT del proveedor para exactamente diez dígitos numéricos.
+5. **R11.** Validar que la fecha de entrega corresponda a un día impar de cada mes; utilizar `MOD`.
+6. **R12.** Validar que la potencia del repuesto eléctrico esté entre 50 y 5000 watts.
+
+## Checklist de revisión
+
+- Agregar cada restricción con `ALTER TABLE ... ADD CONSTRAINT ... CHECK (...)`.
+- Dar a cada restricción un nombre identificable y único dentro de la base de datos.
+- Usar `REGEXP` para patrones de texto con clases como `[0-9]`; `LIKE` solo admite `%` y `_`.
+- Combinar la condición con `IS NOT NULL` cuando el valor no pueda ser nulo.
+- Recordar que MySQL aplica las restricciones `CHECK` desde la versión 8.0.16.
+- Comprobar la restricción intentando insertar o actualizar una fila que cumpla la regla y otra que la incumpla.

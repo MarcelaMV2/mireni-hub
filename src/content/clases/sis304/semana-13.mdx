@@ -1,0 +1,280 @@
+---
+materia: "sis304"
+semana: 13
+cantidadEjercicios: 12
+---
+
+import Codigo from '../../../componentes/mdx/Codigo.astro';
+import MenuImagen from '../../../componentes/mdx/MenuImagen.astro';
+import ApoyoFlotante from '../../../componentes/mdx/ApoyoFlotante.astro';
+
+export const sqlRepuestos = `USE REPUESTOS;
+
+CREATE TABLE REPUESTO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+DESCRIPCION VARCHAR(35) DEFAULT ' ',
+NUMSERIE INT DEFAULT 0
+) ENGINE = InnoDB;
+
+CREATE TABLE ELECTRICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+POTENCIA INT DEFAULT 0,
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE MECANICO (
+CODIGO CHAR(6) NOT NULL PRIMARY KEY,
+ESPECIFICACION VARCHAR(40) DEFAULT ' ',
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO)
+) ENGINE = InnoDB;
+
+CREATE TABLE PROVEEDOR (
+NIT CHAR(10) NOT NULL PRIMARY KEY,
+NOMBREP VARCHAR(35) DEFAULT ' ',
+CELULAR INT
+) ENGINE = InnoDB;
+
+CREATE TABLE COMPRA (
+CODIGO CHAR(6) NOT NULL,
+NIT CHAR(10) NOT NULL,
+FECHA DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDAD INT DEFAULT 0,
+COSTO DECIMAL(10,2) DEFAULT 0.0,
+DESCUENTO DECIMAL(10,2) DEFAULT 0.0,
+IMPUESTO DECIMAL(10,2) DEFAULT 0.0,
+PRIMARY KEY (CODIGO, NIT),
+FOREIGN KEY (CODIGO) REFERENCES REPUESTO(CODIGO),
+FOREIGN KEY (NIT) REFERENCES PROVEEDOR(NIT)
+) ENGINE = InnoDB;
+
+CREATE TABLE ENCARGADO (
+ITEM INT NOT NULL PRIMARY KEY,
+NOMBRE VARCHAR(35) DEFAULT ' ',
+TELEFONO INT,
+CIUDAD VARCHAR(15) DEFAULT ' '
+) ENGINE = InnoDB;
+
+CREATE TABLE ENTREGA (
+NE INT NOT NULL PRIMARY KEY,
+FECHAE DATETIME DEFAULT CURRENT_TIMESTAMP,
+CANTIDADE INT DEFAULT 0,
+CODIGO CHAR(6),
+NIT CHAR(10),
+ITEM INT,
+FOREIGN KEY (CODIGO, NIT) REFERENCES COMPRA(CODIGO, NIT),
+FOREIGN KEY (ITEM) REFERENCES ENCARGADO(ITEM)
+) ENGINE = InnoDB;`;
+
+export const imagenMlgd = "/material/sis304/semana%205%20y%206/MLGD_Repuestos.jpeg";
+
+## ¿Qué es un desencadenador (`TRIGGER`)?
+
+Un **trigger** es un bloque SQL asociado a una tabla que MySQL ejecuta automáticamente cuando una fila se inserta, actualiza o elimina. Se define para un momento (`BEFORE` o `AFTER`) y un evento (`INSERT`, `UPDATE` o `DELETE`), y se ejecuta una vez por cada fila afectada.
+
+### Estructura básica
+
+```sql
+DELIMITER $$
+CREATE TRIGGER NOMBRE_TRIGGER
+BEFORE INSERT ON NOMBRE_TABLA
+FOR EACH ROW
+BEGIN
+    -- acciones automáticas para cada fila
+END $$
+DELIMITER ;
+```
+
+| Elemento | Para qué sirve |
+| --- | --- |
+| `BEFORE` | Se ejecuta antes de insertar, actualizar o eliminar la fila |
+| `AFTER` | Se ejecuta después de que la operación sobre la fila termina correctamente |
+| `INSERT`, `UPDATE`, `DELETE` | Evento que activa el trigger |
+| `FOR EACH ROW` | Ejecuta el trigger para cada fila afectada |
+| `NEW.columna` | Valor nuevo de una fila insertada o actualizada |
+| `OLD.columna` | Valor anterior de una fila actualizada o eliminada |
+| `SIGNAL SQLSTATE '45000'` | Lanza un error y hace fallar la operación que activó el trigger |
+
+### Disponibilidad de `NEW` y `OLD`
+
+| Evento | `NEW` | `OLD` |
+| --- | --- | --- |
+| `INSERT` | Fila que se intenta insertar | No disponible |
+| `UPDATE` | Valores nuevos | Valores anteriores |
+| `DELETE` | No disponible | Fila que se intenta eliminar |
+
+En un trigger `BEFORE`, se puede asignar a `NEW.columna` para cambiar el valor que se guardará. En un trigger `AFTER`, la fila ya fue escrita y no se puede cambiar con `NEW`.
+
+> Los nombres de triggers deben ser únicos dentro de la base de datos. Además, un trigger no puede iniciar ni cerrar una transacción, devolver un conjunto de resultados ni modificar la misma tabla que está siendo modificada por la operación que lo activó.
+
+> MySQL permite implementar acciones como cascada o `SET NULL` con triggers, aunque normalmente conviene declararlas en la clave foránea (`ON DELETE CASCADE`, `ON DELETE SET NULL`). Las acciones automáticas de claves foráneas no activan triggers.
+
+<h2>Desplegables de apoyo</h2>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start my-6 semana-apoyo-desplegables">
+<details open class="semana-imagen-sticky border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver el Modelo Lógico Global de Datos (MLGD)</summary>
+  <div class="relative p-4 border-t border-default">
+    <img src={imagenMlgd} alt="Modelo lógico global de datos de REPUESTOS" class="mx-auto h-auto max-w-full" width="1020" height="351" loading="lazy" />
+    <MenuImagen src={imagenMlgd} />
+  </div>
+</details>
+
+<details class="border border-default rounded-md bg-surface min-w-0">
+  <summary class="cursor-pointer px-4 py-3 font-semibold hover:bg-canvas">Ver la base de datos de la semana 5</summary>
+  <div class="p-3 border-t border-default [&_figure]:!my-0 [&_figure>div]:max-h-[351px] [&_figure>div]:overflow-auto">
+    <Codigo archivo="repuestos.sql" lang="sql" codigo={sqlRepuestos} />
+  </div>
+</details>
+</div>
+
+<ApoyoFlotante
+  imagenSrc={imagenMlgd}
+  imagenAlt="Modelo lógico global de datos de REPUESTOS"
+  imagenTitulo="Modelo Lógico Global de Datos"
+  sql={sqlRepuestos}
+  sqlArchivo="repuestos.sql"
+  sqlTitulo="Base de datos de la semana 5"
+/>
+
+## Ejercicio 1
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Asignar automáticamente la fecha y hora actual al registrar una entrega.</p>
+
+<Codigo archivo="ejercicio-1.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_ENTREGA_FECHA_BI
+BEFORE INSERT ON ENTREGA
+FOR EACH ROW
+BEGIN
+    SET NEW.FECHAE = NOW();
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> al ser <code>BEFORE INSERT</code>, todavía se puede asignar un valor a <code>NEW.FECHAE</code>. Este trigger sobrescribe cualquier fecha enviada en el <code>INSERT</code>.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 2
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Impedir que se registre una entrega con cantidad nula, cero o negativa.</p>
+
+<Codigo archivo="ejercicio-2.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_ENTREGA_CANTIDAD_BI
+BEFORE INSERT ON ENTREGA
+FOR EACH ROW
+BEGIN
+    IF NEW.CANTIDADE IS NULL OR NEW.CANTIDADE <= 0 THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'LA CANTIDAD ENTREGADA DEBE SER MAYOR A CERO';
+    END IF;
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> no hace falta cambiar primero la cantidad a cero. <code>SIGNAL</code> cancela la inserción y MySQL devuelve el mensaje indicado.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 3
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Calcular automáticamente el impuesto (13 %) y el descuento (5 %) de una compra antes de guardarla.</p>
+
+<Codigo archivo="ejercicio-3.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_COMPRA_CALCULOS_BI
+BEFORE INSERT ON COMPRA
+FOR EACH ROW
+BEGIN
+    SET NEW.IMPUESTO = NEW.COSTO * 0.13;
+    SET NEW.DESCUENTO = NEW.COSTO * 0.05;
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> en <code>BEFORE INSERT</code> se modifican los valores de la fila entrante usando <code>NEW</code>. El costo real de acuerdo con el esquema de REPUESTOS se puede calcular como <code>COSTO - DESCUENTO + IMPUESTO</code>.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 4
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Asignar el siguiente número correlativo de entrega cuando no se proporciona <code>NE</code> o se envía cero.</p>
+
+<Codigo archivo="ejercicio-4.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_ENTREGA_NUMERO_BI
+BEFORE INSERT ON ENTREGA
+FOR EACH ROW
+BEGIN
+    DECLARE NULT INT;
+
+    IF NEW.NE IS NULL OR NEW.NE = 0 THEN
+        SELECT COALESCE(MAX(NE), 0) INTO NULT
+        FROM ENTREGA;
+        SET NEW.NE = NULT + 1;
+    END IF;
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> <code>COALESCE(MAX(NE), 0)</code> permite iniciar en 1 cuando la tabla está vacía. Este cálculo es solo didáctico: dos inserciones concurrentes pueden calcular el mismo número. En una aplicación real, es preferible definir <code>NE</code> como <code>AUTO_INCREMENT</code>.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 5
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Implementar manualmente una eliminación en cascada al eliminar un repuesto, borrando primero las entregas y compras relacionadas.</p>
+
+<Codigo archivo="ejercicio-5.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_REPUESTO_CASCADE_BD
+BEFORE DELETE ON REPUESTO
+FOR EACH ROW
+BEGIN
+    DELETE FROM ENTREGA WHERE CODIGO = OLD.CODIGO;
+    DELETE FROM COMPRA WHERE CODIGO = OLD.CODIGO;
+    DELETE FROM ELECTRICO WHERE CODIGO = OLD.CODIGO;
+    DELETE FROM MECANICO WHERE CODIGO = OLD.CODIGO;
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> debe ser <code>BEFORE DELETE</code>: las claves foráneas impiden borrar primero el repuesto padre. Se borran primero las entregas, que dependen de <code>COMPRA</code>, luego las compras y finalmente las filas de subtipo. En un diseño real, es más simple y fiable definir <code>ON DELETE CASCADE</code> en las claves foráneas.</p>
+
+<hr class="my-12 border-default" />
+
+## Ejercicio 6
+
+<p class="border-l-4 border-brand bg-surface px-4 py-3 leading-relaxed">Impedir que se elimine un proveedor que todavía tiene compras registradas.</p>
+
+<Codigo archivo="ejercicio-6.sql" lang="sql" plegado codigo={`USE REPUESTOS;
+DELIMITER $$
+CREATE TRIGGER TRG_PROVEEDOR_RESTRICT_BD
+BEFORE DELETE ON PROVEEDOR
+FOR EACH ROW
+BEGIN
+    IF EXISTS (SELECT 1 FROM COMPRA WHERE NIT = OLD.NIT) THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'NO SE PUEDE ELIMINAR: EL PROVEEDOR TIENE COMPRAS';
+    END IF;
+END $$
+DELIMITER ;`} />
+
+<p><strong>Nota:</strong> si hay compras asociadas, <code>SIGNAL</code> hace fallar la operación. No se debe reinsertar el proveedor: en un trigger <code>BEFORE DELETE</code> la fila todavía existe. Además, la clave foránea de <code>COMPRA</code> ya impide esta eliminación mientras haya compras.</p>
+
+## Problemas propuestos
+
+Los problemas R7 al R12 se proponen como práctica para resolver por parte de los estudiantes de la asignatura.
+
+1. **R7.** Implementar la acción `SET NULL` para las entregas asociadas a un encargado que se elimina; las filas de `ENTREGA` deben quedar con `ITEM = NULL`.
+2. **R8.** Antes de insertar una compra, comparar su cantidad con la cantidad promedio de las compras existentes. Si la supera, reemplazar `NEW.CANTIDAD` con el promedio.
+3. **R9.** Al registrar una compra, comprobar que el repuesto exista en `REPUESTO`; si no existe, cancelar la inserción con un mensaje. (La clave foránea ya ofrece esta protección.)
+4. **R10.** Impedir que se elimine un repuesto con compras o entregas asociadas y mostrar un mensaje. (Las claves foráneas ya impiden esta eliminación.)
+5. **R11.** Antes de insertar una entrega, comprobar que el total entregado, incluida la nueva fila, no supere la cantidad comprada para ese repuesto y proveedor.
+6. **R12.** Antes de actualizar el costo de una compra, recalcular el impuesto (13 %) y el descuento (5 %) usando el nuevo costo.
+
+## Checklist de revisión
+
+- Elegir el evento y el momento adecuados: `BEFORE` o `AFTER`, junto con `INSERT`, `UPDATE` o `DELETE`.
+- Usar `NEW` para valores nuevos y `OLD` para los valores anteriores.
+- Cambiar columnas con `SET NEW.columna = ...` dentro de triggers `BEFORE`.
+- Usar `SIGNAL SQLSTATE '45000'` para rechazar una operación con un mensaje claro.
+- Dar a cada trigger un nombre único dentro de la base de datos.
+- Tener en cuenta las claves foráneas y el orden de borrado al implementar acciones referenciales.
+- Probar tanto el caso válido como el caso que debe provocar un error.

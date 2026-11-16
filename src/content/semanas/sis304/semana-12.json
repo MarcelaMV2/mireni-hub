@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 12,
+  "titulo": "Comprobaciones (CHECK)",
+  "resumen": "Validación de datos con restricciones CHECK en MySQL: rangos numéricos, formatos de texto y condiciones sobre fechas.",
+  "estado": "disponible"
+}

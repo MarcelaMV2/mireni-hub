@@ -1,0 +1,7 @@
+{
+  "materia": "sis304",
+  "numero": 13,
+  "titulo": "Desencadenadores (Triggers)",
+  "resumen": "Automatización de validaciones y acciones en MySQL con triggers BEFORE y AFTER para INSERT, UPDATE y DELETE.",
+  "estado": "disponible"
+}
