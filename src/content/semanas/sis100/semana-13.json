@@ -1,0 +1,7 @@
+{
+  "materia": "sis100",
+  "numero": 13,
+  "titulo": "Ordenamiento burbuja",
+  "resumen": "Generación de números aleatorios en un vector y ordenamiento ascendente mediante el método de la burbuja.",
+  "estado": "disponible"
+}

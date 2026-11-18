@@ -1,0 +1,69 @@
+---
+materia: "sis100"
+semana: 13
+cantidadEjercicios: 2
+---
+
+import Enunciado from '../../../componentes/mdx/Enunciado.astro';
+
+## Ejercicio 1 · Ordenar números con la burbuja
+
+<Enunciado>
+Desarrolla un programa que pregunte cuántos números desea generar. La cantidad debe estar entre **2 y 20**, inclusive; si se ingresa un valor fuera de ese rango, se debe volver a preguntar.
+
+Luego, llena un vector con esa cantidad de números enteros aleatorios entre **1 y 100** y ordénalo de menor a mayor usando el método de la burbuja. El ordenamiento debe realizarse en una función llamada **`Burbuja`**, que recibe el vector y su cantidad de elementos. El programa principal genera y muestra los datos, llama a `Burbuja` y muestra el vector ordenado.
+</Enunciado>
+
+## Ejercicio 2 · Atención por prioridad en una clínica
+
+<Enunciado>
+Una clínica atiende a sus pacientes según un número de prioridad. Mientras más bajo es el número, más urgente es el paciente, así que el 1 se atiende antes que el 5. Los pacientes pueden llegar en cualquier orden, pero siempre se debe atender primero al que tenga el número más bajo.
+
+La clínica solo tiene espacio para 10 pacientes en espera, y las prioridades se guardan en un vector.
+
+El programa muestra un menú y lo repite hasta que el usuario elija salir.
+
+<pre class="menu-programa" style="background: transparent; border: 1px solid var(--color-default); border-radius: 12px; box-shadow: none;">
+1. Agregar paciente
+2. Atender paciente
+3. Mostrar lista
+4. Salir
+</pre>
+
+**Opción 1, agregar paciente.** El programa pide el número de prioridad y lo agrega al final del vector. Después ordena el vector de menor a mayor usando el método de la burbuja, y esto lo hace por dentro sin que el usuario lo pida. Si todo sale bien escribe `Paciente agregado`. Si ya hay 10 pacientes escribe `La lista esta llena` y no agrega nada.
+
+**Opción 2, atender paciente.** Como el vector siempre está ordenado, el primer elemento es el de menor número. El programa escribe `Atendido el paciente con prioridad x`, donde x es ese número, y lo elimina del vector. Los demás pacientes se corren una posición a la izquierda. Si no hay nadie escribe `No hay pacientes por atender`.
+
+**Opción 3, mostrar lista.** Escribe los pacientes de izquierda a derecha, cada prioridad entre corchetes. Si no hay nadie escribe `Lista vacia`.
+
+**Opción 4, salir.** Escribe `Fin del programa` y termina.
+
+Si el usuario escribe cualquier otro número, el programa escribe `Opcion no valida` y vuelve a mostrar el menú.
+</Enunciado>
+
+### Menú del programa
+
+El menú se muestra al iniciar y vuelve a aparecer después de cada opción, excepto cuando se selecciona salir:
+
+<pre style="background: transparent; color: white; box-shadow: none; line-height: 1.5; font-weight: 600;">
+1. Agregar paciente
+2. Atender paciente
+3. Mostrar lista
+4. Salir
+</pre>
+
+### Ejemplos de funcionamiento
+
+La lista tiene capacidad para **10 pacientes** y cada prioridad debe estar entre **1 y 100**. En la tabla, se indica por separado la opción seleccionada, los datos que se ingresan y la respuesta esperada.
+
+| Caso | Selección y situación | Datos ingresados | Respuesta del programa |
+| --- | --- | --- | --- |
+| Agregar paciente | Opción `1`, hay espacio | Prioridad `30` | `Paciente agregado`. El vector queda ordenado. |
+| Lista llena | Opción `1`, ya hay 10 pacientes | Prioridad `40` | `La lista esta llena`. El vector no cambia. |
+| Atender paciente | Opción `2`, hay pacientes en espera | Vector: `[10][20][30]` | `Atendido el paciente con prioridad 10`. El vector queda `[20][30]`. |
+| Lista vacía al atender | Opción `2`, no hay pacientes | Ninguno | `No hay pacientes por atender`. |
+| Mostrar pacientes | Opción `3`, hay pacientes | Vector: `[20][30]` | `[20][30]` |
+| Mostrar lista vacía | Opción `3`, no hay pacientes | Ninguno | `Lista vacia` |
+| Salir | Opción `4` | Ninguno | `Fin del programa`. El programa termina. |
+| Opción no válida | Se ingresa un número distinto de `1`, `2`, `3` o `4` | Por ejemplo, `8` | `Opcion no valida`. Después vuelve a mostrarse el menú. |
+
